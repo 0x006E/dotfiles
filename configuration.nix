@@ -10,6 +10,7 @@
 }:
 let
   stable = import <stable> { };
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { }; 
 in
 {
   nix = {
@@ -26,10 +27,13 @@ in
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_cachyos.extend (_final: prev: {
-    uvcvideo = prev.uvcvideo.overrideAttrs (prevAttrs: { patches = prevAttrs.patches ++ [ ./kernel/00uvc_version_fix.patch ]; });
-  });
   boot.loader.efi.canTouchEfiVariables = true; 
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.extraModulePackages = [
+    (uvcvideo-kernel-module.overrideAttrs (_: {
+      patches = [ ./kernel/00uvc_version_fix.patch ];
+    }))
+  ];
   chaotic.scx.enable = true;
   
   networking.hostName = "ntsv"; # Define your hostname.
