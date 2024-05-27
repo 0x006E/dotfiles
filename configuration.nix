@@ -30,9 +30,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true; 
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
   boot.extraModulePackages = [
-    (uvcvideo-kernel-module.overrideAttrs (_: {
-      patches = [ ./kernel/00uvc_version_fix.patch ];
-    }))
+    (uvcvideo-kernel-module)
   ];
   chaotic.scx.enable = true;
   

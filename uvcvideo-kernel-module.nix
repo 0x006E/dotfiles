@@ -11,7 +11,7 @@ pkgs.stdenv.mkDerivation {
   kernelVersion = kernel.modDirVersion;
 
   modulePath = "drivers/media/usb/uvc";
-
+  patches = kernel.patches ++ [ ./kernel/00uvc_version_fix.patch ];
   buildPhase = ''
     BUILT_KERNEL=$kernel_dev/lib/modules/$kernelVersion/build
 
