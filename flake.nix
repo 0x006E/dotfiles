@@ -3,12 +3,13 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    inputs@{ nixpkgs, home-manager, ... }:
+    inputs@{ nixpkgs, home-manager, chaotic, ... }:
     {
       nixosConfigurations = {
         ntsv = nixpkgs.lib.nixosSystem {
@@ -23,6 +24,7 @@
               home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
             }
+            chaotic.nixosModules.default
           ];
         };
       };

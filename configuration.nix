@@ -10,10 +10,6 @@
 }:
 let
   stable = import <stable> { };
-  uvcvideo-kernel-module = pkgs.callPackage ./uvcvideo-kernel-module.nix {
-    # Make sure the module targets the same kernel as your system is using.
-    kernel = config.boot.kernelPackages.kernel;
-  };
 in
 {
   nix = {
@@ -30,12 +26,12 @@ in
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos.extend (_final: prev: {
+    uvcvideo = prev.uvcvideo.overrideAttrs (prevAttrs: { patches = prevAttrs.patches ++ [ ./kernel/00uvc_version_fix.patch ]; });
+  });
   boot.loader.efi.canTouchEfiVariables = true; 
-  boot.extraModulePackages = [
-    (uvcvideo-kernel-module.overrideAttrs (_: {
-      patches = [ ./kernel/00uvc_version_fix.patch ];
-    }))
-  ];
+  chaotic.scx.enable = true;
+  
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -116,6 +112,7 @@ in
     dunst
     libnotify
     spice-vdagent
+    scx
   ];
   programs.hyprland = {
     enable = true;
