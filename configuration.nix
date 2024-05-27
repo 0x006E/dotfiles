@@ -34,7 +34,7 @@ in
   boot.extraModulePackages = [
     (uvcvideo-kernel-module.overrideAttrs (_: {
       patches = [ ./kernel/00uvc_version_fix.patch ];
-    })
+    }))
   ];
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
