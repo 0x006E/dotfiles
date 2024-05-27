@@ -10,6 +10,10 @@
 }:
 let
   stable = import <stable> { };
+  uvcvideo-kernel-module = pkgs.callPackage ./uvcvideo-kernel-module.nix {
+    # Make sure the module targets the same kernel as your system is using.
+    kernel = config.boot.kernelPackages.kernel;
+  };
 in
 {
   nix = {
@@ -27,13 +31,10 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true; 
-  boot.kernelPatches = [
-    {
-      # Forces version 1.0 uvc for laptop camera
-      name = "uvc-force-1.0";
-      patch = builtins.path { path = ./kernel/00uvc_version_fix.patch; };
-
-    }
+  boot.extraModulePackages = [
+    (uvcvideo-kernel-module.overrideAttrs (_: {
+      patches = [ ./kernel/00uvc_version_fix.patch ];
+    })
   ];
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
