@@ -26,9 +26,16 @@ in
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.canTouchEfiVariables = true; 
+  boot.kernelPatches = [
+    {
+      # Forces version 1.0 uvc for laptop camera
+      name = "uvc-force-1.0";
+      patch = builtins.path { path = ./kernel/00uvc_version_fix.patch; };
 
-  # networking.hostName = "nixos"; # Define your hostname.
+    }
+  ];
+  networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
