@@ -1,11 +1,17 @@
-{ pkgs
-, lib
-, kernel ? pkgs.linuxPackages_cachyos.kernel
+{
+  pkgs,
+  lib,
+  kernel ? pkgs.linuxPackages_cachyos.kernel,
 }:
 
 pkgs.stdenv.mkDerivation {
   pname = "uvcvideo-kernel-module";
-  inherit (kernel) src version postPatch nativeBuildInputs;
+  inherit (kernel)
+    src
+    version
+    postPatch
+    nativeBuildInputs
+    ;
 
   kernel_dev = kernel.dev;
   kernelVersion = kernel.modDirVersion;

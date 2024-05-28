@@ -10,7 +10,7 @@
 }:
 let
   stable = import <stable> { };
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { }; 
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { };
 in
 {
   nix = {
@@ -27,13 +27,11 @@ in
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true; 
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
-  boot.extraModulePackages = [
-    (uvcvideo-kernel-module)
-  ];
+  boot.extraModulePackages = [ (uvcvideo-kernel-module) ];
   chaotic.scx.enable = true;
-  
+
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.

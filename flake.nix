@@ -9,7 +9,12 @@
   };
 
   outputs =
-    inputs@{ nixpkgs, home-manager, chaotic, ... }:
+    inputs@{
+      nixpkgs,
+      home-manager,
+      chaotic,
+      ...
+    }:
     {
       nixosConfigurations = {
         ntsv = nixpkgs.lib.nixosSystem {
