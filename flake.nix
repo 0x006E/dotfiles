@@ -6,6 +6,12 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.3.0";
+
+      # Optional but recommended to limit the size of your system closure.
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -13,6 +19,7 @@
       nixpkgs,
       home-manager,
       chaotic,
+      lanzaboote,
       ...
     }:
     {
@@ -30,6 +37,8 @@
               # arguments to home.nix
             }
             chaotic.nixosModules.default
+            lanzaboote.nixosModules.lanzaboote
+            ./secureboot.nix
           ];
         };
       };
