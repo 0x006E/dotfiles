@@ -1,12 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   stable = import <stable> {};
   uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix {};
 in {
@@ -29,11 +24,17 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
   boot.extraModulePackages = [uvcvideo-kernel-module];
-  
-  swapDevices = [ { device = "/swap/swapfile"; size = 16*1024; } ];  # 16GB Swap
-  boot.resumeDevice = "/dev/mapper/crypted";  # the unlocked drive mapping
+  boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
+  swapDevices = [
+    {
+      device = "/swap/swapfile";
+      size = 16 * 1024;
+    }
+  ]; # 16GB Swap
+  boot.resumeDevice = "/dev/mapper/crypted"; # the unlocked drive mapping
   boot.kernelParams = [
-    "resume_offset=1058048"  # for hibernate resume
+    "nowatchdog"
+    "resume_offset=1058048" # for hibernate resume
   ];
 
   chaotic.scx.enable = true;
