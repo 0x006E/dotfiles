@@ -104,7 +104,6 @@ in {
     wget
     dunst
     libnotify
-    sbctl
     scx
   ];
   programs.hyprland = {
