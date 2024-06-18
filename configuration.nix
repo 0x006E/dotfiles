@@ -56,7 +56,6 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.gdm.wayland.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 #  services.spice-vdagentd.enable = true;
 #  services.qemuGuest.enable = true;
@@ -67,7 +66,7 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-
+  hardware.pulseaudio.enable = false;	
   # Enable sound.
   security.rtkit.enable = true;
   services.pipewire = {
