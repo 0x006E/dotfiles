@@ -1,15 +1,31 @@
+{ config, pkgs, ... }: {
+  config = {
+    packageOverrides = super:
+      let self = super.pkgs;
+      in {
+        iosevka-term = self.iosevka.override {
+          set = "term";
+          design = [
+            "term"
+            "v-l-italic"
+            "v-i-italic"
+            "v-g-singlestorey"
+            "v-zero-dotted"
+            "v-asterisk-high"
+            "v-at-long"
+            "v-brace-straight"
+          ];
+        };
+      };
+
+  };
   fonts = {
     fontconfig = {
       # ultimate.enable = true; # This enables fontconfig-ultimate settings for better font rendering
-      defaultFonts = {
-        monospace = ["Iosevka"];
-      };
+      defaultFonts = { monospace = [ "Iosevka" ]; };
     };
-    enableFontDir = true;
+    fontDir.enable = true;
     enableGhostscriptFonts = true;
-    fonts = with pkgs; [
-      terminus_font      corefonts
-     noto-fonts
-     iosevka
-   ];
- };
+    packages = with pkgs; [ terminus_font corefonts noto-fonts iosevka-term ];
+  };
+}
