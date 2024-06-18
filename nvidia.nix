@@ -47,8 +47,8 @@
       offload.enable = true;
       offload.enableOffloadCmd = true;
       # Make sure to use the correct Bus ID values for your system!
-      intelBusId = "PCI:00:02.0";
-      nvidiaBusId = "PCI:01:00.0";
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
     };
   };
 }

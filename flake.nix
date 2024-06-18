@@ -19,7 +19,7 @@
       nixpkgs,
       home-manager,
       chaotic,
-      lanzaboote,
+#      lanzaboote,
       ...
     }:
     {
