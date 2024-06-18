@@ -29,8 +29,15 @@ in {
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
   boot.extraModulePackages = [uvcvideo-kernel-module];
-  chaotic.scx.enable = true;
+  
+  swapDevices = [ { device = "/swap/swapfile"; size = 16*1024; } ];  # 16GB Swap
+  boot.resumeDevice = "/dev/mapper/crypted";  # the unlocked drive mapping
+  boot.kernelParams = [
+    "resume_offset=1058048"  # for hibernate resume
+  ];
 
+  chaotic.scx.enable = true;
+  services.fwupd.enable = true;
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -104,6 +111,7 @@ in {
     wget
     dunst
     libnotify
+    nil
     scx
   ];
   programs.hyprland = {
