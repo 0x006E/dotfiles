@@ -1,27 +1,11 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
-  nixpkgs.config = {
-    packageOverrides = super: let
-      self = super.pkgs;
-    in {
-      iosevka-term = self.iosevka.override {
-        set = "term";
-        design = [
-          "term"
-          "v-l-italic"
-          "v-i-italic"
-          "v-g-singlestorey"
-          "v-zero-dotted"
-          "v-asterisk-high"
-          "v-at-long"
-          "v-brace-straight"
-        ];
-      };
-    };
-  };
+{pkgs, ...}: {
+  # nixpkgs.config = {
+  #   packageOverrides = pkgs: {
+  #     iosevka-term = pkgs.iosevka.override {
+  #       variant = "sgr-iosevka-term-ss11";
+  #     };
+  #   };
+  # };
   fonts = {
     fontconfig = {
       # ultimate.enable = true; # This enables fontconfig-ultimate settings for better font rendering
@@ -29,6 +13,6 @@
     };
     fontDir.enable = true;
     enableGhostscriptFonts = true;
-    packages = with pkgs; [terminus_font corefonts noto-fonts iosevka-term];
+    packages = with pkgs; [terminus_font corefonts noto-fonts iosevka-bin];
   };
 }
