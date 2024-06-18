@@ -1,18 +1,15 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 {
   config,
   lib,
   pkgs,
   ...
-}:
-let
-  stable = import <stable> { };
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { };
-in
-{
+}: let
+  stable = import <stable> {};
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix {};
+in {
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -22,7 +19,7 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nvidia.nix
-    ./font.nix
+    #    ./font.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -31,7 +28,7 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
-  boot.extraModulePackages = [ (uvcvideo-kernel-module) ];
+  boot.extraModulePackages = [uvcvideo-kernel-module];
   chaotic.scx.enable = true;
 
   networking.hostName = "ntsv"; # Define your hostname.
@@ -58,8 +55,8 @@ in
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-#  services.spice-vdagentd.enable = true;
-#  services.qemuGuest.enable = true;
+  #  services.spice-vdagentd.enable = true;
+  #  services.qemuGuest.enable = true;
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -67,7 +64,7 @@ in
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  hardware.pulseaudio.enable = false;	
+  hardware.pulseaudio.enable = false;
   # Enable sound.
   security.rtkit.enable = true;
   services.pipewire = {
@@ -98,7 +95,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nithin = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
   };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
