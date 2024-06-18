@@ -10,7 +10,7 @@
 }:
 let
   stable = import <stable> { };
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { };
+#  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix { };
 in
 {
   nix = {
@@ -21,6 +21,7 @@ in
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./nvidia.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -28,9 +29,9 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_cachyos;
-  boot.extraModulePackages = [ (uvcvideo-kernel-module) ];
-  chaotic.scx.enable = true;
+#  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+#  boot.extraModulePackages = [ (uvcvideo-kernel-module) ];
+#  chaotic.scx.enable = true;
 
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -55,11 +56,11 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = false;
-  services.xserver.desktopManager.plasma5.enable = true;
-  #services.xserver.displayManager.defaultSession = "plasmax11";
-  services.spice-vdagentd.enable = true;
-  services.qemuGuest.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.desktopManager.plasma6.enable = true;
+  services.xserver.displayManager.defaultSession = "plasmax11";
+#  services.spice-vdagentd.enable = true;
+#  services.qemuGuest.enable = true;
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -100,9 +101,6 @@ in
   users.users.nithin = {
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    openssh.authorizedKeys.keys = [
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDewzq13jOQGbi74nF4OHCq+sitV/zOBKfO4a6qfyvHmNASac2ZfxO/s7SvAW6tdxOyv9bPTiU7FsUagPgoX8OIQAjeTCmQYPj+l+fcOO1II81mcBIlQspE+HnvZ2jV0OQA7KwEHSXacpqlSZ0ccsqh/AjoIz0JUKu4Bve38qbi9QnQ7M40guzHrLm/7beGTv8M24Gs5pjhXdpTWED0ldWmwSqiSI1sFxJ4kjFYru1rJUgs4mCFrt9StI+32l/0N4Ji8pZs5ZcTSO0Hz3Gu9xarq2rcQHz56qvEVOrxa87a9Or196afS1rd7gF5WMmUWQP6A9iLSsxKe3WjAGr64Dip6Rp0CL1R1esAFbzQ7lfGWCMJxDinin3eHaBX4EVGDuXyxhek+2YdUCn2qQ09vOwb6WoZZzaajGdaZrPdr1P3Awn1Y8xxXKs92Zxhysueup6VODKrW8OiX1aoJ+zXZKCLmzCRsRxAJTJPY9dGzlDG/B2r5ve6chlW3M5KtJEeRzs= nithin486@hotmail.com"
-    ];
   };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -111,21 +109,13 @@ in
     wget
     dunst
     libnotify
-    spice-vdagent
-    scx
+#    scx
   ];
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
   };
   programs.dconf.enable = true;
-  hardware = {
-    opengl.enable = true;
-    nvidia.modesetting.enable = true;
-  };
-
-  qt.platformTheme = "qt5ct";
-  hardware.opengl.driSupport32Bit = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -137,8 +127,6 @@ in
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

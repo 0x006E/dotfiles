@@ -16,7 +16,6 @@
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
-  environment.systemPackages = [ nvidia-offload ];
   hardware.nvidia = {
 
     # Modesetting is required.
@@ -46,6 +45,7 @@
 
     prime = {
       offload.enable = true;
+      offload.enableOffloadCmd = true;
       # Make sure to use the correct Bus ID values for your system!
       intelBusId = "PCI:00:02.0";
       nvidiaBusId = "PCI:01:00.0";
