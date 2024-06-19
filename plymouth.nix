@@ -27,7 +27,7 @@
   in {
     enable = true;
     inherit theme;
-    # themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = [theme];})];
+    themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = [theme];})];
   };
 
   environment.systemPackages = with pkgs; [
