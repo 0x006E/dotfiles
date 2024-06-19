@@ -23,6 +23,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.kernelModules = ["netconsole"];
   boot.extraModulePackages = [uvcvideo-kernel-module];
   boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
   swapDevices = [
@@ -33,6 +34,7 @@ in {
   ]; # 16GB Swap
   boot.resumeDevice = "/dev/mapper/crypted"; # the unlocked drive mapping
   boot.kernelParams = [
+    "netconsole=@/enp43s0,6666@192.168.1.2/"
     "nowatchdog"
     "resume_offset=1058048" # for hibernate resume
   ];
