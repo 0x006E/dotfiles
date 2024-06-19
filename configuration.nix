@@ -126,7 +126,7 @@ in {
     scx
     wireguard-tools
     git-crypt
-    asdf-vm
+    devenv
   ];
   programs.hyprland = {
     enable = true;
