@@ -3,7 +3,7 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {pkgs, ...}: let
   stable = import <stable> {};
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix {};
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix {};
 in {
   nix = {
     extraOptions = ''
@@ -31,7 +31,7 @@ in {
     options = "--delete-older-than 3d";
   };
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
   boot.extraModulePackages = [uvcvideo-kernel-module];
   boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
   swapDevices = [
@@ -40,7 +40,7 @@ in {
       size = 16 * 1024;
     }
   ]; # 16GB Swap
-  boot.resumeDevice = "/dev/mapper/crypted"; # the unlocked drive mapping
+  boot.resumeDevice = "/dev/dm-0"; # the unlocked drive mapping
   boot.kernelParams = [
     "nowatchdog"
     "resume_offset=1058048" # for hibernate resume
@@ -124,6 +124,8 @@ in {
     nil
     mako
     scx
+    wireguard-tools
+    git-crypt
   ];
   programs.hyprland = {
     enable = true;
