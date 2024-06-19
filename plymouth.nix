@@ -23,7 +23,7 @@
   boot.consoleLogLevel = 0;
 
   boot.plymouth = let
-    theme = "lone";
+    theme = "deus_ex";
   in {
     enable = true;
     inherit theme;

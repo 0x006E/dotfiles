@@ -121,6 +121,7 @@ in {
     dunst
     libnotify
     nil
+    mako
     # scx
   ];
   programs.hyprland = {
