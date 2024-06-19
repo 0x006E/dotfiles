@@ -147,6 +147,8 @@
     };
   };
 
+  programs.direnv.enable = true;
+
   # alacritty - a cross-platform, GPU-accelerated terminal emulator
   programs.alacritty = {
     enable = true;
@@ -167,6 +169,7 @@
     enableCompletion = true;
     # TODO add your custom bashrc here
     bashrcExtra = ''
+      eval "$(direnv hook bash)"
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
     '';
 
