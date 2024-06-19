@@ -2,13 +2,11 @@
   config,
   pkgs,
   ...
-}: let
-  fprintd-tod = import ./fprintd-tod.nix;
-in {
+}: {
   services.fprintd = {
     enable = true;
   };
-  environment.systemPackages = [
-    fprintd-tod
+  environment.systemPackages = with pkgs; [
+    (callPackage ./fprintd-tod.nix {})
   ];
 }

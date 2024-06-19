@@ -1,11 +1,11 @@
 {
   lib,
-  libfprint,
   fetchFromGitLab,
+  pkgs,
 }:
 # for the curious, "tod" means "Touch OEM Drivers" meaning it can load
 # external .so's.
-libfprint.overrideAttrs (old: rec {
+pkgs.libfprint.overrideAttrs (old: rec {
   pname = "libfprint-tod";
   version = "1.94.7+tod1";
 

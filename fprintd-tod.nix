@@ -1,9 +1,9 @@
 {
   lib,
-  writeText,
-  fprintd,
+  pkgs,
+  ...
 }: let
-  libfprint-tod = import ./libfprint-tod.nix;
+  libfprint-tod = pkgs.callPackage ./libfprint-tod.nix {};
   # Unfortunately, Meson does not yet support disabling individual tests
   # (only full suites): https://github.com/mesonbuild/meson/issues/6999
   # This should be replaced with the appropriate flag once it exists.
@@ -12,10 +12,10 @@
             self.skipTest(None)
   '';
   disable-tests = tests:
-    writeText "disable-tests.sed"
+    pkgs.writeText "disable-tests.sed"
     (lib.concatStrings (map disable-test tests));
 in
-  (fprintd.override {
+  (pkgs.fprintd.override {
     libfprint = libfprint-tod;
   })
   .overrideAttrs ({postPatch ? "", ...}: {
