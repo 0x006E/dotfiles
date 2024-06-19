@@ -15,6 +15,7 @@ in {
     ./hardware-configuration.nix
     ./nvidia.nix
     ./font.nix
+    ./plymouth.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
