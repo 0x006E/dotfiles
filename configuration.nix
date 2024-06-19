@@ -3,7 +3,7 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 {pkgs, ...}: let
   stable = import <stable> {};
-  uvcvideo-kernel-module = pkgs.linuxPackages_latest.callPackage ./uvcvideo-kernel-module.nix {};
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos.callPackage ./uvcvideo-kernel-module.nix {};
 in {
   nix = {
     extraOptions = ''
@@ -31,7 +31,7 @@ in {
     options = "--delete-older-than 3d";
   };
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
   boot.extraModulePackages = [uvcvideo-kernel-module];
   boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
   swapDevices = [
@@ -46,7 +46,7 @@ in {
     "resume_offset=1058048" # for hibernate resume
   ];
 
-  # chaotic.scx.enable = true;
+  chaotic.scx.enable = true;
   services.fwupd.enable = true;
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -123,7 +123,7 @@ in {
     libnotify
     nil
     mako
-    # scx
+    scx
   ];
   programs.hyprland = {
     enable = true;
