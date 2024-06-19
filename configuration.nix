@@ -16,6 +16,7 @@ in {
     ./nvidia.nix
     ./font.nix
     ./plymouth.nix
+    ./fingerprint.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
