@@ -91,13 +91,17 @@
     })
   ];
 
+  programs.firefox.nativeMessagingHosts.packages = with pkgs; [
+    gnomeExtensions.gsconnect
+    ff2mpv-rust
+  ];
+
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
     foot
     neovim
-    firefox
     swww
     vscode
     nixfmt-rfc-style
@@ -110,6 +114,7 @@
     })
     onedriver
     mpv
+    ff2mpv-rust
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
