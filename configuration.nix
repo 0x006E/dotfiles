@@ -129,6 +129,7 @@ in {
     wireguard-tools
     git-crypt
     devenv
+    ff2mpv-rust
   ];
   programs.hyprland = {
     enable = true;
