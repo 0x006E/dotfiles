@@ -25,6 +25,7 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.configurationLimit = 3;
   nix.settings.auto-optimise-store = true;
+  nix.settings.trusted-users = ["root" "@wheel"];
   nix.gc = {
     automatic = true;
     dates = "daily";
@@ -42,6 +43,7 @@ in {
   ]; # 16GB Swap
   boot.resumeDevice = "/dev/dm-0"; # the unlocked drive mapping
   boot.kernelParams = [
+    "i915.enable_psr=0"
     "nowatchdog"
     "resume_offset=1058048" # for hibernate resume
   ];
