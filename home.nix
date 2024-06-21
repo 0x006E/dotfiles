@@ -189,10 +189,6 @@
       urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
       urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
     };
-    initExtra = ''
-      . "${pkgs.asdf-vm}/share/asdf-vm/asdf.sh"
-      . "${pkgs.asdf-vm}/share/asdf-vm/completions/asdf.bash"
-    '';
   };
 
   # Home Manager can also manage your environment variables through
