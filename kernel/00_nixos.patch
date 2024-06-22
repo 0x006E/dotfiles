@@ -1,19 +1,23 @@
 diff --git a/Makefile b/Makefile
-index c3ba9be..c9efb19 100644
+index c3ba9be..6a85543 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,8 +1,11 @@
+@@ -1,8 +1,14 @@
 +KERNEL ?= $(shell uname -r)
 +KERNELDIR ?= /lib/modules/$(KERNEL)/build/
 +
  obj-m += acer-wmi-battery.o
 -PWD := $(CURDIR)
  
- all:
+-all:
 -	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
++modules:
 +	@#"M=":
 +	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
  
  clean:
 -	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
 +	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
++
++modules_install:
++	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules_install

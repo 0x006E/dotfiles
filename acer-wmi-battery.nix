@@ -3,7 +3,6 @@
   lib,
   fetchFromGitHub,
   kernel,
-  kmod,
 }:
 stdenv.mkDerivation rec {
   name = "acer-wmi-battery-${version}-${kernel.version}";
@@ -19,12 +18,19 @@ stdenv.mkDerivation rec {
   sourceRoot = "source";
   hardeningDisable = ["pic" "format"]; # 1
   nativeBuildInputs = kernel.moduleBuildDependencies; # 2
-    patches = kernel.patches ++ [./kernel/00_nixos.patch];
+  patches = [./kernel/00_nixos.patch];
 
-  makeFlags = [
-    "KERNEL_DIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build" # 4
-    "INSTALL_MOD_PATH=$(out)" # 5
-  ];
+  makeFlags =
+    kernel.makeFlags
+    ++ [
+      # Variable refers to the local Makefile.
+      "KERNELDIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
+      # Variable of the Linux src tree's main Makefile.
+      "INSTALL_MOD_PATH=$(out)"
+    ];
+
+  buildFlags = ["modules"];
+  installTargets = ["modules_install"];
 
   meta = with lib; {
     description = "A linux kernel driver for the Acer WMI battery health control interface";
