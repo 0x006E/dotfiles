@@ -4,6 +4,7 @@
 {pkgs, ...}: let
   stable = import <stable> {};
   uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix {};
+  acer-wmi-battery-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix {};
 in {
   nix = {
     extraOptions = ''
@@ -33,8 +34,13 @@ in {
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
-  boot.extraModulePackages = [uvcvideo-kernel-module];
+  boot.extraModulePackages = [uvcvideo-kernel-module acer-wmi-battery-kernel-module];
   boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
+  boot.kernelModules = ["acer-wmi-battery"];
+  boot.extraModprobeConfig = ''
+    options acer-wmi-battery enable_health_mode=1
+  '';
+
   swapDevices = [
     {
       device = "/swap/swapfile";
