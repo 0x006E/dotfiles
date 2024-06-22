@@ -19,9 +19,9 @@ stdenv.mkDerivation rec {
   sourceRoot = "source";
   hardeningDisable = ["pic" "format"]; # 1
   nativeBuildInputs = kernel.moduleBuildDependencies; # 2
+    patches = kernel.patches ++ [./kernel/00_nixos.patch];
 
   makeFlags = [
-    "KERNELRELEASE=${kernel.modDirVersion}" # 3
     "KERNEL_DIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build" # 4
     "INSTALL_MOD_PATH=$(out)" # 5
   ];
