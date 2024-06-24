@@ -17,6 +17,7 @@ in {
     ./nvidia.nix
     ./font.nix
     ./plymouth.nix
+    ./virtualization.nix
     # ./fingerprint.nix
   ];
 
