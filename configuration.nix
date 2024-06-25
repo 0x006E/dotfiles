@@ -18,6 +18,7 @@ in {
     ./font.nix
     ./plymouth.nix
     ./virtualization.nix
+    ./printing.nix
     # ./fingerprint.nix
   ];
 
