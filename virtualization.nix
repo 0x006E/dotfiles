@@ -10,5 +10,5 @@
   virtualisation.incus.enable = true;
   virtualisation.docker.enable = true;
   networking.nftables.enable = true;
-  users.groups.libvirtd.members = ["nithin"];
+  users.users.nithin. extraGroups = ["libvirtd" "incus-admin"]; # Enable ‘sudo’ for the user.
 }
