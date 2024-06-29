@@ -136,6 +136,7 @@ in {
     wireguard-tools
     git-crypt
     devenv
+    discord
   ];
   programs.hyprland = {
     enable = true;
