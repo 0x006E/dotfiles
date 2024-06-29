@@ -1,30 +1,37 @@
 {
-  fetchzip,
-  appimageTools,
-  makeDesktopItem,
+  pkgs,
+  lib,
   ...
 }: let
-  extracted-zip = fetchzip {
-    src = "https://github.com/responsively-org/responsively-app-releases/releases/download/v1.12.0/ResponsivelyApp-1.12.0.AppImage";
-    sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-  }; # 1
-  appimage-file = "${extracted-zip}/PokeWilds-x64"; # 2
-in
-  appimageTools.wrapType2 {
-    name = "Responsively App";
-    version = "1.12.0";
-    src = appimage-file; # 3
+  pname = "responsivelyapp";
+  version = "1.12.0";
+  name = "${pname}-${version}";
 
-    # desktopItems = [
-    #   (makeDesktopItem {
-    #     name = "drawio";
-    #     exec = "drawio %U";
-    #     icon = "drawio";
-    #     desktopName = "drawio";
-    #     comment = "draw.io desktop";
-    #     mimeTypes = ["application/vnd.jgraph.mxfile" "application/vnd.visio"];
-    #     categories = ["Graphics"];
-    #     startupWMClass = "drawio";
-    #   })
-    # ];
-  } {}
+  src = pkgs.fetchurl {
+    url = "https://github.com/responsively-org/responsively-app-releases/releases/download/v${version}/ResponsivelyApp-${version}.AppImage";
+    sha256 = "sha256-qW6vEOAUZVHdNmn8QWmBGksIjYXez0IGei/AYrxn1VQ=";
+  };
+
+  appimageContents = pkgs.appimageTools.extractType2 {inherit name src;};
+in
+  pkgs.appimageTools.wrapType2 rec {
+    inherit name src;
+
+    extraInstallCommands = ''
+      mv $out/bin/${name} $out/bin/${pname}
+      install -m 444 -D ${appimageContents}/${pname}.desktop $out/share/applications/${pname}.desktop
+
+      install -m 444 -D ${appimageContents}/${pname}.png $out/share/icons/hicolor/512x512/apps/${pname}.png
+
+      substituteInPlace $out/share/applications/${pname}.desktop \
+      	--replace 'Exec=AppRun --no-sandbox %U' 'Exec=${pname} %U'
+    '';
+
+    meta = with lib; {
+      description = " A must-have devtool for web developers for quicker responsive web development. 🚀 ";
+      homepage = "https://responsively.app/";
+      license = licenses.gpl3;
+      maintainers = [];
+      platforms = ["x86_64-linux"];
+    };
+  }

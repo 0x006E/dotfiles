@@ -78,6 +78,10 @@ in {
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  zramSwap.enable = true;
+  zramSwap.memoryPercent = 100;
+  zramSwap.priority = 10;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
