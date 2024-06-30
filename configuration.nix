@@ -142,11 +142,17 @@ in {
     wireguard-tools
     git-crypt
     devenv
+    wl-clipboard
+    wayland-utils
+    libsecret
+    cage
+    gamescope
   ];
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
   };
+  programs.niri.enable = true;
   programs.dconf.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

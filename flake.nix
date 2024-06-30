@@ -9,6 +9,7 @@
     alejandra.url = "github:kamadorueda/alejandra/3.0.0";
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
     nil.url = "github:oxalica/nil";
+    niri.url = "github:sodiboo/niri-flake";
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
 
@@ -23,6 +24,7 @@
     home-manager,
     chaotic,
     lanzaboote,
+    niri,
     ...
   }: {
     nixosConfigurations = {
@@ -31,7 +33,9 @@
         modules = [
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
+            nixpkgs.overlays = [niri.overlays.niri];
           }
+          niri.nixosModules.niri
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
