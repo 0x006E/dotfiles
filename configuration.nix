@@ -78,6 +78,8 @@ in {
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  kernel.sysctl."kernel.sysrq" = 1;
+
   zramSwap.enable = true;
   zramSwap.memoryPercent = 100;
   zramSwap.priority = 10;
