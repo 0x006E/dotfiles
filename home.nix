@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "nithin";
@@ -11,37 +15,27 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
-  wayland.windowManager.hyprland.enable = true;
-  wayland.windowManager.hyprland.settings = {
-    "$mod" = "SUPER";
-    "debug:disable_logs" = false;
-    monitor = ",1920x1080@60,0x0,1";
-    bind =
-      [
-        "$mod, F, exec, firefox"
-        "$mod, Q, exec, foot"
-        ", Print, exec, grimblast copy area"
-      ]
-      ++ (
-        # workspaces
-        # binds $mod + [shift +] {1..10} to [move to] workspace {1..10}
-        builtins.concatLists (
-          builtins.genList (
-            x: let
-              ws = let
-                c = (x + 1) / 10;
-              in
-                builtins.toString (x + 1 - (c * 10));
-            in [
-              "$mod, ${ws}, workspace, ${toString (x + 1)}"
-              "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-            ]
-          )
-          10
-        )
-      );
+
+  imports = [
+    inputs.ags.homeManagerModules.default
+    inputs.niri.homeModules.niri
+  ];
+
+  programs.ags = {
+    enable = true;
+
+    # null or path, leave as null if you don't want hm to manage the config
+    configDir = ./ags;
+
+    # additional packages to add to gjs's runtime
+    extraPackages = with pkgs; [
+      gtksourceview
+      webkitgtk
+      accountsservice
+    ];
   };
+
+  home.stateVersion = "24.05"; # Please read the comment before changing.
 
   home.pointerCursor = {
     gtk.enable = true;
@@ -84,18 +78,18 @@
   # environment.
 
   nixpkgs.overlays = [
+    inputs.niri.overlays.niri
     (self: super: {
       mpv = super.mpv.override {
         scripts = [self.mpvScripts.mpris];
       };
     })
   ];
-
+  # programs.niri.enable = true;
   programs.firefox.nativeMessagingHosts.packages = with pkgs; [
     gnomeExtensions.gsconnect
     ff2mpv-rust
   ];
-
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
@@ -121,6 +115,7 @@
     stremio
     vesktop
     (pkgs.callPackage ./responsively-app.nix {})
+    fuzzel
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of

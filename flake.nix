@@ -10,6 +10,7 @@
     alejandra.inputs.nixpkgs.follows = "nixpkgs";
     nil.url = "github:oxalica/nil";
     niri.url = "github:sodiboo/niri-flake";
+    ags.url = "github:Aylur/ags";
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
 
@@ -25,23 +26,26 @@
     chaotic,
     lanzaboote,
     niri,
+    ags,
     ...
-  }: {
+  } @ inputs: {
     nixosConfigurations = {
       ntsv = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         modules = [
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
-            nixpkgs.overlays = [niri.overlays.niri];
           }
-          niri.nixosModules.niri
+          # niri.nixosModules.niri
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+
+            home-manager.extraSpecialArgs = {inherit inputs;};
             home-manager.users.nithin = import ./home.nix;
+
             home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
             # arguments to home.nix
           }
