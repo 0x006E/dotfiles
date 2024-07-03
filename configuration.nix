@@ -61,7 +61,7 @@ in {
   ];
 
   chaotic.scx.enable = true;
-  chaotic.scx.scheduler = "scx_bpfland";
+  # chaotic.scx.scheduler = "scx_bpfland";
   services.fwupd.enable = true;
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
