@@ -32,11 +32,12 @@
     nixosConfigurations = {
       ntsv = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
+        specialArgs = {inherit inputs;};
         modules = [
+          niri.nixosModules.niri
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
           }
-          # niri.nixosModules.niri
           ./configuration.nix
           home-manager.nixosModules.home-manager
           {

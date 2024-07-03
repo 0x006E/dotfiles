@@ -1,7 +1,11 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-{pkgs, ...}: let
+{
+  pkgs,
+  inputs,
+  ...
+}: let
   stable = import <stable> {};
   uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix {};
   acer-wmi-battery-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix {};
@@ -57,6 +61,7 @@ in {
   ];
 
   chaotic.scx.enable = true;
+  chaotic.scx.scheduler = "scx_bpfland";
   services.fwupd.enable = true;
   networking.hostName = "ntsv"; # Define your hostname.
   # Pick only one of the below networking options.
@@ -146,8 +151,13 @@ in {
     wayland-utils
     libsecret
     cage
+
     gamescope
   ];
+  # nixpkgs.overlays = [inputs.niri.overlays.niri];
+  programs.niri.enable = true;
+  # programs.niri.package = pkgs.niri-unstable;
+  environment.variables.NIXOS_OZONE_WL = "1";
 
   programs.dconf.enable = true;
   # Some programs need SUID wrappers, can be configured further or are

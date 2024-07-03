@@ -18,7 +18,6 @@
 
   imports = [
     inputs.ags.homeManagerModules.default
-    inputs.niri.homeModules.niri
   ];
 
   programs.ags = {
@@ -78,14 +77,12 @@
   # environment.
 
   nixpkgs.overlays = [
-    inputs.niri.overlays.niri
     (self: super: {
       mpv = super.mpv.override {
         scripts = [self.mpvScripts.mpris];
       };
     })
   ];
-  programs.niri.enable = true;
   programs.firefox.nativeMessagingHosts.packages = with pkgs; [
     gnomeExtensions.gsconnect
     ff2mpv-rust
@@ -116,7 +113,6 @@
     vesktop
     (pkgs.callPackage ./responsively-app.nix {})
     fuzzel
-    mako
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
