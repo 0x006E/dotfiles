@@ -1,6 +1,15 @@
 window.bar {
-    background-color: @theme_bg_color;
-    color: @theme_fg_color;
+    background-color: transparent;
+    color: #ADEFD1;
+}
+
+.center,
+.left,
+.right {
+    margin: 0.5em;
+    padding: 0.5em 0em;
+    background-color: #00203F;
+    border-radius: 16px;
 }
 
 button {
@@ -58,18 +67,7 @@ window.notification-popups box.notifications {
     border-radius: 7px;
 }
 
-.notification {
-    min-width: 350px;
-    border-radius: 11px;
-    padding: 1em;
-    margin: .5em;
-    border: 1px solid @wm_borders_edge;
-    background-color: @theme_bg_color;
-}
 
-.notification.critical {
-    border: 1px solid lightcoral;
-}
 
 .title {
     color: @theme_fg_color;

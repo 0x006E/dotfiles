@@ -64,7 +64,7 @@ in {
   # chaotic.scx.scheduler = "scx_bpfland";
   services.fwupd.enable = true;
   networking.hostName = "ntsv"; # Define your hostname.
-  # Pick only one of the below networking options.
+  # Pick only one oOh well, i'll close this for now then!f the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
@@ -136,6 +136,7 @@ in {
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
   };
 
+  programs.niri.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -155,7 +156,7 @@ in {
     gamescope
   ];
   # nixpkgs.overlays = [inputs.niri.overlays.niri];
-  programs.niri.enable = true;
+
   # programs.niri.package = pkgs.niri-unstable;
   environment.variables.NIXOS_OZONE_WL = "1";
 
