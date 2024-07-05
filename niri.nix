@@ -39,7 +39,7 @@ with lib; let
 in {
   programs.niri = {
     settings = {
-      input.keyboard.xkb.layout = "no";
+      input.keyboard.xkb.layout = "us";
       input.mouse.accel-speed = 1.0;
       input.touchpad = {
         tap = true;
