@@ -26,6 +26,8 @@ in {
     # ./fingerprint.nix
   ];
 
+  nixpkgs.overlays = [inputs.niri.overlays.niri];
+
   nixpkgs.config.allowUnfree = true;
 
   # Use the systemd-boot EFI boot loader.
@@ -136,7 +138,6 @@ in {
     extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
   };
 
-  programs.niri.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -152,12 +153,12 @@ in {
     wayland-utils
     libsecret
     cage
-
     gamescope
   ];
   # nixpkgs.overlays = [inputs.niri.overlays.niri];
 
-  # programs.niri.package = pkgs.niri-unstable;
+  programs.niri.enable = true;
+  programs.niri.package = pkgs.niri-unstable;
   environment.variables.NIXOS_OZONE_WL = "1";
 
   programs.dconf.enable = true;

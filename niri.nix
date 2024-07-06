@@ -54,42 +54,46 @@ in {
       prefer-no-csd = true;
 
       layout = {
-        gaps = 16;
-        struts.left = 64;
-        struts.right = 64;
-        border.width = 4;
+        gaps = 10;
+        struts.left = 0;
+        struts.right = 0;
+        focus-ring.enable = false;
+        border = {
+          enable = true;
+          width = 2;
+          active.gradient = {
+            from = "#ADEFD1";
+            to = "#00203F";
+            angle = 45;
+            relative-to = "workspace-view";
+          };
+          inactive.gradient = {
+            from = "#00203F";
+            to = "#ADEFD1";
+            angle = 45;
+            relative-to = "workspace-view";
+          };
+        };
       };
 
       hotkey-overlay.skip-at-startup = true;
 
       binds = with config.lib.niri.actions; let
         sh = spawn "sh" "-c";
-
-        screenshot-area-script = pkgs.writeShellScript "screenshot-area" ''
-          grim -o $(niri msg --json focused-output | jq -r .name) - | swayimg --config=info.mode=off --fullscreen - &
-          SWAYIMG=$!
-          niri msg action do-screen-transition -d 1200
-          sleep 1.2
-          grim -g "$(slurp)" - | wl-copy -t image/png
-          niri msg action do-screen-transition
-          kill $SWAYIMG
-        '';
-
-        screenshot-area = spawn "${screenshot-area-script}";
       in
         lib.attrsets.mergeAttrsList [
           {
             "Mod+T".action = spawn "foot";
             "Mod+D".action = spawn "fuzzel";
-            "Mod+W".action = sh (builtins.concatStringsSep "; " [
-              "systemctl --user restart waybar.service"
-              "systemctl --user restart swaybg.service"
-            ]);
+            # "Mod+W".action = sh (builtins.concatStringsSep "; " [
+            #   "systemctl --user restart waybar.service"
+            #   "systemctl --user restart swaybg.service"
+            # ]);
 
             "Mod+L".action = spawn "blurred-locker";
-            "Mod+Shift+S".action = screenshot-area;
-            "Mod+Print".action = screenshot-window;
-
+            "Print".action = sh "flameshot gui";
+            "Mod+Print".action = sh "flameshot full --clipboard";
+            "Mod+Shift+Print".action = sh "flameshot full";
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
             "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
             "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -161,11 +165,12 @@ in {
 
       # examples:
 
-      # spawn-at-startup = [
-      #   {command = ["alacritty"];}
-      #   {command = ["waybar"];}
-      #   {command = ["swww" "start"];}
-      # ];
+      spawn-at-startup = [
+        {command = ["xwayland-satellite"];}
+        {command = ["swaybg"];}
+        {command = ["variety"];}
+        {command = ["ags"];}
+      ];
 
       animations.shaders.window-resize = ''
         vec4 resize_color(vec3 coords_curr_geo, vec3 size_curr_geo) {
@@ -242,7 +247,41 @@ in {
 
   programs.foot = {
     enable = true;
-    settings.csd.preferred = "none";
+    settings = {
+      environment = {
+        QT_QPA_PLATFORM = "wayland";
+        DISPLAY = ":0";
+      };
+      csd.preferred = "none";
+      main = let
+        withSize = "size=${toString size}";
+        size = "11";
+        font = "Iosevka Term";
+      in {
+        term = "xterm-256color";
+        font = "${font}:${withSize}";
+        font-bold = "${font}:style=Bold:${withSize}";
+        font-italic = "${font}:style=Italic:${withSize}";
+        font-bold-italic = "${font}:style=BoldItalic:${withSize}";
+        box-drawings-uses-font-glyphs = true;
+        initial-window-size-pixels = "800x600";
+      };
+
+      scrollback = {
+        lines = 10000;
+      };
+
+      url = {
+        launch = "xdg-open \${url}";
+        protocols = "http, https, ftp, ftps, file";
+      };
+
+      colors = {
+        alpha = 0.75;
+        foreground = "ADEFD1";
+        background = "00203F";
+      };
+    };
   };
 
   programs.fuzzel = {
@@ -252,4 +291,13 @@ in {
   services.swaync = {
     enable = true;
   };
+
+  home.packages = with pkgs; [
+    brightnessctl
+    flameshot
+    xwayland
+    xwayland-satellite
+    variety
+    swaybg
+  ];
 }

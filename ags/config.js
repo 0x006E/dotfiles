@@ -169,6 +169,7 @@ function SysTray() {
         })))
 
     return Widget.Box({
+        vertical: true,
         children: items,
     })
 }
