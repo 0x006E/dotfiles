@@ -9,7 +9,7 @@
 
   src = pkgs.fetchurl {
     url = "https://downloads.zohocdn.com/zmail-desktop/linux/zoho-mail-desktop-lite-x64-v${version}.AppImage";
-    sha256 = "sha256-qW6vEOAUZVHdNmn8QWmBGksIjYXez0IGei/AYrxn1VQ=";
+    sha256 = "sha256-wSXyO4vRTN1vCnAzs5ro545m4qhbv826J+QMLoHb1YA=";
   };
 
   appimageContents = pkgs.appimageTools.extractType2 {inherit name src;};
