@@ -114,6 +114,7 @@
     stremio
     vesktop
     (pkgs.callPackage ./responsively-app.nix {})
+    (pkgs.callPackage ./zoho-mail.nix {})
     fuzzel
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
