@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  pname = "zoho-mail-desktop-lite";
+  pname = "zoho-mail-desktop";
   version = "1.6.3";
   name = "${pname}-${version}";
 
@@ -19,7 +19,6 @@ in
 
     extraInstallCommands = ''
       mv $out/bin/${name} $out/bin/${pname}
-      ls -l
       install -m 444 -D ${appimageContents}/${pname}.desktop $out/share/applications/${pname}.desktop
 
       install -m 444 -D ${appimageContents}/${pname}.png $out/share/icons/hicolor/512x512/apps/${pname}.png
