@@ -154,6 +154,8 @@ in {
     libsecret
     cage
     gamescope
+    dwarfs
+    deluge
   ];
   # nixpkgs.overlays = [inputs.niri.overlays.niri];
 
