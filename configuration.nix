@@ -4,9 +4,9 @@
 {
   pkgs,
   inputs,
+  pkgs-stable,
   ...
 }: let
-  stable = import <stable> {};
   uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix {};
   acer-wmi-battery-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix {};
 in {
@@ -108,6 +108,7 @@ in {
   # Enable sound.
   security.rtkit.enable = true;
   services.pipewire = {
+    wireplumber.package = pkgs-stable.wireplumber;
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;

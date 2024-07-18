@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -22,6 +23,7 @@
   outputs = {
     alejandra,
     nixpkgs,
+    nixpkgs-stable,
     home-manager,
     chaotic,
     lanzaboote,
@@ -32,7 +34,13 @@
     nixosConfigurations = {
       ntsv = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
-        specialArgs = {inherit inputs;};
+        specialArgs = {
+          pkgs-stable = import nixpkgs-stable {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          inherit inputs;
+        };
         modules = [
           niri.nixosModules.niri
           {
