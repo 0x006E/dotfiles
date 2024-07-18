@@ -162,7 +162,14 @@ in {
 
   programs.niri.enable = true;
   programs.niri.package = pkgs.niri-unstable;
-  environment.variables.NIXOS_OZONE_WL = "1";
+  environment.sessionVariables = {
+    VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
+    NIXOS_OZONE_WL = "1";
+    EDITOR = "nvim";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    DISPLAY = ":0";
+    QT_QPA_PLATFORM = "wayland";
+  };
 
   programs.dconf.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
@@ -194,7 +201,7 @@ in {
   # even if you've upgraded your system to a new NixOS release.
   #
   # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system.
+  # so changing it will NOT VK_DRIVER_FILES="/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json"upgrade your system.
   #
   # This value being lower than the current NixOS release does NOT mean your system is
   # out of date, out of support, or vulnerable.
