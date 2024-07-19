@@ -94,6 +94,7 @@ in {
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.wayland = true;
   services.xserver.desktopManager.gnome.enable = true;
   #  services.spice-vdagentd.enable = true;
   #  services.qemuGuest.enable = true;
@@ -167,7 +168,7 @@ in {
     NIXOS_OZONE_WL = "1";
     EDITOR = "nvim";
     WLR_NO_HARDWARE_CURSORS = "1";
-    DISPLAY = ":0";
+#   DISPLAY = ":0"; # Adding this to session variables breaks everything
     QT_QPA_PLATFORM = "wayland";
   };
 
