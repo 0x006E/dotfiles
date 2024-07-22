@@ -158,9 +158,15 @@ in {
     gamescope
     dwarfs
     deluge
-  ];
-  # nixpkgs.overlays = [inputs.niri.overlays.niri];
+    zed-editor
 
+  ];
+  nix.settings = {
+    substituters = ["https://walker.cachix.org"];
+    trusted-public-keys = ["walker.cachix.org-1:fG8q+uAaMqhsMxWjwvk0IMb4mFPFLqHjuvfwQxE4oJM="];
+  };
+  # nixpkgs.overlays = [inputs.niri.overlays.niri];
+  time.hardwareClockInLocalTime = true;
   programs.niri.enable = true;
   programs.niri.package = pkgs.niri-unstable;
   environment.sessionVariables = {
@@ -178,7 +184,7 @@ in {
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {
   #   enable = true;
-  #   enableSSHSupport = true;
+  #   enableSSHSupport = true
   # };
 
   # List services that you want to enable:

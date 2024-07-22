@@ -18,6 +18,7 @@
       # Optional but recommended to limit the size of your system closure.
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    walker.url = "github:abenz1267/walker";
   };
 
   outputs = {
@@ -29,6 +30,7 @@
     lanzaboote,
     niri,
     ags,
+    walker,
     ...
   } @ inputs: {
     nixosConfigurations = {

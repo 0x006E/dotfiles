@@ -84,7 +84,7 @@ in {
         lib.attrsets.mergeAttrsList [
           {
             "Mod+T".action = spawn "foot";
-            "Mod+D".action = spawn "fuzzel";
+            "Mod+D".action = spawn "walker";
             # "Mod+W".action = sh (builtins.concatStringsSep "; " [
             #   "systemctl --user restart waybar.service"
             #   "systemctl --user restart swaybg.service"

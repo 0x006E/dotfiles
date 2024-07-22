@@ -18,6 +18,7 @@
 
   imports = [
     inputs.ags.homeManagerModules.default
+    inputs.walker.homeManagerModules.walker
     ./niri.nix
   ];
 
@@ -33,6 +34,11 @@
       webkitgtk
       accountsservice
     ];
+  };
+
+  programs.walker = {
+    enable = true;
+    runAsService = true;
   };
 
   home.stateVersion = "24.05"; # Please read the comment before changing.
