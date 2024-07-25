@@ -83,7 +83,7 @@ in {
       in
         lib.attrsets.mergeAttrsList [
           {
-            "Mod+T".action = spawn "foot";
+            "Mod+T".action = spawn "wezterm";
             "Mod+D".action = spawn "walker";
             # "Mod+W".action = sh (builtins.concatStringsSep "; " [
             #   "systemctl --user restart waybar.service"
@@ -244,7 +244,7 @@ in {
       ];
     };
   };
-
+  programs.wezterm.enable = true;
   programs.foot = {
     enable = true;
     settings = {
