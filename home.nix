@@ -108,7 +108,10 @@
       extraLibraries = pkgs: [
         # List library dependencies here
         mangohud
+        # (wineWowPackages.unstableFull.override { waylandSupport = true; })
         wineWowPackages.waylandFull
+        bash
+        winetricks
       ];
     })
     onedriver
@@ -207,11 +210,11 @@
   #  /etc/profiles/per-user/nithin/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    EDITOR = "nvim";
-    WLR_NO_HARDWARE_CURSORS = "1";
-    NIXOS_OZONE_WL = "1";
-    DISPLAY = ":0";
-    QT_QPA_PLATFORM = "wayland";
+    # EDITOR = "nvim";
+    # WLR_NO_HARDWARE_CURSORS = "1";
+    # NIXOS_OZONE_WL = "1";
+    # # DISPLAY = ":0";
+    # QT_QPA_PLATFORM = "wayland";
   };
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

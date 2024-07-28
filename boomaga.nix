@@ -36,10 +36,14 @@ stdenv.mkDerivation rec {
 
   cmakeFlags = [
     "-DCMAKE_INSTALL_PREFIX=${placeholder "out"}"
-    "-DCUPS_PPD_DIR=${placeholder "out"}/share/ppd/boomaga"
-    "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups" 
+    "-DCUPS_PPD_DIR=${placeholder "out"}/share/cups/model/boomaga"
+    "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups/backend" 
   ];
 
+  # postPatch = ''
+  #     substituteInPlace src/backend/cups_backend/main.cpp \
+  #         --replace "/var/cache/boomaga" "/var/cache/cups/boomaga"
+  # '';
 
   meta = with lib; {
     description = "Virtual printer for viewing and editing before printing";

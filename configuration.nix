@@ -177,7 +177,8 @@ in {
 #   DISPLAY = ":0"; # Adding this to session variables breaks everything
     QT_QPA_PLATFORM = "wayland";
   };
-
+  services.power-profiles-daemon.enable = false;
+  services.auto-cpufreq.enable = true;
   programs.dconf.enable = true;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

@@ -40,6 +40,7 @@ in {
   programs.niri = {
     settings = {
       input.keyboard.xkb.layout = "us";
+      input.focus-follows-mouse = { enable = true; max-scroll-amount="10%"; };
       input.mouse.accel-speed = 1.0;
       input.touchpad = {
         tap = true;
@@ -249,8 +250,12 @@ in {
     enable = true;
     settings = {
       environment = {
+        VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
         QT_QPA_PLATFORM = "wayland";
         DISPLAY = ":0";
+        EDITOR = "nvim";
+        WLR_NO_HARDWARE_CURSORS = "1";
+        NIXOS_OZONE_WL = "1";
       };
       csd.preferred = "none";
       main = let
