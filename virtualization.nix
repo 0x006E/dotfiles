@@ -10,7 +10,7 @@
   virtualisation.incus.enable = true;
   virtualisation.docker.enable = true;
   networking.nftables.enable = true;
-  networking.firewall.trustedInterfaces = [ "virbr0" ];
+  networking.firewall.trustedInterfaces = ["virbr0"];
   users.users.nithin.extraGroups = ["libvirtd" "incus-admin" "docker"]; # Enable ‘sudo’ for the user.
   environment.systemPackages = with pkgs; [virtiofsd];
 }

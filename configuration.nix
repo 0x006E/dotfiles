@@ -159,7 +159,6 @@ in {
     dwarfs
     deluge
     zed-editor
-
   ];
   nix.settings = {
     substituters = ["https://walker.cachix.org"];
@@ -174,7 +173,7 @@ in {
     NIXOS_OZONE_WL = "1";
     EDITOR = "nvim";
     WLR_NO_HARDWARE_CURSORS = "1";
-#   DISPLAY = ":0"; # Adding this to session variables breaks everything
+    #   DISPLAY = ":0"; # Adding this to session variables breaks everything
     QT_QPA_PLATFORM = "wayland";
   };
   services.power-profiles-daemon.enable = false;

@@ -1,6 +1,6 @@
-{pkgs, ...}: let 
+{pkgs, ...}: let
   boomaga = pkgs.libsForQt5.callPackage ./boomaga.nix {};
- in {
+in {
   services.avahi = {
     enable = true;
     nssmdns4 = true;
@@ -15,7 +15,7 @@
       {
         name = "Boomaga";
         deviceUri = "boomaga:/";
-        model = "boomaga/boomaga.ppd"; 
+        model = "boomaga/boomaga.ppd";
         description = "Boomaga Virtual Printer";
         location = "Local Virtual Printer";
         ppdOptions = {

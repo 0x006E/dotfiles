@@ -40,7 +40,10 @@ in {
   programs.niri = {
     settings = {
       input.keyboard.xkb.layout = "us";
-      input.focus-follows-mouse = { enable = true; max-scroll-amount="10%"; };
+      input.focus-follows-mouse = {
+        enable = true;
+        max-scroll-amount = "10%";
+      };
       input.mouse.accel-speed = 1.0;
       input.touchpad = {
         tap = true;
