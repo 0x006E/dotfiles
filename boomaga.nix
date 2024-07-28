@@ -1,15 +1,15 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, cmake
-, cups
-, qtbase
-, qttools
-, wrapQtAppsHook
-, pkg-config
-, poppler
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  cups,
+  qtbase,
+  qttools,
+  wrapQtAppsHook,
+  pkg-config,
+  poppler,
 }:
-
 stdenv.mkDerivation rec {
   pname = "boomaga";
   version = "3.0.0"; # Update this to the correct version
@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-ThiyZ/fTwp+E639HavUv9WbRE+RxGbRwcPqXSuVWdaQ="; # Update with correct hash
   };
 
-  nativeBuildInputs = [ 
+  nativeBuildInputs = [
     cmake
     wrapQtAppsHook
     pkg-config
@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   cmakeFlags = [
     "-DCMAKE_INSTALL_PREFIX=${placeholder "out"}"
     "-DCUPS_PPD_DIR=${placeholder "out"}/share/cups/model/boomaga"
-    "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups/backend" 
+    "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups/backend"
   ];
 
   # postPatch = ''
@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
     description = "Virtual printer for viewing and editing before printing";
     homepage = "https://www.boomaga.org/";
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ ]; # Add your name if you're maintaining this package
+    maintainers = with maintainers; []; # Add your name if you're maintaining this package
     platforms = platforms.linux;
   };
 }
