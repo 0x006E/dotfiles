@@ -39,6 +39,7 @@
   programs.walker = {
     enable = true;
     runAsService = true;
+    # style = {};
   };
 
   home.stateVersion = "24.05"; # Please read the comment before changing.

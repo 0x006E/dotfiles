@@ -40,10 +40,10 @@ stdenv.mkDerivation rec {
     "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups/backend"
   ];
 
-  # postPatch = ''
-  #     substituteInPlace src/backend/cups_backend/main.cpp \
-  #         --replace "/var/cache/boomaga" "/var/cache/cups/boomaga"
-  # '';
+  postPatch = ''
+      substituteInPlace src/backend/cups_backend/main.cpp \
+          --replace "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))"
+  '';
 
   meta = with lib; {
     description = "Virtual printer for viewing and editing before printing";

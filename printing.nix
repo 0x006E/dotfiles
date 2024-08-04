@@ -24,6 +24,10 @@ in {
       }
     ];
   };
+  systemd.tmpfiles.rules = [
+      "d /var/cache/boomaga 0775 root lp - -"
+      "d /var/cache/boomaga/nithin 0770 nithin lp - -"
+    ];
   services.dbus.packages = [boomaga];
   services.printing.drivers = with pkgs; [hplipWithPlugin boomaga];
 }
