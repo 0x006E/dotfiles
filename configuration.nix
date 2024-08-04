@@ -159,11 +159,16 @@ in {
     dwarfs
     deluge
     zed-editor
+    darktable
+    shotwell
+    krita
   ];
   nix.settings = {
     substituters = ["https://walker.cachix.org"];
     trusted-public-keys = ["walker.cachix.org-1:fG8q+uAaMqhsMxWjwvk0IMb4mFPFLqHjuvfwQxE4oJM="];
   };
+  systemd.extraConfig = ''DefaultTimeoutStopSec=10s'';
+  systemd.user.extraConfig = ''DefaultTimeoutStopSec=10s'';
   # nixpkgs.overlays = [inputs.niri.overlays.niri];
   time.hardwareClockInLocalTime = true;
   programs.niri.enable = true;
