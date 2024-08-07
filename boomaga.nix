@@ -41,8 +41,8 @@ stdenv.mkDerivation rec {
   ];
 
   postPatch = ''
-      substituteInPlace src/backend/cups_backend/main.cpp \
-          --replace "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))"
+    substituteInPlace src/backend/cups_backend/main.cpp \
+        --replace "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))"
   '';
 
   meta = with lib; {
