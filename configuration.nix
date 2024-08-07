@@ -176,8 +176,14 @@ in {
     krita
   ];
   nix.settings = {
-    substituters = ["https://walker.cachix.org"];
-    trusted-public-keys = ["walker.cachix.org-1:fG8q+uAaMqhsMxWjwvk0IMb4mFPFLqHjuvfwQxE4oJM="];
+    substituters = [
+      "https://walker.cachix.org"
+      "https://0x006e-nix.cachix.org"
+    ];
+    trusted-public-keys = [
+      "walker.cachix.org-1:fG8q+uAaMqhsMxWjwvk0IMb4mFPFLqHjuvfwQxE4oJM="
+      "0x006e-nix.cachix.org-1:JV0ESHZ7I9+ihTkFJ81RtqsjzV/2845VPwpU8OD8JL8="
+    ];
   };
   systemd.extraConfig = ''DefaultTimeoutStopSec=10s'';
   systemd.user.extraConfig = ''DefaultTimeoutStopSec=10s'';
