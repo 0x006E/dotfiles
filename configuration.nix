@@ -109,7 +109,19 @@ in {
   # Enable sound.
   security.rtkit.enable = true;
   services.pipewire = {
-    wireplumber.package = pkgs-stable.wireplumber;
+    # wireplumber.package = pkgs-stable.wireplumber;
+    wireplumber = {
+      package = pkgs-stable.wireplumber;
+      extraConfig = {
+        "disable-camera" = {
+          "wireplumber.profiles" = {
+            main = {
+              "monitor.libcamera" = "disabled";
+            };
+          };
+        };
+      };
+    };
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
@@ -184,6 +196,7 @@ in {
   services.power-profiles-daemon.enable = false;
   services.auto-cpufreq.enable = true;
   programs.dconf.enable = true;
+  hardware.cpu.intel.updateMicrocode = true; 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
