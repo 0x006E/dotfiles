@@ -8,20 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@v25
-      with:
-        extra_nix_config: |
-          accept-flake-config = true
-          sandbox-fallback = false
-          system-features = big-parallel gccarch-x86-64-v3
-        install_options: --daemon
-    - uses: cachix/cachix-action@v14
-      with:
-        name: 0x006e-nix
-        # If you chose API tokens for write access OR if you have a private cache
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - uses: DeterminateSystems/magic-nix-cache-action@v2
-    - uses: actions/checkout@v4
     - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: |
@@ -30,4 +16,10 @@ jobs:
     - uses: yaxitech/nix-install-pkgs-action@v3
       with:
         packages: "github:srid/nixci"
+    - uses: cachix/cachix-action@v14
+      with:
+        name: 0x006e-nix
+        # If you chose API tokens for write access OR if you have a private cache
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+    - uses: DeterminateSystems/magic-nix-cache-action@v2
     - run: nixci build | cachix push 0x006e-nix
