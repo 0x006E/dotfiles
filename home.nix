@@ -18,7 +18,7 @@
 
   imports = [
     inputs.ags.homeManagerModules.default
-    inputs.walker.homeManagerModules.walker
+    inputs.walker.homeManagerModules.default
     ./niri.nix
   ];
 
