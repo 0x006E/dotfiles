@@ -57,7 +57,6 @@ in {
   ]; # 16GB Swap
   boot.resumeDevice = "/dev/dm-0"; # the unlocked drive mapping
   boot.kernelParams = [
-    "i915.enable_psr=0"
     "nowatchdog"
     "resume_offset=1058048" # for hibernate resume
   ];
@@ -200,7 +199,17 @@ in {
     QT_QPA_PLATFORM = "wayland";
   };
   services.power-profiles-daemon.enable = false;
-  services.auto-cpufreq.enable = true;
+  # services.auto-cpufreq.enable = true;
+  services.thermald.enable = true;
+  powerManagement.enable = true;
+  powerManagement.powertop.enable = true;
+  services.tlp = {
+    enable = true;
+    settings = {
+      TLP_DEFAULT_MODE = "BAT";
+      TLP_PERSISTENT_DEFAULT = 1;
+    };
+  };
   programs.dconf.enable = true;
   hardware.cpu.intel.updateMicrocode = true; 
   # Some programs need SUID wrappers, can be configured further or are

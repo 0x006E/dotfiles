@@ -9,6 +9,10 @@
     enable = true;
     enable32Bit = true;
   };
+  
+  boot.kernelParams = [
+    "nvidia.NVreg_EnableS0ixPowerManagement=1"
+  ];
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
   hardware.nvidia = {
