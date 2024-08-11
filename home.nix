@@ -85,7 +85,7 @@
   # environment.
   programs.nix-index = {
     enable = true;
-    enableBashIntegration = true; 
+    enableBashIntegration = true;
   };
   programs.nix-index-database.comma.enable = true;
   nixpkgs.overlays = [
