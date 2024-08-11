@@ -9,8 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: jlumbroso/free-disk-space@main
-      with:
-        tool-cache: true
     - uses: DeterminateSystems/nix-installer-action@main
       with:
         extra-conf: |
@@ -25,4 +23,4 @@ jobs:
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - uses: DeterminateSystems/magic-nix-cache-action@v2
-    - run: nix-fast-build --cachix-cache 0x006e-nix --skip-cached
+    - run: nix-fast-build --cachix-cache 0x006e-nix --skip-cached --flake ".#nixosConfigurations."ntsv".config.system.build.toplevel"
