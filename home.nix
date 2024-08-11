@@ -19,9 +19,9 @@
   imports = [
     inputs.ags.homeManagerModules.default
     inputs.walker.homeManagerModules.default
+    inputs.nix-index-database.hmModules.nix-index
     ./niri.nix
   ];
-
   programs.ags = {
     enable = true;
 
@@ -83,7 +83,11 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-
+  programs.nix-index = {
+    enable = true;
+    enableBashIntegration = true; 
+  };
+  programs.nix-index-database.comma.enable = true;
   nixpkgs.overlays = [
     (self: super: {
       mpv = super.mpv.override {
@@ -101,6 +105,8 @@
     # # "Hello, world!" when run.
     # pkgs.hello
     foot
+    distrobox
+    xorg.xhost
     neovim
     swww
     vscode
@@ -188,6 +194,7 @@
     # TODO add your custom bashrc here
     bashrcExtra = ''
       eval "$(direnv hook bash)"
+      export DISPLAY=:0
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
     '';
 
