@@ -47,8 +47,13 @@ in {
   boot.kernelModules = ["acer-wmi-battery"];
   boot.extraModprobeConfig = ''
     options acer-wmi-battery enable_health_mode=1
+    options iwlwifi 11n_disable=8 power_save="Y" power_level=5
   '';
-
+  services.ananicy = {
+    enable = true;
+    package = pkgs.ananicy-cpp;
+    rulesProvider = pkgs.ananicy-rules-cachyos;
+  }; 
   swapDevices = [
     {
       device = "/swap/swapfile";
