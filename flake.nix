@@ -23,6 +23,10 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-cosmic = {
+      url = "github:lilyinstarlight/nixos-cosmic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -36,6 +40,7 @@
     ags,
     walker,
     nix-index-database,
+    nixos-cosmic,
     ...
   } @ inputs: {
     nixosConfigurations = {
@@ -65,6 +70,13 @@
             home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
             # arguments to home.nix
           }
+          {
+            nix.settings = {
+              # substituters = [ "https://cosmic.cachix.org/" ];
+              # trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+            };
+          }
+          nixos-cosmic.nixosModules.default
           chaotic.nixosModules.default
           lanzaboote.nixosModules.lanzaboote
           ./secureboot.nix
