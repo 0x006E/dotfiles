@@ -99,12 +99,21 @@
     gnomeExtensions.gsconnect
     ff2mpv-rust
   ];
+  services.gpg-agent = {
+    enable = true;
+    enableBashIntegration = true;
+    enableSshSupport = true;
+    pinentryPackage = pkgs.pinentry-qt;
+  };
+  programs.gpg.enable = true;
   services.swaync.enable = true;
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
     foot
+    bitwarden
+    pinentry-qt
     distrobox
     xorg.xhost
     neovim
@@ -164,7 +173,11 @@
   programs.git = {
     enable = true;
     userName = "Nithin S Varrier";
-    userEmail = "nithin486@hotmail.com";
+    userEmail = "me@ntsv.dev";
+    signing = {
+      signByDefault = true;
+      key = null;
+    };
   };
 
   # starship - an customizable prompt for any shell
