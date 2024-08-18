@@ -112,6 +112,8 @@
     # # "Hello, world!" when run.
     # pkgs.hello
     foot
+    keybase-gui
+    kbfs
     bitwarden
     pinentry-qt
     distrobox
@@ -179,7 +181,7 @@
       key = null;
     };
   };
-
+  services.keybase.enable = true;
   # starship - an customizable prompt for any shell
   programs.starship = {
     enable = true;
