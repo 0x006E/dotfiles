@@ -83,6 +83,7 @@ in {
 
       binds = with config.lib.niri.actions; let
         sh = spawn "sh" "-c";
+        screenshot = sh ''((! pidof slurp) || sudo kill -9 $(pidof slurp)) && (grim -g "$(slurp)" - | wl-copy)'';
       in
         lib.attrsets.mergeAttrsList [
           {
@@ -94,9 +95,11 @@ in {
             # ]);
 
             "Mod+L".action = spawn "blurred-locker";
-            "Print".action = sh "flameshot gui";
-            "Mod+Print".action = sh "flameshot full --clipboard";
-            "Mod+Shift+Print".action = sh "flameshot full";
+            "Print".action = sh "grim - | wl-copy";
+            "Mod+Print".action = screenshot;
+            "Shift+Super+S".action = screenshot;
+            # "Mod+Shift+Print".action = sh "flames /hot full";
+            
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
             "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
             "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -301,7 +304,8 @@ in {
 
   home.packages = with pkgs; [
     brightnessctl
-    flameshot
+    grim 
+    slurp
     xwayland
     xwayland-satellite
     variety

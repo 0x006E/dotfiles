@@ -29,7 +29,6 @@ in {
   nixpkgs.overlays = [inputs.niri.overlays.niri];
 
   nixpkgs.config.allowUnfree = true;
-  services.desktopManager.cosmic.enable = true;
   # services.displayManager.cosmic-greeter.enable = true;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
