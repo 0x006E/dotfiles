@@ -27,8 +27,8 @@ in {
   ];
 
   nixpkgs.overlays = [inputs.niri.overlays.niri];
-
   nixpkgs.config.allowUnfree = true;
+  # services.desktopManager.cosmic.enable = true;
   # services.displayManager.cosmic-greeter.enable = true;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -76,7 +76,6 @@ in {
 
   # Set your time zone.
   time.timeZone = "Asia/Kolkata";
-
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -159,8 +158,10 @@ in {
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    commit-mono
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     xwayland
+    inputs.zen-browser.packages."${system}".specific
     wget
     libnotify
     nil
