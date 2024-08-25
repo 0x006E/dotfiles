@@ -29,3 +29,4 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@v21
         with:
           inputs: ${{ inputs.bumpWhat }}
+          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
