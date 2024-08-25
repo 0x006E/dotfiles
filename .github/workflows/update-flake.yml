@@ -29,7 +29,3 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@v21
         with:
           inputs: ${{ inputs.bumpWhat }}
-          sign-commits: true
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          token: ${{ secrets.GH_TOKEN_FOR_UPDATES }}
