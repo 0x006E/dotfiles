@@ -50,6 +50,4 @@
   boot.kernelParams = [
     "nvidia.NVreg_EnableS0ixPowerManagement=1"
   ];
-
-
 }

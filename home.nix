@@ -107,7 +107,7 @@
   };
   programs.gpg.enable = true;
   services.swaync.enable = true;
-  
+
   services.udiskie.enable = true;
 
   home.packages = with pkgs; [

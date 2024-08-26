@@ -99,7 +99,7 @@ in {
             "Mod+Print".action = screenshot;
             "Shift+Super+S".action = screenshot;
             # "Mod+Shift+Print".action = sh "flames /hot full";
-            
+
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
             "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
             "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -304,7 +304,7 @@ in {
 
   home.packages = with pkgs; [
     brightnessctl
-    grim 
+    grim
     slurp
     xwayland
     xwayland-satellite
