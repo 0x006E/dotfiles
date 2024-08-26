@@ -3,7 +3,8 @@
   config,
   libs,
   ...
-}: {
+}:
+{
   # Enable OpenGL
   hardware.graphics = {
     enable = true;
@@ -11,7 +12,7 @@
   };
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
   # services.xserver.videoDrivers = ["nouveau"];
   hardware.nvidia = {
     # Modesetting is required.
@@ -47,7 +48,5 @@
       nvidiaBusId = "PCI:1:0:0";
     };
   };
-  boot.kernelParams = [
-    "nvidia.NVreg_EnableS0ixPowerManagement=1"
-  ];
+  boot.kernelParams = [ "nvidia.NVreg_EnableS0ixPowerManagement=1" ];
 }
