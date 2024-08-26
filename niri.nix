@@ -4,39 +4,50 @@
   lib,
   ...
 }:
-with lib; let
-  binds = {
-    suffixes,
-    prefixes,
-    substitutions ? {},
-  }: let
-    replacer = replaceStrings (attrNames substitutions) (attrValues substitutions);
-    format = prefix: suffix: let
-      actual-suffix =
-        if isList suffix.action
-        then {
-          action = head suffix.action;
-          args = tail suffix.action;
-        }
-        else {
-          inherit (suffix) action;
-          args = [];
-        };
+with lib;
+let
+  binds =
+    {
+      suffixes,
+      prefixes,
+      substitutions ? { },
+    }:
+    let
+      replacer = replaceStrings (attrNames substitutions) (attrValues substitutions);
+      format =
+        prefix: suffix:
+        let
+          actual-suffix =
+            if isList suffix.action then
+              {
+                action = head suffix.action;
+                args = tail suffix.action;
+              }
+            else
+              {
+                inherit (suffix) action;
+                args = [ ];
+              };
 
-      action = replacer "${prefix.action}-${actual-suffix.action}";
-    in {
-      name = "${prefix.key}+${suffix.key}";
-      value.action.${action} = actual-suffix.args;
-    };
-    pairs = attrs: fn:
-      concatMap (key:
-        fn {
-          inherit key;
-          action = attrs.${key};
-        }) (attrNames attrs);
-  in
-    listToAttrs (pairs prefixes (prefix: pairs suffixes (suffix: [(format prefix suffix)])));
-in {
+          action = replacer "${prefix.action}-${actual-suffix.action}";
+        in
+        {
+          name = "${prefix.key}+${suffix.key}";
+          value.action.${action} = actual-suffix.args;
+        };
+      pairs =
+        attrs: fn:
+        concatMap (
+          key:
+          fn {
+            inherit key;
+            action = attrs.${key};
+          }
+        ) (attrNames attrs);
+    in
+    listToAttrs (pairs prefixes (prefix: pairs suffixes (suffix: [ (format prefix suffix) ])));
+in
+{
   programs.niri = {
     settings = {
       input.keyboard.xkb.layout = "us";
@@ -81,10 +92,12 @@ in {
 
       hotkey-overlay.skip-at-startup = true;
 
-      binds = with config.lib.niri.actions; let
-        sh = spawn "sh" "-c";
-        screenshot = sh ''((! pidof slurp) || sudo kill -9 $(pidof slurp)) && (grim -g "$(slurp)" - | wl-copy)'';
-      in
+      binds =
+        with config.lib.niri.actions;
+        let
+          sh = spawn "sh" "-c";
+          screenshot = sh ''((! pidof slurp) || sudo kill -9 $(pidof slurp)) && (grim -g "$(slurp)" - | wl-copy)'';
+        in
         lib.attrsets.mergeAttrsList [
           {
             "Mod+T".action = spawn "wezterm";
@@ -99,7 +112,7 @@ in {
             "Mod+Print".action = screenshot;
             "Shift+Super+S".action = screenshot;
             # "Mod+Shift+Print".action = sh "flames /hot full";
-            
+
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
             "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
             "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -141,10 +154,15 @@ in {
             prefixes."Mod+Shift" = "move";
           })
           (binds {
-            suffixes = builtins.listToAttrs (map (n: {
-              name = toString n;
-              value = ["workspace" n];
-            }) (range 1 9));
+            suffixes = builtins.listToAttrs (
+              map (n: {
+                name = toString n;
+                value = [
+                  "workspace"
+                  n
+                ];
+              }) (range 1 9)
+            );
             prefixes."Mod" = "focus";
             prefixes."Mod+Ctrl" = "move-window-to";
           })
@@ -172,10 +190,10 @@ in {
       # examples:
 
       spawn-at-startup = [
-        {command = ["xwayland-satellite"];}
-        {command = ["swaybg"];}
-        {command = ["variety"];}
-        {command = ["ags"];}
+        { command = [ "xwayland-satellite" ]; }
+        { command = [ "swaybg" ]; }
+        { command = [ "variety" ]; }
+        { command = [ "ags" ]; }
       ];
 
       animations.shaders.window-resize = ''
@@ -219,23 +237,25 @@ in {
       window-rules = [
         {
           draw-border-with-background = false;
-          geometry-corner-radius = let
-            r = 8.0;
-          in {
-            top-left = r;
-            top-right = r;
-            bottom-left = r;
-            bottom-right = r;
-          };
+          geometry-corner-radius =
+            let
+              r = 8.0;
+            in
+            {
+              top-left = r;
+              top-right = r;
+              bottom-left = r;
+              bottom-right = r;
+            };
           clip-to-geometry = true;
         }
         {
-          matches = [{is-focused = false;}];
+          matches = [ { is-focused = false; } ];
           opacity = 0.95;
         }
         {
           # the terminal is already transparent from stylix
-          matches = [{app-id = "^foot$";}];
+          matches = [ { app-id = "^foot$"; } ];
           opacity = 1.0;
         }
         {
@@ -263,19 +283,21 @@ in {
         NIXOS_OZONE_WL = "1";
       };
       csd.preferred = "none";
-      main = let
-        withSize = "size=${toString size}";
-        size = "11";
-        font = "Iosevka Term";
-      in {
-        term = "xterm-256color";
-        font = "${font}:${withSize}";
-        font-bold = "${font}:style=Bold:${withSize}";
-        font-italic = "${font}:style=Italic:${withSize}";
-        font-bold-italic = "${font}:style=BoldItalic:${withSize}";
-        box-drawings-uses-font-glyphs = true;
-        initial-window-size-pixels = "800x600";
-      };
+      main =
+        let
+          withSize = "size=${toString size}";
+          size = "11";
+          font = "Iosevka Term";
+        in
+        {
+          term = "xterm-256color";
+          font = "${font}:${withSize}";
+          font-bold = "${font}:style=Bold:${withSize}";
+          font-italic = "${font}:style=Italic:${withSize}";
+          font-bold-italic = "${font}:style=BoldItalic:${withSize}";
+          box-drawings-uses-font-glyphs = true;
+          initial-window-size-pixels = "800x600";
+        };
 
       scrollback = {
         lines = 10000;
@@ -304,7 +326,7 @@ in {
 
   home.packages = with pkgs; [
     brightnessctl
-    grim 
+    grim
     slurp
     xwayland
     xwayland-satellite
