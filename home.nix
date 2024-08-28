@@ -99,6 +99,7 @@
     pinentryPackage = pkgs.pinentry-qt;
   };
   programs.gpg.enable = true;
+
   services.swaync.enable = true;
 
   services.udiskie.enable = true;

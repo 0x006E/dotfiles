@@ -8,11 +8,10 @@
   # };
   fonts = {
     fontconfig = {
-      # ultimate.enable = true; # This enables fontconfig-ultimate settings for better font rendering
-      defaultFonts = {monospace = ["Iosevka"];};
+      defaultFonts = {monospace = ["Iosevka" "Commit Mono"];};
     };
     fontDir.enable = true;
     enableGhostscriptFonts = true;
-    packages = with pkgs; [terminus_font corefonts noto-fonts iosevka-bin];
+    packages = with pkgs; [terminus_font corefonts noto-fonts iosevka-bin commit-mono];
   };
 }

@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  inputs,
   ...
 }:
 with lib;
@@ -270,7 +271,16 @@ in
       ];
     };
   };
-  programs.wezterm.enable = true;
+  programs.wezterm = {
+   enable = true;
+   enableBashIntegration = true;
+   extraConfig = ''
+    return {
+      font = wezterm.font("Commit Mono"),
+    }
+   '';
+   package = inputs.wezterm-flake.packages.${pkgs.system}.default;
+  };
   programs.foot = {
     enable = true;
     settings = {

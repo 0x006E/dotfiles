@@ -28,6 +28,8 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     zen-browser.url = "github:MarceColl/zen-browser-flake";
+    wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
+    wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -40,6 +42,7 @@
     niri,
     ags,
     walker,
+    wezterm-flake,
     nix-index-database,
     # nixos-cosmic,
     zen-browser,
