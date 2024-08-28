@@ -272,14 +272,14 @@ in
     };
   };
   programs.wezterm = {
-   enable = true;
-   enableBashIntegration = true;
-   extraConfig = ''
-    return {
-      font = wezterm.font("Commit Mono"),
-    }
-   '';
-   package = inputs.wezterm-flake.packages.${pkgs.system}.default;
+    enable = true;
+    enableBashIntegration = true;
+    extraConfig = ''
+      return {
+        font = wezterm.font("Commit Mono"),
+      }
+    '';
+    package = inputs.wezterm-flake.packages.${pkgs.system}.default;
   };
   programs.foot = {
     enable = true;
