@@ -1,5 +1,8 @@
-{ inputs, pkgs, ... }:
 {
+  inputs,
+  pkgs,
+  ...
+}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "nithin";
@@ -86,7 +89,7 @@
   };
   programs.nix-index-database.comma.enable = true;
   nixpkgs.overlays = [
-    (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
+    (self: super: {mpv = super.mpv.override {scripts = [self.mpvScripts.mpris];};})
   ];
   programs.firefox.nativeMessagingHosts.packages = with pkgs; [
     gnomeExtensions.gsconnect
@@ -137,8 +140,8 @@
     stirling-pdf
     stremio
     vesktop
-    (pkgs.callPackage ./responsively-app.nix { })
-    (pkgs.callPackage ./zoho-mail.nix { })
+    (pkgs.callPackage ./responsively-app.nix {})
+    (pkgs.callPackage ./zoho-mail.nix {})
     fuzzel
     obs-studio
     # # It is sometimes useful to fine-tune packages, for example, by applying
@@ -193,8 +196,8 @@
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
     };
   };
 
