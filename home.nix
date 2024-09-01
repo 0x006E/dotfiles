@@ -85,9 +85,6 @@
     enableBashIntegration = true;
   };
   programs.nix-index-database.comma.enable = true;
-  nixpkgs.overlays = [
-    (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
-  ];
   programs.firefox.nativeMessagingHosts.packages = with pkgs; [
     gnomeExtensions.gsconnect
     ff2mpv-rust
@@ -101,8 +98,46 @@
   programs.gpg.enable = true;
 
   services.swaync.enable = true;
+  programs.vscode = {
+  enable = true;
+  extensions = with pkgs.vscode-marketplace; [
+      vadimcn.vscode-lldb
+      esbenp.prettier-vscode
+      bradlc.vscode-tailwindcss
+      # Languages
+      rust-lang.rust-analyzer
+      tamasfe.even-better-toml
+      serayuzgur.crates
+
+      bbenoist.nix
+      brettm12345.nixfmt-vscode
+
+      yzhang.markdown-all-in-one
+      marp-team.marp-vscode
+
+      github.copilot
+
+        # Misc
+      mkhl.direnv
+      ms-vscode.live-server
+
+    ];
+  mutableExtensionsDir = false;
+  };
 
   services.udiskie.enable = true;
+  services.flameshot = {
+    enable = true;
+    package = pkgs.flameshot.override {
+     enableWlrSupport = true;
+    };
+    settings = {
+      General = {
+        disabledTrayIcon = true;
+        showStartupLaunchMessage = false;
+      };
+    };
+  };
 
   home.packages = with pkgs; [
     # # Adds the 'hello' command to your environment. It prints a friendly
@@ -117,7 +152,6 @@
     xorg.xhost
     neovim
     swww
-    vscode
     nixfmt-rfc-style
     (lutris.override {
       extraLibraries = pkgs: [

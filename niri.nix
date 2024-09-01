@@ -109,9 +109,9 @@ in
             # ]);
 
             "Mod+L".action = spawn "blurred-locker";
-            "Print".action = sh "grim - | wl-copy";
-            "Mod+Print".action = screenshot;
-            "Shift+Super+S".action = screenshot;
+            "Print".action = sh "flameshot full --clipboard";
+            "Mod+Print".action = sh "flameshot gui";
+            "Shift+Super+S".action = sh "flameshot gui";
             # "Mod+Shift+Print".action = sh "flames /hot full";
 
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";

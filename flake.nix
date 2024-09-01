@@ -30,6 +30,7 @@
     zen-browser.url = "github:MarceColl/zen-browser-flake";
     wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
     wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   outputs = {
@@ -42,6 +43,7 @@
     niri,
     ags,
     walker,
+    nix-vscode-extensions,
     wezterm-flake,
     nix-index-database,
     # nixos-cosmic,
@@ -62,6 +64,11 @@
           niri.nixosModules.niri
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
+            nixpkgs.overlays = [
+              (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
+              inputs.nix-vscode-extensions.overlays.default # Also have a look at https://github.com/nix-community/nix-vscode-extensions/issues/29
+            ];
+
           }
           ./configuration.nix
           home-manager.nixosModules.home-manager
