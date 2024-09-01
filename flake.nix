@@ -65,10 +65,9 @@
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
             nixpkgs.overlays = [
-              (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
+              (self: super: {mpv = super.mpv.override {scripts = [self.mpvScripts.mpris];};})
               inputs.nix-vscode-extensions.overlays.default # Also have a look at https://github.com/nix-community/nix-vscode-extensions/issues/29
             ];
-
           }
           ./configuration.nix
           home-manager.nixosModules.home-manager
