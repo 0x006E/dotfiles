@@ -107,6 +107,7 @@
       vadimcn.vscode-lldb
       esbenp.prettier-vscode
       bradlc.vscode-tailwindcss
+      github.codespaces
       # Languages
       rust-lang.rust-analyzer
       tamasfe.even-better-toml
