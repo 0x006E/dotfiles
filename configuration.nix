@@ -6,10 +6,16 @@
   inputs,
   pkgs-stable,
   ...
-}: let
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix {};
-  acer-wmi-battery-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix {};
-in {
+}:
+let
+  uvcvideo-kernel-module =
+    pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix
+      { };
+  acer-wmi-battery-kernel-module =
+    pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix
+      { };
+in
+{
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -26,7 +32,7 @@ in {
     # ./fingerprint.nix
   ];
 
-  nixpkgs.overlays = [inputs.niri.overlays.niri];
+  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   nixpkgs.config.allowUnfree = true;
   # services.desktopManager.cosmic.enable = true;
   # services.displayManager.cosmic-greeter.enable = true;
@@ -35,7 +41,10 @@ in {
   boot.loader.systemd-boot.configurationLimit = 3;
   boot.loader.timeout = 0;
   nix.settings.auto-optimise-store = true;
-  nix.settings.trusted-users = ["root" "@wheel"];
+  nix.settings.trusted-users = [
+    "root"
+    "@wheel"
+  ];
   nix.gc = {
     automatic = true;
     dates = "daily";
@@ -43,9 +52,15 @@ in {
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_cachyos-lto;
-  boot.extraModulePackages = [uvcvideo-kernel-module acer-wmi-battery-kernel-module];
-  boot.blacklistedKernelModules = ["iTCO_wdt" "iTCO_vendor_support"];
-  boot.kernelModules = ["acer-wmi-battery"];
+  boot.extraModulePackages = [
+    uvcvideo-kernel-module
+    acer-wmi-battery-kernel-module
+  ];
+  boot.blacklistedKernelModules = [
+    "iTCO_wdt"
+    "iTCO_vendor_support"
+  ];
+  boot.kernelModules = [ "acer-wmi-battery" ];
   boot.extraModprobeConfig = ''
     options acer-wmi-battery enable_health_mode=1
     options iwlwifi 11n_disable=8 power_save="Y" power_level=5
@@ -153,7 +168,7 @@ in {
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nithin = {
     isNormalUser = true;
-    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:

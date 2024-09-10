@@ -2,7 +2,8 @@
   config,
   pkgs,
   ...
-}: {
+}:
+{
   boot.kernelParams = [
     # Silences boot messages
     "quiet"
@@ -22,13 +23,15 @@
   boot.initrd.verbose = false;
   boot.consoleLogLevel = 0;
 
-  boot.plymouth = let
-    theme = "deus_ex";
-  in {
-    enable = true;
-    inherit theme;
-    themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = [theme];})];
-  };
+  boot.plymouth =
+    let
+      theme = "deus_ex";
+    in
+    {
+      enable = true;
+      inherit theme;
+      themePackages = [ (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ theme ]; }) ];
+    };
 
   environment.systemPackages = with pkgs; [
     plymouth

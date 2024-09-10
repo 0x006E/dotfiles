@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   # nixpkgs.config = {
   #   packageOverrides = pkgs: {
   #     iosevka-term = pkgs.iosevka.override {
@@ -8,10 +9,21 @@
   # };
   fonts = {
     fontconfig = {
-      defaultFonts = {monospace = ["Iosevka" "Commit Mono"];};
+      defaultFonts = {
+        monospace = [
+          "Iosevka"
+          "Commit Mono"
+        ];
+      };
     };
     fontDir.enable = true;
     enableGhostscriptFonts = true;
-    packages = with pkgs; [terminus_font corefonts noto-fonts iosevka-bin commit-mono];
+    packages = with pkgs; [
+      terminus_font
+      corefonts
+      noto-fonts
+      iosevka-bin
+      commit-mono
+    ];
   };
 }
