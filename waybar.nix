@@ -3,8 +3,7 @@
   pkgs,
   lib,
   ...
-}:
-{
+}: {
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -26,15 +25,14 @@
 
       * {
         ${
-          if config.hostId == "yoga" then
-            ''
-              font-size: 18px;
-            ''
-          else
-            ''
+        if config.hostId == "yoga"
+        then ''
+          font-size: 18px;
+        ''
+        else ''
 
-            ''
-        }
+        ''
+      }
       }
     '';
     settings = [
@@ -45,7 +43,7 @@
         tray = {
           spacing = 10;
         };
-        modules-center = [ "niri/window" ];
+        modules-center = ["niri/window"];
         modules-left = [
           "niri/workspaces"
           "niri/mode"
@@ -58,7 +56,11 @@
             "memory"
             "temperature"
           ]
-          ++ (if config.hostId == "yoga" then [ "battery" ] else [ ])
+          ++ (
+            if config.hostId == "yoga"
+            then ["battery"]
+            else []
+          )
           ++ [
             "clock"
             "tray"
