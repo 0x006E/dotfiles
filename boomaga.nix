@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
     description = "Virtual printer for viewing and editing before printing";
     homepage = "https://www.boomaga.org/";
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; []; # Add your name if you're maintaining this package
+    maintainers = with maintainers; [ ]; # Add your name if you're maintaining this package
     platforms = platforms.linux;
   };
 }
