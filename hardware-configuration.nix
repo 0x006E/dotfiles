@@ -7,10 +7,9 @@
   pkgs,
   modulesPath,
   ...
-}: {
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
+}:
+{
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   boot.initrd.availableKernelModules = [
     "xhci_pci"
@@ -21,14 +20,14 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-intel"];
-  boot.extraModulePackages = [];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
     fsType = "btrfs";
-    options = ["subvol=@"];
+    options = [ "subvol=@" ];
   };
 
   boot.initrd.luks.devices."crypted".device = "/dev/disk/by-uuid/a868c4bd-b34b-4593-9307-a0cb13cd41a8";
@@ -36,13 +35,13 @@
   fileSystems."/home" = {
     device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
     fsType = "btrfs";
-    options = ["subvol=@home"];
+    options = [ "subvol=@home" ];
   };
 
   fileSystems."/swap" = {
     device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
     fsType = "btrfs";
-    options = ["subvol=@swap"];
+    options = [ "subvol=@swap" ];
   };
 
   fileSystems."/boot" = {

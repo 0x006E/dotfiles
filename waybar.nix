@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -25,14 +26,15 @@
 
       * {
         ${
-        if config.hostId == "yoga"
-        then ''
-          font-size: 18px;
-        ''
-        else ''
+          if config.hostId == "yoga" then
+            ''
+              font-size: 18px;
+            ''
+          else
+            ''
 
-        ''
-      }
+            ''
+        }
       }
     '';
     settings = [
@@ -40,9 +42,14 @@
         height = 30;
         layer = "top";
         position = "bottom";
-        tray = {spacing = 10;};
-        modules-center = ["niri/window"];
-        modules-left = ["niri/workspaces" "niri/mode"];
+        tray = {
+          spacing = 10;
+        };
+        modules-center = [ "niri/window" ];
+        modules-left = [
+          "niri/workspaces"
+          "niri/mode"
+        ];
         modules-right =
           [
             "pulseaudio"
@@ -51,11 +58,7 @@
             "memory"
             "temperature"
           ]
-          ++ (
-            if config.hostId == "yoga"
-            then ["battery"]
-            else []
-          )
+          ++ (if config.hostId == "yoga" then [ "battery" ] else [ ])
           ++ [
             "clock"
             "tray"
@@ -64,7 +67,13 @@
           format = "{capacity}% {icon}";
           format-alt = "{time} {icon}";
           format-charging = "{capacity}% ";
-          format-icons = ["" "" "" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           format-plugged = "{capacity}% ";
           states = {
             critical = 15;
@@ -79,7 +88,9 @@
           format = "{usage}% ";
           tooltip = false;
         };
-        memory = {format = "{}% ";};
+        memory = {
+          format = "{}% ";
+        };
         network = {
           interval = 1;
           format-alt = "{ifname}: {ipaddr}/{cidr}";
@@ -94,7 +105,11 @@
           format-bluetooth-muted = " {icon} {format_source}";
           format-icons = {
             car = "";
-            default = ["" "" ""];
+            default = [
+              ""
+              ""
+              ""
+            ];
             handsfree = "";
             headphones = "";
             headset = "";
@@ -106,11 +121,17 @@
           format-source-muted = "";
           on-click = "pavucontrol";
         };
-        "niri/mode" = {format = ''<span style="italic">{}</span>'';};
+        "niri/mode" = {
+          format = ''<span style="italic">{}</span>'';
+        };
         temperature = {
           critical-threshold = 80;
           format = "{temperatureC}°C {icon}";
-          format-icons = ["" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+          ];
         };
       }
     ];

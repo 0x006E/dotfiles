@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   # nixpkgs.config = {
   #   packageOverrides = pkgs: {
   #     iosevka-term = pkgs.iosevka.override {
