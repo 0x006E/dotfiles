@@ -123,7 +123,7 @@
       mkhl.direnv
       ms-vscode.live-server
 
-      # Flutter 
+      # Flutter
       dart-code.flutter
       nash.awesome-flutter-snippets
       dart-code.dart-code
