@@ -2,9 +2,8 @@
   lib,
   pkgs,
   ...
-}:
-let
-  libfprint-tod = pkgs.callPackage ./libfprint-tod.nix { };
+}: let
+  libfprint-tod = pkgs.callPackage ./libfprint-tod.nix {};
   # Unfortunately, Meson does not yet support disabling individual tests
   # (only full suites): https://github.com/mesonbuild/meson/issues/6999
   # This should be replaced with the appropriate flag once it exists.
@@ -12,18 +11,14 @@ let
     /${test}/a\
             self.skipTest(None)
   '';
-  disable-tests =
-    tests: pkgs.writeText "disable-tests.sed" (lib.concatStrings (map disable-test tests));
+  disable-tests = tests: pkgs.writeText "disable-tests.sed" (lib.concatStrings (map disable-test tests));
 in
-(pkgs.fprintd.override {
-  libfprint = libfprint-tod;
-}).overrideAttrs
+  (pkgs.fprintd.override {
+    libfprint = libfprint-tod;
+  })
+  .overrideAttrs
   (
-    {
-      postPatch ? "",
-      ...
-    }:
-    {
+    {postPatch ? "", ...}: {
       pname = "fprintd-tod";
 
       postPatch =
@@ -40,7 +35,7 @@ in
 
       meta = {
         description = "fprintd built with libfprint-tod to support Touch OEM Drivers";
-        maintainers = with lib.maintainers; [ hmenke ];
+        maintainers = with lib.maintainers; [hmenke];
       };
     }
   )
