@@ -1,12 +1,14 @@
-{pkgs, ...}: let
-  boomaga = pkgs.libsForQt5.callPackage ./boomaga.nix {};
-in {
+{ pkgs, ... }:
+let
+  boomaga = pkgs.libsForQt5.callPackage ./boomaga.nix { };
+in
+{
   services.avahi = {
     enable = true;
     nssmdns4 = true;
     openFirewall = true;
   };
-  environment.systemPackages = with pkgs; [boomaga];
+  environment.systemPackages = with pkgs; [ boomaga ];
 
   hardware.printers = {
     ensurePrinters = [
@@ -32,7 +34,7 @@ in {
     "d /var/cache/boomaga 0775 root lp - -"
     "d /var/cache/boomaga/nithin 0770 nithin lp - -"
   ];
-  services.dbus.packages = [boomaga];
+  services.dbus.packages = [ boomaga ];
   services.printing.drivers = with pkgs; [
     hplipWithPlugin
     boomaga
