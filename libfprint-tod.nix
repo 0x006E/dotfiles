@@ -28,6 +28,6 @@ pkgs.libfprint.overrideAttrs (old: rec {
     description = "A library designed to make it easy to add support for consumer fingerprint readers, with support for loaded drivers";
     license = licenses.lgpl21;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ grahamc ];
+    maintainers = with maintainers; [grahamc];
   };
 })
