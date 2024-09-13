@@ -19,6 +19,7 @@
     enableGhostscriptFonts = true;
     packages = with pkgs; [
       terminus_font
+      font-awesome
       corefonts
       noto-fonts
       iosevka-bin

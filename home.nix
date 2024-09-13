@@ -24,7 +24,7 @@
     ./waybar.nix
   ];
   programs.ags = {
-    enable = true;
+    # enable = true;
 
     # null or path, leave as null if you don't want hm to manage the config
     configDir = ./ags;
@@ -125,6 +125,12 @@
       # Misc
       mkhl.direnv
       ms-vscode.live-server
+
+      # Flutter 
+      dart-code.flutter
+      nash.awesome-flutter-snippets
+      dart-code.dart-code
+      marufhassan.flutter
     ];
     mutableExtensionsDir = false;
   };

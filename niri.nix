@@ -324,7 +324,7 @@ in {
     grim
     slurp
     xwayland
-    xwayland-satellite
+    xwayland-satellite-unstable
     variety
     swaybg
   ];

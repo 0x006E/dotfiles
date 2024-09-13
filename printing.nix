@@ -22,6 +22,12 @@ in {
       }
     ];
   };
+   
+  users.users.nithin.extraGroups = [
+    "scanner"
+    "lp"
+  ];
+  hardware.sane.enable = true;
   systemd.tmpfiles.rules = [
     "d /var/cache/boomaga 0775 root lp - -"
     "d /var/cache/boomaga/nithin 0770 nithin lp - -"
