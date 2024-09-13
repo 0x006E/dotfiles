@@ -2,8 +2,7 @@
   inputs,
   pkgs,
   ...
-}:
-{
+}: {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "nithin";
@@ -139,7 +138,7 @@
   services.udiskie.enable = true;
   services.flameshot = {
     enable = true;
-    package = pkgs.flameshot.override { enableWlrSupport = true; };
+    package = pkgs.flameshot.override {enableWlrSupport = true;};
     settings = {
       General = {
         disabledTrayIcon = true;
@@ -180,8 +179,8 @@
     stirling-pdf
     stremio
     vesktop
-    (pkgs.callPackage ./responsively-app.nix { })
-    (pkgs.callPackage ./zoho-mail.nix { })
+    (pkgs.callPackage ./responsively-app.nix {})
+    (pkgs.callPackage ./zoho-mail.nix {})
     fuzzel
     obs-studio
     # # It is sometimes useful to fine-tune packages, for example, by applying
@@ -236,8 +235,8 @@
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
     };
   };
 
