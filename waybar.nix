@@ -1,4 +1,3 @@
-{ pkgs, lib, ... }:
 
 {
   config,
@@ -9,14 +8,6 @@
   programs.waybar = {
     enable = true;
     systemd.enable = true;
-    package = pkgs.waybar.overrideAttrs (o: {
-      patches = [
-        (pkgs.fetchpatch {
-          url = "https://github.com/Alexays/Waybar/pull/3551.patch";
-          hash = "sha256-+tZXg3EDyr+HikeYQ62AeX5S8wSZdtTSE9S9ZvpKr0E=";
-        })
-      ];
-    });
     style = ''
       ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
 
