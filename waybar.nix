@@ -1,12 +1,13 @@
-{ pkgs, lib, ... }:
-
 {
+  pkgs,
+  lib,
+  ...
+}: {
   config,
   pkgs,
   lib,
   ...
-}:
-{
+}: {
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -38,7 +39,7 @@
         tray = {
           spacing = 10;
         };
-        modules-center = [ "niri/window" ];
+        modules-center = ["niri/window"];
         modules-left = [
           "niri/workspaces"
           "niri/mode"
