@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: {
+}:
+{
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -24,9 +25,14 @@
       {
         layer = "top";
         position = "left";
-        tray = {spacing = 10;};
-        modules-center = ["niri/window"];
-        modules-left = ["niri/workspaces" "niri/mode"];
+        tray = {
+          spacing = 10;
+        };
+        modules-center = [ "niri/window" ];
+        modules-left = [
+          "niri/workspaces"
+          "niri/mode"
+        ];
         modules-right = [
           "pulseaudio"
           "network"
@@ -41,7 +47,13 @@
           format = "{capacity}%\n{icon}";
           format-alt = "{time}\n{icon}";
           format-charging = "{capacity}%\n";
-          format-icons = ["" "" "" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
           format-plugged = "{capacity}%\n";
           states = {
             critical = 15;
@@ -61,7 +73,9 @@
           format = "{usage}%\n";
           tooltip = false;
         };
-        memory = {format = "{}%\n";};
+        memory = {
+          format = "{}%\n";
+        };
         network = {
           interval = 1;
           format-alt = "{ifname}: {ipaddr}/{cidr}";
@@ -77,7 +91,11 @@
           format-bluetooth-muted = "\n{icon}\n{format_source}";
           format-icons = {
             car = "";
-            default = ["" "" ""];
+            default = [
+              ""
+              ""
+              ""
+            ];
             handsfree = "";
             headphones = "";
             headset = "";
@@ -89,11 +107,17 @@
           format-source-muted = "";
           on-click = "pavucontrol";
         };
-        "niri/mode" = {format = ''<span style="italic">{}</span>'';};
+        "niri/mode" = {
+          format = ''<span style="italic">{}</span>'';
+        };
         temperature = {
           critical-threshold = 80;
           format = "{temperatureC}°C\n{icon}";
-          format-icons = ["" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+          ];
         };
       }
     ];
