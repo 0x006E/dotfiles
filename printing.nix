@@ -22,7 +22,7 @@ in {
       }
     ];
   };
-   
+
   users.users.nithin.extraGroups = [
     "scanner"
     "lp"
