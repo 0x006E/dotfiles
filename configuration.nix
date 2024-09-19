@@ -17,6 +17,7 @@ in {
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
+      deprecated-features = url-literals
     '';
   };
   imports = [
