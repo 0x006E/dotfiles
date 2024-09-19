@@ -6,14 +6,16 @@
   inputs,
   pkgs-stable,
   ...
-}: let
+}:
+let
   uvcvideo-kernel-module =
     pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix
-    {};
+      { };
   acer-wmi-battery-kernel-module =
     pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix
-    {};
-in {
+      { };
+in
+{
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -31,7 +33,7 @@ in {
     # ./fingerprint.nix
   ];
 
-  nixpkgs.overlays = [inputs.niri.overlays.niri];
+  nixpkgs.overlays = [ inputs.niri.overlays.niri ];
   nixpkgs.config.allowUnfree = true;
   # services.desktopManager.cosmic.enable = true;
   # services.displayManager.cosmic-greeter.enable = true;
@@ -59,7 +61,7 @@ in {
     "iTCO_wdt"
     "iTCO_vendor_support"
   ];
-  boot.kernelModules = ["acer-wmi-battery"];
+  boot.kernelModules = [ "acer-wmi-battery" ];
   boot.extraModprobeConfig = ''
     options acer-wmi-battery enable_health_mode=1
     options iwlwifi 11n_disable=8 power_save="Y" power_level=5
@@ -167,7 +169,7 @@ in {
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nithin = {
     isNormalUser = true;
-    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:

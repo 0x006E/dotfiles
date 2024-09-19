@@ -29,59 +29,62 @@
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
-  outputs = {
-    nixpkgs,
-    nixpkgs-stable,
-    home-manager,
-    chaotic,
-    lanzaboote,
-    niri,
-    ags,
-    walker,
-    nix-vscode-extensions,
-    wezterm-flake,
-    nix-index-database,
-    lix-module,
-    zen-browser,
-    ...
-  } @ inputs: {
-    nixosConfigurations = {
-      ntsv = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          pkgs-stable = import nixpkgs-stable {
-            inherit system;
-            config.allowUnfree = true;
-          };
-          inherit inputs;
-        };
-        modules = [
-          lix-module.nixosModules.default
-          niri.nixosModules.niri
-          {
-            nixpkgs.overlays = [
-              (self: super: {mpv = super.mpv.override {scripts = [self.mpvScripts.mpris];};})
-              inputs.nix-vscode-extensions.overlays.default # Also have a look at https://github.com/nix-community/nix-vscode-extensions/issues/29
-            ];
-          }
-          ./configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-
-            home-manager.extraSpecialArgs = {
-              inherit inputs;
+  outputs =
+    {
+      nixpkgs,
+      nixpkgs-stable,
+      home-manager,
+      chaotic,
+      lanzaboote,
+      niri,
+      ags,
+      walker,
+      nix-vscode-extensions,
+      wezterm-flake,
+      nix-index-database,
+      lix-module,
+      zen-browser,
+      ...
+    }@inputs:
+    {
+      nixosConfigurations = {
+        ntsv = nixpkgs.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          specialArgs = {
+            pkgs-stable = import nixpkgs-stable {
+              inherit system;
+              config.allowUnfree = true;
             };
-            home-manager.users.nithin = import ./home.nix;
+            inherit inputs;
+          };
+          modules = [
+            lix-module.nixosModules.default
+            niri.nixosModules.niri
+            {
+              nixpkgs.overlays = [
+                (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
+                inputs.nix-vscode-extensions.overlays.default # Also have a look at https://github.com/nix-community/nix-vscode-extensions/issues/29
+              ];
+            }
+            ./configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
 
-            home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
-          }
-          chaotic.nixosModules.default
-          lanzaboote.nixosModules.lanzaboote
-          ./secureboot.nix
-        ];
+              home-manager.extraSpecialArgs = {
+                inherit inputs;
+              };
+              home-manager.users.nithin = import ./home.nix;
+
+              home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
+            }
+            chaotic.nixosModules.default
+            lanzaboote.nixosModules.lanzaboote
+            ./secureboot.nix
+          ];
+        };
       };
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
     };
-  };
 }

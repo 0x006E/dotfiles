@@ -149,6 +149,9 @@
     # # "Hello, world!" when run.
     # pkgs.hello
     foot
+    pre-commit
+    cabal-install
+    ghc
     keybase-gui
     kbfs
     bitwarden
