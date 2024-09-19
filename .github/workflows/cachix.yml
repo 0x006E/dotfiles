@@ -22,7 +22,6 @@ jobs:
         echo "Disk space after cleanup:"
         df -h
     - uses: DeterminateSystems/nix-installer-action@main
-    - name: Install omnix
     - uses: yaxitech/nix-install-pkgs-action@v4
       with:
         packages: "github:juspay/omnix"
