@@ -23,7 +23,9 @@ jobs:
         df -h
     - uses: DeterminateSystems/nix-installer-action@main
     - name: Install omnix
-      run: nix --accept-flake-config profile install "github:juspay/omnix"
+    - uses: yaxitech/nix-install-pkgs-action@v4
+      with:
+        packages: "github:juspay/omnix"
     - uses: cachix/cachix-action@v14
       with:
         name: 0x006e-nix
