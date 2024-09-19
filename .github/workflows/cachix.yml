@@ -21,18 +21,12 @@ jobs:
         sudo apt-get clean
         echo "Disk space after cleanup:"
         df -h
-    - uses: DeterminateSystems/nix-installer-action@main
-      with:
-        extra-conf: |
-          trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-          substituters = https://cache.garnix.io?priority=41 https://cache.nixos.org/
-    - uses: yaxitech/nix-install-pkgs-action@v3
-      with:
-        packages: "github:Mic92/nix-fast-build"
+    - name: Install omnix
+      run: nix --accept-flake-config profile install "github:juspay/omnix"
     - uses: cachix/cachix-action@v14
       with:
         name: 0x006e-nix
         # If you chose API tokens for write access OR if you have a private cache
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - uses: DeterminateSystems/magic-nix-cache-action@v2
-    - run: nixci build | cachix push 0x006e-nix
+    - run: om ci | cachix push 0x006e-nix
