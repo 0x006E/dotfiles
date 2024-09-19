@@ -27,6 +27,11 @@
     #   url = "github:lilyinstarlight/nixos-cosmic";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+
+    lix-module = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     zen-browser.url = "github:MarceColl/zen-browser-flake";
     wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
     wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";
@@ -46,6 +51,7 @@
     nix-vscode-extensions,
     wezterm-flake,
     nix-index-database,
+    lix-module,
     # nixos-cosmic,
     zen-browser,
     ...
@@ -61,6 +67,7 @@
           inherit inputs;
         };
         modules = [
+          lix-module.nixosModules.default
           niri.nixosModules.niri
           {
             environment.systemPackages = [alejandra.defaultPackage.${system}];
