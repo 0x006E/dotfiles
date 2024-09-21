@@ -276,7 +276,7 @@ in
     enableBashIntegration = true;
     extraConfig = ''
       return {
-        font = wezterm.font("Commit Mono"),
+        font = wezterm.font_with_fallback {"Commit Mono", "Font Awesome 6 Free"},
         window_background_opacity = 0.65,
         color_scheme = 'Banana Blueberry',
       }

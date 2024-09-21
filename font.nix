@@ -21,6 +21,7 @@
     packages = with pkgs; [
       terminus_font
       font-awesome
+      powerline-fonts
       corefonts
       noto-fonts
       iosevka-bin

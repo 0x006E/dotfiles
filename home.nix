@@ -159,6 +159,7 @@
     pre-commit
     cabal-install
     ghc
+    blueman
     keybase-gui
     kbfs
     bitwarden
