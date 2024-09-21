@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  pkgs-unstable,
+  ...
+}:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -17,8 +22,10 @@
     inputs.ags.homeManagerModules.default
     inputs.walker.homeManagerModules.default
     inputs.nix-index-database.hmModules.nix-index
+    inputs.nixvim.homeManagerModules.nixvim
     ./niri.nix
     ./waybar.nix
+    ./ide.nix
   ];
   programs.ags = {
     # enable = true;
@@ -158,7 +165,6 @@
     pinentry-qt
     distrobox
     xorg.xhost
-    neovim
     swww
     nixfmt-rfc-style
     (lutris.override {
@@ -253,7 +259,7 @@
 
     # set some aliases, feel free to add more or remove some
     shellAliases = {
-      mc = "nvim ~/nix";
+      mc = "pushd ~/nix;nvim ~/nix;popd";
       rs = "sudo nixos-rebuild switch";
       rb = "sudo nixos-rebuild boot";
       k = "kubectl";

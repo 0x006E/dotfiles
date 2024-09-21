@@ -192,9 +192,9 @@ in
 
       spawn-at-startup = [
         { command = [ "xwayland-satellite" ]; }
+        { command = [ "systemctl --user reset-failed waybar.service" ]; }
         { command = [ "swaybg" ]; }
         { command = [ "variety" ]; }
-        { command = [ "ags" ]; }
       ];
 
       animations.shaders.window-resize = ''
@@ -277,6 +277,8 @@ in
     extraConfig = ''
       return {
         font = wezterm.font("Commit Mono"),
+        window_background_opacity = 0.65,
+        color_scheme = 'Banana Blueberry',
       }
     '';
     package = inputs.wezterm-flake.packages.${pkgs.system}.default;

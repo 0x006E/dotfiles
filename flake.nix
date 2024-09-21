@@ -3,10 +3,15 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nil.url = "github:oxalica/nil";
     niri.url = "github:sodiboo/niri-flake";
     ags.url = "github:Aylur/ags";
@@ -33,29 +38,33 @@
     {
       nixpkgs,
       nixpkgs-stable,
+      nixpkgs-unstable,
       home-manager,
       chaotic,
       lanzaboote,
       niri,
-      ags,
-      walker,
-      nix-vscode-extensions,
-      wezterm-flake,
-      nix-index-database,
       lix-module,
-      zen-browser,
       ...
     }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs-stable = import nixpkgs-stable {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
+    in
     {
       nixosConfigurations = {
         ntsv = nixpkgs.lib.nixosSystem rec {
           system = "x86_64-linux";
           specialArgs = {
-            pkgs-stable = import nixpkgs-stable {
-              inherit system;
-              config.allowUnfree = true;
-            };
             inherit inputs;
+            inherit pkgs-stable;
+            inherit pkgs-unstable;
           };
           modules = [
             lix-module.nixosModules.default
@@ -74,6 +83,8 @@
 
               home-manager.extraSpecialArgs = {
                 inherit inputs;
+                inherit pkgs-unstable;
+                inherit pkgs-stable;
               };
               home-manager.users.nithin = import ./home.nix;
 

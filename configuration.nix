@@ -17,6 +17,7 @@ let
 in
 {
   nix = {
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     extraOptions = ''
       experimental-features = nix-command flakes
       deprecated-features = url-literals

@@ -1,12 +1,12 @@
 {
-  config,
   pkgs,
-  lib,
+  pkgs-unstable,
   ...
 }:
 {
   programs.waybar = {
     enable = true;
+    package = pkgs-unstable.waybar;
     systemd.enable = true;
     style = ''
       ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
