@@ -30,6 +30,13 @@
         nvimRuntime = true;
         plugins = true;
       };
+      combinePlugins = {
+        enable = false;
+        # standalonePlugins = [
+        #   "nvim-treesitter"
+        #   "copilot-lua"
+        # ];
+      };
     };
     package = pkgs-unstable.neovim-unwrapped;
     autoCmd = [
@@ -148,12 +155,9 @@
       leap.enable = true;
       which-key.enable = true;
       sleuth.enable = true;
-      neo-tree.enable = true;
-      oil.enable = true;
       nix.enable = true;
       lualine.enable = true;
       nvim-colorizer.enable = true;
-      fugitive.enable = true;
       lazygit.enable = true;
       copilot-lua = {
         enable = true;
@@ -169,6 +173,8 @@
             n_lines = 50;
             search_method = "cover_or_next";
           };
+          sessions = { };
+          files = { };
           comment = {
             mappings = {
               comment = "<leader>/";
