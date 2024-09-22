@@ -21,7 +21,6 @@
     (sqlite.override { interactive = true; })
     xh
   ];
-
   programs.nixvim = {
     enable = true;
     vimAlias = true;
@@ -155,6 +154,13 @@
       lualine.enable = true;
       nvim-colorizer.enable = true;
       fugitive.enable = true;
+      lazygit.enable = true;
+      copilot-lua = {
+        enable = true;
+        suggestion = {
+          autoTrigger = true;
+        };
+      };
       mini = {
         enable = true;
         mockDevIcons = true;
