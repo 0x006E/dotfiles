@@ -17,13 +17,108 @@
     nodePackages.typescript-language-server
     npm-check-updates
     php
+    lazygit
+    prettierd
     pyright
     (sqlite.override { interactive = true; })
     xh
+    ripgrep
   ];
   programs.nixvim = {
     enable = true;
     vimAlias = true;
+    extraPlugins = [
+      (pkgs.vimUtils.buildVimPlugin {
+        name = "format-on-save";
+        src = pkgs.fetchFromGitHub {
+          owner = "elentok";
+          repo = "format-on-save.nvim";
+          rev = "fed870bb08d9889580f5ca335649da2074bd4b6f";
+          hash = "sha256-07RWMrBDVIH3iGgo2RcNDhThSrR/Icijcd//MOnBzpA=";
+        };
+        patches = [
+          (pkgs.fetchpatch {
+            url = "https://github.com/elentok/format-on-save.nvim/pull/24.patch";
+            hash = "sha256-g1SSjxCaoP/AAUBkOY1ZSVI9wuDl5o5Sie8YzZt6zgQ=";
+          })
+
+        ];
+      })
+    ];
+    extraConfigLua = ''
+      local format_on_save = require("format-on-save")
+      local formatters = require("format-on-save.formatters")
+      local vim_notify = require("format-on-save.error-notifiers.vim-notify")
+      format_on_save.setup({
+        error_notifier = vim_notify,
+        exclude_path_patterns = {
+          "/node_modules/",
+        },
+        formatter_by_ft = {
+          css = formatters.lsp,
+          html = formatters.lsp,
+          java = formatters.lsp,
+          javascript = formatters.lsp,
+          json = formatters.lsp,
+          lua = formatters.lsp,
+          markdown = formatters.prettierd,
+          openscad = formatters.lsp,
+          python = formatters.black,
+          rust = formatters.lsp,
+          scad = formatters.lsp,
+          scss = formatters.lsp,
+          sh = formatters.shfmt,
+          terraform = formatters.lsp,
+          typescript = formatters.prettierd,
+          typescriptreact = formatters.prettierd,
+          yaml = formatters.lsp,
+          nix = formatters.lsp,
+          -- Concatenate formatters
+          python = {
+            formatters.remove_trailing_whitespace,
+            formatters.shell({ cmd = "tidy-imports" }),
+            formatters.black,
+            formatters.ruff,
+          },
+
+          -- Use a tempfile instead of stdin
+          go = {
+            formatters.shell({
+              cmd = { "goimports-reviser", "-rm-unused", "-set-alias", "-format", "%" },
+              tempfile = function()
+                return vim.fn.expand("%") .. '.formatter-temp'
+              end
+            }),
+            formatters.shell({ cmd = { "gofmt" } }),
+          },
+
+          -- Add conditional formatter that only runs if a certain file exists
+          -- in one of the parent directories.
+          javascript = {
+            formatters.if_file_exists({
+              pattern = ".eslintrc.*",
+              formatter = formatters.eslint_d_fix
+            }),
+            formatters.if_file_exists({
+              pattern = { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
+              formatter = formatters.prettierd,
+            }),
+          },
+        },
+
+        -- Optional: fallback formatter to use when no formatters match the current filetype
+        fallback_formatter = {
+          formatters.lsp,
+          formatters.remove_trailing_whitespace,
+          formatters.remove_trailing_newlines,
+          formatters.prettierd,
+        },
+
+        -- By default, all shell commands are prefixed with "sh -c" (see PR #3)
+        -- To prevent that set `run_with_sh` to `false`.
+        -- run_with_sh = false,
+      })
+    '';
     performance = {
       byteCompileLua = {
         enable = true;
@@ -40,12 +135,12 @@
     };
     package = pkgs-unstable.neovim-unwrapped;
     autoCmd = [
-      {
-        event = [ "BufWritePre" ];
-        pattern = [ "*" ];
-        command = "lua vim.lsp.buf.format()";
-
-      }
+      # {
+      #   event = [ "BufWritePre" ];
+      #   pattern = [ "*" ];
+      #   command = "lua vim.lsp.buf.format()";
+      #
+      # }
 
       {
         event = [ "VimEnter" ];
@@ -81,6 +176,7 @@
     opts = {
       number = true;
       shiftwidth = 2;
+      tabstop = 2;
       wildmenu = true;
       wildmode = "longest:full,full";
       clipboard = "unnamedplus";
@@ -93,11 +189,64 @@
     };
     keymaps = [
       {
+        key = "<leader>lg";
+        action = "<cmd>LazyGit<cr>";
+        mode = [ "n" ];
+      }
+      {
         key = "<leader>d";
         action = "\"_d";
         mode = [
           "n"
           "x"
+        ];
+      }
+      {
+        key = "<leader>n";
+        action = ":bnext<cr>";
+        mode = [
+          "n"
+          "v"
+        ];
+      }
+      {
+        key = "<leader>p";
+        action = ":bprevious<cr>";
+        mode = [
+          "n"
+          "v"
+        ];
+      }
+      {
+        key = "<leader>d";
+        action = ":bdelete<cr>";
+        mode = [
+          "n"
+          "v"
+        ];
+      }
+      {
+        key = "jj";
+        action = "<esc>";
+        mode = [ "i" ];
+      }
+
+      {
+        key = "<leader>u";
+        action = "<cmd>UndotreeToggle<cr>";
+        mode = [
+          "n"
+          "v"
+        ];
+      }
+      {
+        key = "<leader>o";
+        action = {
+          __raw = "function () if not MiniFiles.close() then MiniFiles.open() end end";
+        };
+        mode = [
+          "n"
+          "v"
         ];
       }
       {
@@ -156,9 +305,54 @@
       which-key.enable = true;
       sleuth.enable = true;
       nix.enable = true;
+      project-nvim.enable = true;
       lualine.enable = true;
       nvim-colorizer.enable = true;
       lazygit.enable = true;
+      direnv.enable = true;
+      spectre = {
+        enable = true;
+        findPackage = pkgs.ripgrep;
+        replacePackage = pkgs.gnused;
+      };
+      emmet.enable = true;
+      undotree = {
+        enable = true;
+        settings = {
+          CursorLine = true;
+          DiffAutoOpen = true;
+          DiffCommand = "diff";
+          DiffpanelHeight = 10;
+          HelpLine = true;
+          HighlightChangedText = true;
+          HighlightChangedWithSign = true;
+          HighlightSyntaxAdd = "DiffAdd";
+          HighlightSyntaxChange = "DiffChange";
+          HighlightSyntaxDel = "DiffDelete";
+          RelativeTimestamp = true;
+          SetFocusWhenToggle = true;
+          ShortIndicators = false;
+          SplitWidth = 40;
+          TreeNodeShape = "*";
+          TreeReturnShape = "\\";
+          TreeSplitShape = "/";
+          TreeVertShape = "|";
+          WindowLayout = 4;
+        };
+      };
+      # neoterm.enable = true;
+      floaterm = {
+        enable = true;
+        keymaps = {
+          toggle = "<leader>tt";
+          new = "<leader>tN";
+          kill = "<leader>tk";
+          next = "<leader>tn";
+          prev = "<leader>tp";
+        };
+        wintype = "split";
+        height = 0.3;
+      };
       copilot-lua = {
         enable = true;
         suggestion = {
@@ -169,10 +363,12 @@
         enable = true;
         mockDevIcons = true;
         modules = {
+          notify = { };
           ai = {
             n_lines = 50;
             search_method = "cover_or_next";
           };
+          tabline = { };
           sessions = { };
           files = { };
           comment = {
@@ -332,6 +528,16 @@
         enable = true;
         servers = {
           ts-ls.enable = true;
+          eslint = {
+            enable = true;
+            autostart = true;
+            settings = {
+              codeActionOnSave = {
+                enable = true;
+                mode = "all";
+              };
+            };
+          };
           gopls.enable = true;
           svelte.enable = true;
           tailwindcss.enable = true;
