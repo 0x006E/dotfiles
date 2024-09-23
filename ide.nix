@@ -12,6 +12,7 @@
     mkcert
     nixfmt-rfc-style
     node2nix
+    goimports-reviser
     nodejs
     nodePackages.svelte-language-server
     nodePackages.typescript-language-server
@@ -44,6 +45,7 @@
 
         ];
       })
+      pkgs.vimPlugins.tailwindcss-colors-nvim
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
@@ -111,7 +113,7 @@
           formatters.lsp,
           formatters.remove_trailing_whitespace,
           formatters.remove_trailing_newlines,
-          formatters.prettierd,
+          -- formatters.prettierd,
         },
 
         -- By default, all shell commands are prefixed with "sh -c" (see PR #3)
@@ -126,22 +128,18 @@
         plugins = true;
       };
       combinePlugins = {
-        enable = false;
-        # standalonePlugins = [
-        #   "nvim-treesitter"
-        #   "copilot-lua"
+        enable = true;
+        # pathsToLink = [
+        #   ""
         # ];
+        standalonePlugins = [
+          "nvim-treesitter"
+          "copilot.lua"
+        ];
       };
     };
     package = pkgs-unstable.neovim-unwrapped;
     autoCmd = [
-      # {
-      #   event = [ "BufWritePre" ];
-      #   pattern = [ "*" ];
-      #   command = "lua vim.lsp.buf.format()";
-      #
-      # }
-
       {
         event = [ "VimEnter" ];
         pattern = [ "*" ];
@@ -149,21 +147,6 @@
           __raw = "MiniMap.open";
         };
       }
-      # {
-      #   event = [ "User" ];
-      #   pattern = [ "MiniStarterOpened" ];
-      #   callback = {
-      #     __raw = ''
-      #       function()
-      #             local rhs = function()
-      #               MiniStarter.eval_current_item()
-      #               MiniMap.open()
-      #             end
-      #             vim.keymap.set('n', '<CR>', rhs, { buffer = true })
-      #           end
-      #     '';
-      #   };
-      # }
     ];
     globals.mapleader = " ";
     colorschemes.cyberdream = {
@@ -188,6 +171,11 @@
       fillchars = "eob: ,fold: ,foldopen:,foldsep: ,foldclose:";
     };
     keymaps = [
+      {
+        key = "<leader>ss";
+        action = "<cmd>Spectre<cr>";
+        mode = [ "n" ];
+      }
       {
         key = "<leader>lg";
         action = "<cmd>LazyGit<cr>";
@@ -357,6 +345,9 @@
         enable = true;
         suggestion = {
           autoTrigger = true;
+          keymap = {
+            accept = "<tab>";
+          };
         };
       };
       mini = {
@@ -369,7 +360,9 @@
             search_method = "cover_or_next";
           };
           tabline = { };
-          sessions = { };
+          sessions = {
+            autoread = true;
+          };
           files = { };
           comment = {
             mappings = {
@@ -433,6 +426,9 @@
           move = { };
           icons = { };
           map = {
+            window = {
+              winblend = 100;
+            };
             integrations = {
               "__unkeyed-1.diagnostic_integration" = {
                 __raw = ''
@@ -527,7 +523,23 @@
       lsp = {
         enable = true;
         servers = {
+          templ.enable = true;
           ts-ls.enable = true;
+          htmx = {
+            enable = true;
+            filetypes = [
+              "html"
+              "templ"
+            ];
+          };
+          html = {
+            enable = true;
+            filetypes = [
+              "html"
+              "templ"
+            ];
+          };
+          cssls.enable = true;
           eslint = {
             enable = true;
             autostart = true;
@@ -540,7 +552,27 @@
           };
           gopls.enable = true;
           svelte.enable = true;
-          tailwindcss.enable = true;
+          tailwindcss = {
+            enable = true;
+            filetypes = [
+              "html"
+              "javascript"
+              "typescript"
+              "react"
+              "templ"
+            ];
+            onAttach.function = ''
+              require('tailwindcss-colors').buf_attach(bufnr)
+                  attach(client, bufnr)
+            '';
+            settings = {
+              tailwindCSS = {
+                includeLanguages = {
+                  templ = "html";
+                };
+              };
+            };
+          };
           pyright.enable = true;
           nixd = {
             enable = true;
@@ -569,6 +601,7 @@
             gd = "definition";
             gi = "implementation";
             gt = "type_definition";
+            gr = "rename";
           };
           diagnostic = {
             "<leader>j" = "goto_next";
