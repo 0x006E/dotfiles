@@ -457,7 +457,13 @@ in
           };
         };
       };
-      airline.enable = true;
+      airline = {
+        enable = true;
+        settings = {
+          powerline_fonts = 1;
+        };
+      };
+      autoclose.enable = true;
       mini = {
         enable = true;
         mockDevIcons = true;
