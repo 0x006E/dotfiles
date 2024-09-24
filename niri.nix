@@ -102,7 +102,7 @@ in
         in
         lib.attrsets.mergeAttrsList [
           {
-            "Mod+T".action = sh "kitty && niri msg action focus-workspace terminal";
+            "Mod+T".action = sh "niri msg action focus-workspace terminal && kitty";
             "Mod+D".action = spawn "walker";
             # "Mod+W".action = sh (builtins.concatStringsSep "; " [
             #   "systemctl --user restart waybar.service"
