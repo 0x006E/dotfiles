@@ -4,6 +4,35 @@
   ...
 }:
 
+let
+  format-on-save = pkgs.vimUtils.buildVimPlugin {
+    name = "format-on-save";
+    src = pkgs.fetchFromGitHub {
+      owner = "elentok";
+      repo = "format-on-save.nvim";
+      rev = "fed870bb08d9889580f5ca335649da2074bd4b6f";
+      hash = "sha256-07RWMrBDVIH3iGgo2RcNDhThSrR/Icijcd//MOnBzpA=";
+    };
+    patches = [
+      (pkgs.fetchpatch {
+        url = "https://github.com/elentok/format-on-save.nvim/pull/24.patch";
+        hash = "sha256-g1SSjxCaoP/AAUBkOY1ZSVI9wuDl5o5Sie8YzZt6zgQ=";
+      })
+
+    ];
+  };
+
+  tailwindcss-colorizer-cmp = pkgs.vimUtils.buildVimPlugin {
+    name = "tailwindcss-colorizer-cmp";
+    src = pkgs.fetchFromGitHub {
+      owner = "roobert";
+      repo = "tailwindcss-colorizer-cmp.nvim";
+      rev = "3d3cd95e4a4135c250faf83dd5ed61b8e5502b86";
+      hash = "sha256-PIkfJzLt001TojAnE/rdRhgVEwSvCvUJm/vNPLSWjpY=";
+    };
+  };
+in
+
 {
 
   home.packages = with pkgs; [
@@ -28,30 +57,21 @@
   programs.nixvim = {
     enable = true;
     vimAlias = true;
-    extraPlugins = [
-      (pkgs.vimUtils.buildVimPlugin {
-        name = "format-on-save";
-        src = pkgs.fetchFromGitHub {
-          owner = "elentok";
-          repo = "format-on-save.nvim";
-          rev = "fed870bb08d9889580f5ca335649da2074bd4b6f";
-          hash = "sha256-07RWMrBDVIH3iGgo2RcNDhThSrR/Icijcd//MOnBzpA=";
-        };
-        patches = [
-          (pkgs.fetchpatch {
-            url = "https://github.com/elentok/format-on-save.nvim/pull/24.patch";
-            hash = "sha256-g1SSjxCaoP/AAUBkOY1ZSVI9wuDl5o5Sie8YzZt6zgQ=";
-          })
-
-        ];
-      })
-      pkgs.vimPlugins.tailwindcss-colors-nvim
+    extraPlugins = with pkgs.vimPlugins; [
+      tailwindcss-colors-nvim
+      tailwindcss-colorizer-cmp
+      format-on-save
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
+      require("tailwindcss-colorizer-cmp").setup({})
       format_on_save.setup({
+
+        experiments = {
+           partial_update = 'diff', -- or 'line-by-line'
+        },
         error_notifier = vim_notify,
         exclude_path_patterns = {
           "/node_modules/",
@@ -135,10 +155,17 @@
         standalonePlugins = [
           "nvim-treesitter"
           "copilot.lua"
+          "smart-splits.nvim"
         ];
       };
     };
     package = pkgs-unstable.neovim-unwrapped;
+
+    autoGroups = {
+      remember_folds = {
+        clear = true;
+      };
+    };
     autoCmd = [
       {
         event = [ "VimEnter" ];
@@ -146,6 +173,18 @@
         callback = {
           __raw = "MiniMap.open";
         };
+      }
+      {
+        event = "BufWinLeave";
+        pattern = "*.*";
+        command = "mkview";
+        group = "remember_folds";
+      }
+      {
+        event = "BufWinEnter";
+        pattern = "*.*";
+        command = "silent! loadview";
+        group = "remember_folds";
       }
     ];
     globals.mapleader = " ";
@@ -168,7 +207,7 @@
       foldcolumn = "auto:9";
       foldlevel = 99;
       foldlevelstart = 99;
-      fillchars = "eob: ,fold: ,foldopen:,foldsep: ,foldclose:";
+      fillchars = "eob: ,fold: ,foldopen:,foldsep:|,foldclose:";
     };
     keymaps = [
       {
@@ -260,9 +299,73 @@
         ];
 
       }
+      # Resizing splits
       {
-        key = "<F2>";
-        action = "<cmd>Neotree toggle<cr>";
+        key = "<A-h>";
+        action.__raw = "require('smart-splits').resize_left";
+        mode = "n";
+      }
+      {
+        key = "<A-j>";
+        action.__raw = "require('smart-splits').resize_down";
+        mode = "n";
+      }
+      {
+        key = "<A-k>";
+        action.__raw = "require('smart-splits').resize_up";
+        mode = "n";
+      }
+      {
+        key = "<A-l>";
+        action.__raw = "require('smart-splits').resize_right";
+        mode = "n";
+      }
+      # Moving between splits
+      {
+        key = "<C-h>";
+        action.__raw = "require('smart-splits').move_cursor_left";
+        mode = "n";
+      }
+      {
+        key = "<C-j>";
+        action.__raw = "require('smart-splits').move_cursor_down";
+        mode = "n";
+      }
+      {
+        key = "<C-k>";
+        action.__raw = "require('smart-splits').move_cursor_up";
+        mode = "n";
+      }
+      {
+        key = "<C-l>";
+        action.__raw = "require('smart-splits').move_cursor_right";
+        mode = "n";
+      }
+      {
+        key = "<C-\\>";
+        action.__raw = "require('smart-splits').move_cursor_previous";
+        mode = "n";
+      }
+      # Swapping buffers between windows
+      {
+        key = "<leader><leader>h";
+        action.__raw = "require('smart-splits').swap_buf_left";
+        mode = "n";
+      }
+      {
+        key = "<leader><leader>j";
+        action.__raw = "require('smart-splits').swap_buf_down";
+        mode = "n";
+      }
+      {
+        key = "<leader><leader>k";
+        action.__raw = "require('smart-splits').swap_buf_up";
+        mode = "n";
+      }
+      {
+        key = "<leader><leader>l";
+        action.__raw = "require('smart-splits').swap_buf_right";
+        mode = "n";
       }
       {
         key = "<space>e";
@@ -289,6 +392,7 @@
     ];
 
     plugins = {
+      # efmls-configs.enable = true;
       leap.enable = true;
       which-key.enable = true;
       sleuth.enable = true;
@@ -328,15 +432,18 @@
           WindowLayout = 4;
         };
       };
+
+      smart-splits.enable = true;
+
       # neoterm.enable = true;
       floaterm = {
         enable = true;
         keymaps = {
-          toggle = "<leader>tt";
-          new = "<leader>tN";
-          kill = "<leader>tk";
-          next = "<leader>tn";
-          prev = "<leader>tp";
+          toggle = ",tt";
+          new = ",tN";
+          kill = ",tk";
+          next = ",tn";
+          prev = ",tp";
         };
         wintype = "split";
         height = 0.3;
@@ -346,7 +453,7 @@
         suggestion = {
           autoTrigger = true;
           keymap = {
-            accept = "<tab>";
+            accept = "<C-Enter>";
           };
         };
       };
@@ -359,6 +466,7 @@
             n_lines = 50;
             search_method = "cover_or_next";
           };
+          animate = { };
           tabline = { };
           sessions = {
             autoread = true;
@@ -427,7 +535,7 @@
           icons = { };
           map = {
             window = {
-              winblend = 100;
+              winblend = 95;
             };
             integrations = {
               "__unkeyed-1.diagnostic_integration" = {
@@ -467,40 +575,43 @@
       };
       nvim-ufo = {
         enable = true;
-        foldVirtTextHandler = ''
-          function(virtText, lnum, endLnum, width, truncate)
-                local newVirtText = {}
-                local totalLines = vim.api.nvim_buf_line_count(0)
-                local foldedLines = endLnum - lnum
-                local suffix = ("  %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
-                local sufWidth = vim.fn.strdisplaywidth(suffix)
-                local targetWidth = width - sufWidth
-                local curWidth = 0
-                for _, chunk in ipairs(virtText) do
-                  local chunkText = chunk[1]
-                  local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                  if targetWidth > curWidth + chunkWidth then
-                    table.insert(newVirtText, chunk)
-                  else
-                    chunkText = truncate(chunkText, targetWidth - curWidth)
-                    local hlGroup = chunk[2]
-                    table.insert(newVirtText, { chunkText, hlGroup })
-                    chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                    -- str width returned from truncate() may less than 2nd argument, need padding
-                    if curWidth + chunkWidth < targetWidth then
-                      suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+        foldVirtTextHandler = {
+          __raw = ''
+            function(virtText, lnum, endLnum, width, truncate)
+                  local newVirtText = {}
+                  local totalLines = vim.api.nvim_buf_line_count(0)
+                  local foldedLines = endLnum - lnum
+                  local suffix = ("  %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
+                  local sufWidth = vim.fn.strdisplaywidth(suffix)
+                  local targetWidth = width - sufWidth
+                  local curWidth = 0
+                  for _, chunk in ipairs(virtText) do
+                    local chunkText = chunk[1]
+                    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                    if targetWidth > curWidth + chunkWidth then
+                      table.insert(newVirtText, chunk)
+                    else
+                      chunkText = truncate(chunkText, targetWidth - curWidth)
+                      local hlGroup = chunk[2]
+                      table.insert(newVirtText, { chunkText, hlGroup })
+                      chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                      -- str width returned from truncate() may less than 2nd argument, need padding
+                      if curWidth + chunkWidth < targetWidth then
+                        suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+                      end
+                      break
                     end
-                    break
+                    curWidth = curWidth + chunkWidth
                   end
-                  curWidth = curWidth + chunkWidth
+                  local rAlignAppndx = math.max(math.min(vim.api.nvim_win_get_width(0), width - 1) - curWidth - sufWidth, 0)
+                  suffix = (" "):rep(rAlignAppndx) .. suffix
+                  table.insert(newVirtText, { suffix, "MoreMsg" })
+                  return newVirtText
                 end
-                local rAlignAppndx = math.max(math.min(vim.api.nvim_win_get_width(0), width - 1) - curWidth - sufWidth, 0)
-                suffix = (" "):rep(rAlignAppndx) .. suffix
-                table.insert(newVirtText, { suffix, "MoreMsg" })
-                return newVirtText
-              end
-        '';
+          '';
+        };
       };
+      precognition.enable = true;
       treesitter = {
         enable = true;
         settings = {
@@ -522,6 +633,13 @@
 
       lsp = {
         enable = true;
+        capabilities = ''
+          capabilities.textDocument.foldingRange = {
+           dynamicRegistration = false,
+           lineFoldingOnly = true
+          }
+        '';
+        inlayHints = true;
         servers = {
           templ.enable = true;
           ts-ls.enable = true;
@@ -563,7 +681,6 @@
             ];
             onAttach.function = ''
               require('tailwindcss-colors').buf_attach(bufnr)
-                  attach(client, bufnr)
             '';
             settings = {
               tailwindCSS = {
@@ -587,9 +704,6 @@
                 nixos = {
                   expr = "(builtins.getFlake (\"git+file://\" + toString ./.)).nixosConfigurations.ntsv.options";
                 };
-                home_manager = {
-                  expr = "(builtins.getFlake (\"git+file://\" + toString ./.)).homeConfigurations.\"nithin@ntsv\".options";
-                };
               };
             };
           };
@@ -602,6 +716,7 @@
             gi = "implementation";
             gt = "type_definition";
             gr = "rename";
+            gc = "code_action";
           };
           diagnostic = {
             "<leader>j" = "goto_next";
@@ -623,6 +738,13 @@
             { name = "path"; }
             { name = "buffer"; }
           ];
+          formatting = {
+            format = ''
+              function (entry, vim_item) 
+                return require("tailwindcss-colorizer-cmp").formatter(entry, vim_item)
+              end
+            '';
+          };
           mapping = {
             "<C-Space>" = "cmp.mapping.complete()";
             "<C-e>" = "cmp.mapping.close()";
