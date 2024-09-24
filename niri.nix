@@ -67,7 +67,9 @@ in
       input.touch.map-to-output = "eDP-1";
 
       prefer-no-csd = true;
-
+      workspaces = {
+        "terminal" = { };
+      };
       layout = {
         gaps = 10;
         struts.left = 0;
@@ -97,11 +99,10 @@ in
         with config.lib.niri.actions;
         let
           sh = spawn "sh" "-c";
-          screenshot = sh ''((! pidof slurp) || sudo kill -9 $(pidof slurp)) && (grim -g "$(slurp)" - | wl-copy)'';
         in
         lib.attrsets.mergeAttrsList [
           {
-            "Mod+T".action = spawn "wezterm";
+            "Mod+T".action = sh "kitty && niri msg action focus-workspace terminal";
             "Mod+D".action = spawn "walker";
             # "Mod+W".action = sh (builtins.concatStringsSep "; " [
             #   "systemctl --user restart waybar.service"
@@ -168,6 +169,7 @@ in
             prefixes."Mod+Ctrl" = "move-window-to";
           })
           {
+            "Mod+Shift+T".action = focus-workspace "terminal";
             "Mod+Comma".action = consume-window-into-column;
             "Mod+Period".action = expel-window-from-column;
 
@@ -255,9 +257,10 @@ in
           opacity = 0.95;
         }
         {
-          # the terminal is already transparent from stylix
-          matches = [ { app-id = "^foot$"; } ];
-          opacity = 1.0;
+          matches = [ { app-id = "kitty"; } ];
+          opacity = 0.8;
+          open-maximized = true;
+          open-on-workspace = "terminal";
         }
         {
           matches = [
@@ -271,87 +274,21 @@ in
       ];
     };
   };
-  programs.wezterm = {
+  programs.kitty = {
     enable = true;
-    enableBashIntegration = true;
-    extraConfig = ''
-      local mux = wezterm.mux
-      wezterm.on("gui-startup", function()
-          local tab, pane, window = mux.spawn_window{}
-          window:gui_window():maximize()
-      end)
-      return {
-             font = wezterm.font_with_fallback {"Commit Mono", "Font Awesome 6 Free"},
-             colors = {
-               foreground = "#ffffff",
-               background = "#16181a",
-               cursor_bg = "#ffffff",
-               cursor_fg = "#16181a",
-               cursor_border = "#ffffff",
-               selection_fg = "#ffffff",
-               selection_bg = "#3c4048",
-
-               scrollbar_thumb = "#16181a",
-               split = "#16181a",
-
-               ansi = { "#16181a", "#ff6e5e", "#5eff6c", "#f1ff5e", "#5ea1ff", "#bd5eff", "#5ef1ff", "#ffffff" },
-               brights = { "#3c4048", "#ff6e5e", "#5eff6c", "#f1ff5e", "#5ea1ff", "#bd5eff", "#5ef1ff", "#ffffff" },
-               indexed = { [16] = "#ffbd5e", [17] = "#ff6e5e" },
-             },
-             window_background_opacity = 0.95,
-      }
-    '';
-    package = inputs.wezterm-flake.packages.${pkgs.system}.default;
-  };
-  programs.foot = {
-    enable = true;
-    settings = {
-      environment = {
-        VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
-        QT_QPA_PLATFORM = "wayland";
-        DISPLAY = ":0";
-        EDITOR = "nvim";
-        WLR_NO_HARDWARE_CURSORS = "1";
-        NIXOS_OZONE_WL = "1";
-      };
-      csd.preferred = "none";
-      main =
-        let
-          withSize = "size=${toString size}";
-          size = "11";
-          font = "Iosevka Term";
-        in
-        {
-          term = "xterm-256color";
-          font = "${font}:${withSize}";
-          font-bold = "${font}:style=Bold:${withSize}";
-          font-italic = "${font}:style=Italic:${withSize}";
-          font-bold-italic = "${font}:style=BoldItalic:${withSize}";
-          box-drawings-uses-font-glyphs = true;
-          initial-window-size-pixels = "800x600";
-        };
-
-      scrollback = {
-        lines = 10000;
-      };
-
-      url = {
-        launch = "xdg-open \${url}";
-        protocols = "http, https, ftp, ftps, file";
-      };
-
-      colors = {
-        alpha = 0.75;
-        foreground = "ADEFD1";
-        background = "00203F";
-      };
+    shellIntegration.enableBashIntegration = true;
+    theme = "Nightfox";
+    font.name = "Commit Mono";
+    environment = {
+      VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
+      QT_QPA_PLATFORM = "wayland";
+      DISPLAY = ":0";
+      EDITOR = "nvim";
+      WLR_NO_HARDWARE_CURSORS = "1";
+      NIXOS_OZONE_WL = "1";
     };
   };
 
-  programs.fuzzel = {
-    enable = true;
-    settings.main.terminal = "foot";
-  };
   services.swaync = {
     enable = true;
   };
