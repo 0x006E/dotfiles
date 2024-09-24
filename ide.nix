@@ -188,12 +188,13 @@ in
       }
     ];
     globals.mapleader = " ";
-    colorschemes.cyberdream = {
+    colorschemes.ayu = {
       enable = true;
-      settings = {
-        italic_comments = true;
-        transparent = true;
-      };
+      # flavor = "carbonfox";
+      # settings = {
+      # italic_comments = true;
+      # transparent = true;
+      # };
     };
     opts = {
       number = true;
@@ -398,7 +399,6 @@ in
       sleuth.enable = true;
       nix.enable = true;
       project-nvim.enable = true;
-      lualine.enable = true;
       nvim-colorizer.enable = true;
       lazygit.enable = true;
       direnv.enable = true;
@@ -457,6 +457,7 @@ in
           };
         };
       };
+      airline.enable = true;
       mini = {
         enable = true;
         mockDevIcons = true;
