@@ -31,6 +31,7 @@ let
       hash = "sha256-PIkfJzLt001TojAnE/rdRhgVEwSvCvUJm/vNPLSWjpY=";
     };
   };
+
 in
 
 {
@@ -395,6 +396,7 @@ in
     plugins = {
       # efmls-configs.enable = true;
       leap.enable = true;
+      friendly-snippets.enable = true;
       which-key.enable = true;
       sleuth.enable = true;
       nix.enable = true;
@@ -631,6 +633,9 @@ in
 
       telescope = {
         enable = true;
+        extensions = {
+          ui-select.enable = true;
+        };
         keymaps = {
           "<leader>ff" = "find_files";
           "<leader>fg" = "live_grep";
@@ -649,7 +654,28 @@ in
         inlayHints = true;
         servers = {
           templ.enable = true;
-          ts-ls.enable = true;
+          ts-ls = {
+            enable = true;
+            extraOptions = {
+              commands = {
+                OrganizeImports = {
+                  __raw = ''
+                    {
+                      function()
+                        local params = {
+                          command = "_typescript.organizeImports",
+                          arguments = {vim.api.nvim_buf_get_name(0)},
+                          title = ""
+                        }
+                        vim.lsp.buf.execute_command(params)
+                      end,
+                      description = "Organize Imports"
+                    }
+                  '';
+                };
+              };
+            };
+          };
           htmx = {
             enable = true;
             filetypes = [
@@ -723,7 +749,7 @@ in
             gi = "implementation";
             gt = "type_definition";
             gr = "rename";
-            gc = "code_action";
+            "<C-Space>" = "code_action";
           };
           diagnostic = {
             "<leader>j" = "goto_next";
