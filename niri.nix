@@ -191,10 +191,29 @@ in
         ];
 
       # examples:
-
       spawn-at-startup = [
+        {
+          command =
+            let
+              units = [
+                "niri"
+                "graphical-session.target"
+                "xdg-desktop-portal"
+                "xdg-desktop-portal-gnome"
+                "waybar"
+              ];
+              commands = builtins.concatStringsSep ";" (map (unit: "systemctl --user status ${unit}") units);
+            in
+            [
+              "kitty"
+              "--"
+              "sh"
+              "-c"
+              "env SYSTEMD_COLORS=1 watch -n 1 -d --color '${commands}'"
+            ];
+        }
+
         { command = [ "xwayland-satellite" ]; }
-        { command = [ "systemctl --user reset-failed waybar.service" ]; }
         { command = [ "swaybg" ]; }
         { command = [ "variety" ]; }
       ];
@@ -277,7 +296,7 @@ in
   programs.kitty = {
     enable = true;
     shellIntegration.enableBashIntegration = true;
-    theme = "Nightfox";
+    themeFile = "Nightfox";
     font.name = "Commit Mono";
     environment = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";

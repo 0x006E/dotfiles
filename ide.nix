@@ -391,9 +391,62 @@ in
         action = ''"+y'';
         mode = [ "v" ];
       }
+
+      # trouble
+      {
+        key = "<leader>xx";
+        action = "<cmd>Trouble diagnostics toggle<cr>";
+        options = {
+          silent = true;
+          desc = "Diagnostics (Trouble)";
+        };
+      }
+      {
+        key = "<leader>xX";
+        action = "<cmd>Trouble diagnostics toggle filter.buf=0<cr>";
+        options = {
+          silent = true;
+          desc = "Buffer Diagnostics (Trouble)";
+        };
+      }
+      {
+        key = "<leader>cs";
+        action = "<cmd>Trouble symbols toggle focus=false<cr>";
+        options = {
+          silent = true;
+          desc = "Symbols (Trouble)";
+        };
+      }
+      {
+        key = "<leader>cl";
+        action = "<cmd>Trouble lsp toggle focus=false win.position=right<cr>";
+        options = {
+          silent = true;
+          desc = "LSP Definitions / references / ... (Trouble)";
+        };
+      }
+      {
+        key = "<leader>xL";
+        action = "<cmd>Trouble loclist toggle<cr>";
+        options = {
+          silent = true;
+          desc = "Location List (Trouble)";
+        };
+      }
+      {
+        key = "<leader>xQ";
+        action = "<cmd>Trouble qflist toggle<cr>";
+        options = {
+          silent = true;
+          desc = "Quickfix List (Trouble)";
+        };
+      }
     ];
 
     plugins = {
+      trouble = {
+        enable = true;
+      };
       # efmls-configs.enable = true;
       leap.enable = true;
       friendly-snippets.enable = true;
