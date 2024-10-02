@@ -32,6 +32,15 @@ let
     };
   };
 
+  tsc-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "tsc-nvim";
+    src = pkgs.fetchFromGitHub {
+      owner = "dmmulroy";
+      repo = "tsc.nvim";
+      rev = "82c37ebfe45d30763db6f45b54e18f1e485bb52c";
+      hash = "sha256-mpJWipLdqxoMe0ixMnhgZguKQK+1iCqH5/v2NQ4vypE=";
+    };
+  };
 in
 
 {
@@ -62,12 +71,19 @@ in
       tailwindcss-colors-nvim
       tailwindcss-colorizer-cmp
       format-on-save
+      tsc-nvim
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
+      require("tsc").setup({
+        auto_open_qflist = true,
+        use_trouble_qflist = true,
+        use_diagnostics = true,
+        auto_start_watch_mode = true,
+      })
       format_on_save.setup({
 
         experiments = {
