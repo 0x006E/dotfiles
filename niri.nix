@@ -110,10 +110,16 @@ in
             # ]);
 
             "Mod+L".action = spawn "blurred-locker";
-            "Print".action = sh "flameshot full --clipboard";
-            "Mod+Print".action = sh "flameshot gui";
-            "Shift+Super+S".action = sh "flameshot gui";
+            # "Print".action = sh "flameshot full --clipboard";
+            # "Mod+Print".action = sh "flameshot gui";
+            # "Shift+Super+S".action = sh "flameshot gui";
             # "Mod+Shift+Print".action = sh "flames /hot full";
+
+            "Print".action = screenshot;
+            "Mod+Print".action = screenshot;
+            "Shift+Super+S".action = screenshot;
+
+            # GRIM not working correctly
 
             "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
             "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
