@@ -28,6 +28,7 @@
       url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    blink-cmp.url = "github:Saghen/blink.cmp";
     zen-browser.url = "github:MarceColl/zen-browser-flake";
     wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
     wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";

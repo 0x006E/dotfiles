@@ -110,9 +110,14 @@
     enable = true;
     extensions = with pkgs.vscode-marketplace; [
       vadimcn.vscode-lldb
+      ms-dotnettools.csdevkit
       esbenp.prettier-vscode
       bradlc.vscode-tailwindcss
       github.codespaces
+      ms-vscode.mono-debug
+      ms-dotnettools.csharp
+      ms-vscode-remote.remote-containers
+      ms-dotnettools.vscode-dotnet-runtime
       # Languages
       rust-lang.rust-analyzer
       tamasfe.even-better-toml
@@ -247,7 +252,19 @@
     };
   };
 
-  programs.direnv.enable = true;
+  programs.direnv = {
+    enable = true;
+    package = pkgs.direnv.overrideAttrs (oldAttrs: {
+      patches = oldAttrs.patches or [ ] ++ [
+        (pkgs.fetchpatch {
+          url = "https://github.com/direnv/direnv/pull/1048.patch";
+          hash = "sha256-BG+ekOPVBWsosMLxTCJPOQWX1eOrWiIfDswd1Xk/4GU=";
+        })
+      ];
+    });
+    nix-direnv.enable = true;
+    enableBashIntegration = true;
+  };
 
   programs.bash = {
     enable = true;

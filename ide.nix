@@ -1,6 +1,8 @@
 {
   pkgs,
   pkgs-unstable,
+  system,
+  inputs,
   ...
 }:
 
@@ -72,12 +74,18 @@ in
       tailwindcss-colorizer-cmp
       format-on-save
       tsc-nvim
+      inputs.blink-cmp.packages."x86_64-linux".default
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
+      require('blink.cmp').setup({
+       highlight = {
+         use_nvim_cmp_as_default = true,
+       }
+      });
       require("tsc").setup({
         auto_open_qflist = true,
         use_trouble_qflist = true,
@@ -828,7 +836,7 @@ in
       };
 
       cmp = {
-        enable = true;
+        enable = false;
         autoEnableSources = true;
         settings = {
           completion = {
