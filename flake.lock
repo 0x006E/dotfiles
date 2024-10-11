@@ -1459,6 +1459,22 @@
         "type": "indirect"
       }
     },
+    "nixpkgs-wizardlink": {
+      "locked": {
+        "lastModified": 1718991552,
+        "narHash": "sha256-8/cn8NkBbIxQ4I+XvgCSqICd2vHzjTl6Fi6KzSiG27Y=",
+        "owner": "wizardlink",
+        "repo": "nixpkgs",
+        "rev": "23c18c349b5a1ffc3f791f9ec4b27dfb77e3f235",
+        "type": "github"
+      },
+      "original": {
+        "owner": "wizardlink",
+        "ref": "vtsls",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1728492678,
@@ -1823,6 +1839,7 @@
         "nixpkgs": "nixpkgs_10",
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "nixpkgs-wizardlink": "nixpkgs-wizardlink",
         "nixvim": "nixvim",
         "walker": "walker",
         "wezterm-flake": "wezterm-flake",

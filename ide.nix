@@ -66,7 +66,6 @@ in
     (sqlite.override { interactive = true; })
     xh
     ripgrep
-    vtsls
   ];
   programs.nixvim = {
     enable = true;
@@ -680,40 +679,42 @@ in
       };
       nvim-ufo = {
         enable = true;
-        foldVirtTextHandler = {
-          __raw = ''
-            function(virtText, lnum, endLnum, width, truncate)
-                  local newVirtText = {}
-                  local totalLines = vim.api.nvim_buf_line_count(0)
-                  local foldedLines = endLnum - lnum
-                  local suffix = ("  %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
-                  local sufWidth = vim.fn.strdisplaywidth(suffix)
-                  local targetWidth = width - sufWidth
-                  local curWidth = 0
-                  for _, chunk in ipairs(virtText) do
-                    local chunkText = chunk[1]
-                    local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                    if targetWidth > curWidth + chunkWidth then
-                      table.insert(newVirtText, chunk)
-                    else
-                      chunkText = truncate(chunkText, targetWidth - curWidth)
-                      local hlGroup = chunk[2]
-                      table.insert(newVirtText, { chunkText, hlGroup })
-                      chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                      -- str width returned from truncate() may less than 2nd argument, need padding
-                      if curWidth + chunkWidth < targetWidth then
-                        suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+        settings = {
+          fold_virt_text_handler = {
+            __raw = ''
+              function(virtText, lnum, endLnum, width, truncate)
+                    local newVirtText = {}
+                    local totalLines = vim.api.nvim_buf_line_count(0)
+                    local foldedLines = endLnum - lnum
+                    local suffix = ("  %d %d%%"):format(foldedLines, foldedLines / totalLines * 100)
+                    local sufWidth = vim.fn.strdisplaywidth(suffix)
+                    local targetWidth = width - sufWidth
+                    local curWidth = 0
+                    for _, chunk in ipairs(virtText) do
+                      local chunkText = chunk[1]
+                      local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                      if targetWidth > curWidth + chunkWidth then
+                        table.insert(newVirtText, chunk)
+                      else
+                        chunkText = truncate(chunkText, targetWidth - curWidth)
+                        local hlGroup = chunk[2]
+                        table.insert(newVirtText, { chunkText, hlGroup })
+                        chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                        -- str width returned from truncate() may less than 2nd argument, need padding
+                        if curWidth + chunkWidth < targetWidth then
+                          suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
+                        end
+                        break
                       end
-                      break
+                      curWidth = curWidth + chunkWidth
                     end
-                    curWidth = curWidth + chunkWidth
+                    local rAlignAppndx = math.max(math.min(vim.api.nvim_win_get_width(0), width - 1) - curWidth - sufWidth, 0)
+                    suffix = (" "):rep(rAlignAppndx) .. suffix
+                    table.insert(newVirtText, { suffix, "MoreMsg" })
+                    return newVirtText
                   end
-                  local rAlignAppndx = math.max(math.min(vim.api.nvim_win_get_width(0), width - 1) - curWidth - sufWidth, 0)
-                  suffix = (" "):rep(rAlignAppndx) .. suffix
-                  table.insert(newVirtText, { suffix, "MoreMsg" })
-                  return newVirtText
-                end
-          '';
+            '';
+          };
         };
       };
       precognition.enable = true;
@@ -753,6 +754,7 @@ in
           templ.enable = true;
           vtsls = {
             enable = true;
+            package = pkgs.vtsls;
             extraOptions = {
               commands = {
                 OrganizeImports = {
