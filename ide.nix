@@ -34,15 +34,16 @@ let
     };
   };
 
-  tsc-nvim = pkgs.vimUtils.buildVimPlugin {
-    name = "tsc-nvim";
+  workspace-diagnostics = pkgs.vimUtils.buildVimPlugin {
+    name = "workspace-diagnostics.nvim";
     src = pkgs.fetchFromGitHub {
-      owner = "dmmulroy";
-      repo = "tsc.nvim";
-      rev = "82c37ebfe45d30763db6f45b54e18f1e485bb52c";
-      hash = "sha256-mpJWipLdqxoMe0ixMnhgZguKQK+1iCqH5/v2NQ4vypE=";
+      owner = "artemave";
+      repo = "workspace-diagnostics.nvim";
+      rev = "573ff93c47898967efdfbc6587a1a39e3c2d365e";
+      hash = "sha256-lBj4KUPmmhtpffYky/HpaTwY++d/Q9socp/Ys+4VeX0=";
     };
   };
+
 in
 
 {
@@ -65,6 +66,7 @@ in
     (sqlite.override { interactive = true; })
     xh
     ripgrep
+    vtsls
   ];
   programs.nixvim = {
     enable = true;
@@ -73,8 +75,9 @@ in
       tailwindcss-colors-nvim
       tailwindcss-colorizer-cmp
       format-on-save
-      tsc-nvim
+      # tsc-nvim
       inputs.blink-cmp.packages."x86_64-linux".default
+      workspace-diagnostics
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
@@ -86,12 +89,12 @@ in
          use_nvim_cmp_as_default = true,
        }
       });
-      require("tsc").setup({
-        auto_open_qflist = true,
-        use_trouble_qflist = true,
-        use_diagnostics = true,
-        auto_start_watch_mode = true,
-      })
+      -- require("tsc").setup({
+      --   -- auto_open_qflist = true,
+      --   -- use_trouble_qflist = true,
+      --   use_diagnostics = true,
+      --   auto_start_watch_mode = true,
+      -- })
       format_on_save.setup({
 
         experiments = {
@@ -295,7 +298,15 @@ in
       {
         key = "<leader>o";
         action = {
-          __raw = "function () if not MiniFiles.close() then MiniFiles.open() end end";
+          __raw = ''
+            function()
+              local MiniFiles = require("mini.files")
+              local _ = MiniFiles.close() or MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+              vim.defer_fn(function()
+                MiniFiles.reveal_cwd()
+              end, 30)
+            end
+          '';
         };
         mode = [
           "n"
@@ -470,9 +481,17 @@ in
     plugins = {
       trouble = {
         enable = true;
+        settings = {
+          preview = {
+            scratch = false;
+          };
+          open_no_results = false;
+          auto_preview = false;
+        };
       };
       # efmls-configs.enable = true;
       leap.enable = true;
+      ts-comments.enable = true;
       friendly-snippets.enable = true;
       which-key.enable = true;
       sleuth.enable = true;
@@ -729,9 +748,10 @@ in
           }
         '';
         inlayHints = true;
+        onAttach = "require('workspace-diagnostics').populate_workspace_diagnostics(client, bufnr)";
         servers = {
           templ.enable = true;
-          ts-ls = {
+          vtsls = {
             enable = true;
             extraOptions = {
               commands = {
@@ -753,6 +773,7 @@ in
               };
             };
           };
+
           htmx = {
             enable = true;
             filetypes = [

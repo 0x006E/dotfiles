@@ -5,6 +5,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-wizardlink.url = "github:wizardlink/nixpkgs/vtsls";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -40,6 +41,7 @@
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-unstable,
+      nixpkgs-wizardlink,
       home-manager,
       chaotic,
       lanzaboote,
@@ -57,10 +59,17 @@
         inherit system;
         config.allowUnfree = true;
       };
+      overlay = final: prev: {
+        # Inherit the changes into the overlay
+        inherit (nixpkgs-wizardlink.legacyPackages.${prev.system})
+          vtsls
+          ;
+      };
     in
     {
       nixosConfigurations = {
         ntsv = nixpkgs.lib.nixosSystem rec {
+
           system = "x86_64-linux";
           specialArgs = {
             inherit inputs;
@@ -74,6 +83,7 @@
               nixpkgs.overlays = [
                 (self: super: { mpv = super.mpv.override { scripts = [ self.mpvScripts.mpris ]; }; })
                 inputs.nix-vscode-extensions.overlays.default # Also have a look at https://github.com/nix-community/nix-vscode-extensions/issues/29
+                overlay
               ];
             }
             ./configuration.nix
