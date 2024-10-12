@@ -1,7 +1,6 @@
 {
   pkgs,
   pkgs-unstable,
-  system,
   inputs,
   ...
 }:
@@ -44,6 +43,14 @@ let
     };
   };
 
+  magazine = pkgs.vimPlugins.nvim-cmp.overrideAttrs (old: {
+    src = pkgs.fetchFromGitHub {
+      owner = "iguanacucumber";
+      repo = "magazine.nvim";
+      rev = "4aec249cdcef9b269e962bf73ef976181ee7fdd9";
+      sha256 = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
+    };
+  });
 in
 
 {
@@ -68,14 +75,13 @@ in
     ripgrep
   ];
   programs.nixvim = {
+
     enable = true;
     vimAlias = true;
     extraPlugins = with pkgs.vimPlugins; [
       tailwindcss-colors-nvim
       tailwindcss-colorizer-cmp
       format-on-save
-      # tsc-nvim
-      inputs.blink-cmp.packages."x86_64-linux".default
       workspace-diagnostics
     ];
     extraConfigLua = ''
@@ -83,17 +89,6 @@ in
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
-      require('blink.cmp').setup({
-       highlight = {
-         use_nvim_cmp_as_default = true,
-       }
-      });
-      -- require("tsc").setup({
-      --   -- auto_open_qflist = true,
-      --   -- use_trouble_qflist = true,
-      --   use_diagnostics = true,
-      --   auto_start_watch_mode = true,
-      -- })
       format_on_save.setup({
 
         experiments = {
@@ -217,11 +212,6 @@ in
     globals.mapleader = " ";
     colorschemes.ayu = {
       enable = true;
-      # flavor = "carbonfox";
-      # settings = {
-      # italic_comments = true;
-      # transparent = true;
-      # };
     };
     opts = {
       number = true;
@@ -274,7 +264,7 @@ in
       }
       {
         key = "<leader>d";
-        action = ":bdelete<cr>";
+        action = ":Bdelete<cr>";
         mode = [
           "n"
           "v"
@@ -478,13 +468,15 @@ in
     ];
 
     plugins = {
+      bufdelete.enable = true;
+      noice.enable = true;
       trouble = {
         enable = true;
         settings = {
           preview = {
             scratch = false;
           };
-          open_no_results = false;
+          open_no_results = true;
           auto_preview = false;
         };
       };
@@ -859,7 +851,8 @@ in
       };
 
       cmp = {
-        enable = false;
+        enable = true;
+        package = magazine;
         autoEnableSources = true;
         settings = {
           completion = {
