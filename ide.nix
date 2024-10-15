@@ -271,6 +271,11 @@ in
         ];
       }
       {
+        key = ",,";
+        action = "<C-\\><C-n>";
+        mode = [ "t" ];
+      }
+      {
         key = "jj";
         action = "<esc>";
         mode = [ "i" ];
@@ -470,6 +475,8 @@ in
     plugins = {
       bufdelete.enable = true;
       noice.enable = true;
+      hardtime.enable = true;
+      notify.enable = true;
       trouble = {
         enable = true;
         settings = {
@@ -830,6 +837,10 @@ in
                   expr = "(builtins.getFlake (\"git+file://\" + toString ./.)).nixosConfigurations.ntsv.options";
                 };
               };
+
+            };
+            extraOptions = {
+              offset_encoding = "utf-8";
             };
           };
         };

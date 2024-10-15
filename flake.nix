@@ -5,7 +5,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgs-wizardlink.url = "github:wizardlink/nixpkgs/vtsls";
+    nixpkgs-kuglimon.url = "github:kuglimon/nixpkgs/vtsls";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +46,7 @@
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-unstable,
-      nixpkgs-wizardlink,
+      nixpkgs-kuglimon,
       home-manager,
       chaotic,
       lanzaboote,
@@ -66,7 +66,7 @@
       };
       overlay = final: prev: {
         # Inherit the changes into the overlay
-        inherit (nixpkgs-wizardlink.legacyPackages.${prev.system})
+        inherit (nixpkgs-kuglimon.legacyPackages.${prev.system})
           vtsls
           ;
       };
