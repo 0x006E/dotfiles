@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  pkgs-stable,
   pkgs-unstable,
   ...
 }:
@@ -170,7 +171,7 @@
     blueman
     keybase-gui
     kbfs
-    bitwarden
+    pkgs-stable.bitwarden
     pinentry-qt
     distrobox
     xorg.xhost
