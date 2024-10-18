@@ -115,6 +115,8 @@
       bradlc.vscode-tailwindcss
       github.codespaces
       ms-vscode.mono-debug
+      ms-python.python
+      ms-python.debugpy
       ms-dotnettools.csharp
       ms-vscode-remote.remote-containers
       ms-dotnettools.vscode-dotnet-runtime
@@ -157,6 +159,7 @@
   };
 
   home.packages = with pkgs; [
+    vimgolf
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
