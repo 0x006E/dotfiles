@@ -48,9 +48,18 @@ let
       owner = "iguanacucumber";
       repo = "magazine.nvim";
       rev = "4aec249cdcef9b269e962bf73ef976181ee7fdd9";
-      sha256 = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
+      hash = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
     };
   });
+  tiny-inline-diagnostic = pkgs.vimUtils.buildVimPlugin {
+    name = "tiny-inline-diagnostic";
+    src = pkgs.fetchFromGitHub {
+      owner = "rachartier";
+      repo = "tiny-inline-diagnostic.nvim";
+      rev = "a4f8b29eb318b507a5e5c11e6d69bea4f5bc2ab2";
+      hash = "sha256-S+O5hI0hF3drTwTwIlQ3aPl9lTBErt53lgUFlQGSCA8=";
+    };
+  };
 in
 
 {
@@ -77,10 +86,11 @@ in
   programs.nixvim = {
 
     enable = true;
-    vimAlias = true;
+    vimAlias = false;
     extraPlugins = with pkgs.vimPlugins; [
       tailwindcss-colors-nvim
       tailwindcss-colorizer-cmp
+      tiny-inline-diagnostic
       format-on-save
       workspace-diagnostics
     ];
@@ -89,6 +99,7 @@ in
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
+      require('tiny-inline-diagnostic').setup()
       format_on_save.setup({
 
         experiments = {
