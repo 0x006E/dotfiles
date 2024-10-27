@@ -68,6 +68,8 @@ in
   '';
   # options iwlwifi 11n_disable=8 power_save="Y" power_level=5
   # options acer-wmi-battery enable_health_mode=1
+  services.tailscale.enable = true;
+  services.resolved.enable = true;
   services.ananicy = {
     enable = true;
     package = pkgs.ananicy-cpp;
@@ -92,7 +94,9 @@ in
   # Pick only one oOh well, i'll close this for now then!f the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
-
+  networking.nameservers = [
+    "100.100.100.100"
+  ];
   # Set your time zone.
   time.timeZone = "Asia/Kolkata";
   # Configure network proxy if necessary

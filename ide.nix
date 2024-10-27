@@ -67,6 +67,8 @@ in
   home.packages = with pkgs; [
     gcc
     hugo
+    eslint_d
+    eslint
     mkcert
     nixfmt-rfc-style
     node2nix
