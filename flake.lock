@@ -925,6 +925,22 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/fb192fec7cc7a4c26d51779e9bab07ce6fa5597a.tar.gz"
       }
     },
+    "nixpkgs-matthewpi": {
+      "locked": {
+        "lastModified": 1730058145,
+        "narHash": "sha256-msuIkiOd3D2bz/4zzCIKsoVDMp822HyMjE7s46nMX2Q=",
+        "owner": "matthewpi",
+        "repo": "nixpkgs",
+        "rev": "f7aceec47e062f753d0c53ca245da58576997354",
+        "type": "github"
+      },
+      "original": {
+        "owner": "matthewpi",
+        "ref": "zen-browser",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1710695816,
@@ -1100,22 +1116,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_9": {
-      "locked": {
-        "lastModified": 1727348695,
-        "narHash": "sha256-J+PeFKSDV+pHL7ukkfpVzCOO7mBSrrpJ3svwBFABbhI=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "1925c603f17fc89f4c8f6bf6f631a802ad85d784",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixvim": {
       "inputs": {
         "devshell": "devshell",
@@ -1209,12 +1209,12 @@
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-kuglimon": "nixpkgs-kuglimon",
+        "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
         "walker": "walker",
-        "wezterm-flake": "wezterm-flake",
-        "zen-browser": "zen-browser"
+        "wezterm-flake": "wezterm-flake"
       }
     },
     "rust-analyzer-src": {
@@ -1505,24 +1505,6 @@
       "original": {
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
-        "type": "github"
-      }
-    },
-    "zen-browser": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_9"
-      },
-      "locked": {
-        "lastModified": 1727721329,
-        "narHash": "sha256-QYlWZwUSwrM7BuO+dXclZIwoPvBIuJr6GpFKv9XKFPI=",
-        "owner": "MarceColl",
-        "repo": "zen-browser-flake",
-        "rev": "e6ab73f405e9a2896cce5956c549a9cc359e5fcc",
-        "type": "github"
-      },
-      "original": {
-        "owner": "MarceColl",
-        "repo": "zen-browser-flake",
         "type": "github"
       }
     },

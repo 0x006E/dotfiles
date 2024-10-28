@@ -6,6 +6,7 @@
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-kuglimon.url = "github:kuglimon/nixpkgs/vtsls";
+    nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -35,7 +36,6 @@
       inputs.lix.follows = "lix";
     };
     blink-cmp.url = "github:Saghen/blink.cmp";
-    zen-browser.url = "github:MarceColl/zen-browser-flake";
     wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
     wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
@@ -47,6 +47,7 @@
       nixpkgs-stable,
       nixpkgs-unstable,
       nixpkgs-kuglimon,
+      nixpkgs-matthewpi,
       home-manager,
       chaotic,
       lanzaboote,
@@ -65,6 +66,9 @@
         config.allowUnfree = true;
       };
       overlay = final: prev: {
+        inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
+          zen-browser
+          ;
         # Inherit the changes into the overlay
         inherit (nixpkgs-kuglimon.legacyPackages.${prev.system})
           vtsls
