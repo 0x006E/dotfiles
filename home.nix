@@ -94,17 +94,6 @@
     enableBashIntegration = true;
   };
   programs.nix-index-database.comma.enable = true;
-  programs.firefox.nativeMessagingHosts.packages = with pkgs; [
-    gnomeExtensions.gsconnect
-    ff2mpv-rust
-  ];
-  services.gpg-agent = {
-    enable = true;
-    enableBashIntegration = true;
-    enableSshSupport = true;
-    pinentryPackage = pkgs.pinentry-qt;
-  };
-  programs.gpg.enable = true;
 
   services.swaync.enable = true;
   programs.vscode = {
@@ -191,7 +180,6 @@
     onedriver
     mpv
     ff2mpv-rust
-    firefox
     hoppscotch
     stirling-pdf
     stremio

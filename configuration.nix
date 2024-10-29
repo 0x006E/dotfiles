@@ -177,9 +177,16 @@ in
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
-
+  networking.firewall.enable = false;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+  programs.gnupg.agent = {
+    enable = true;
+    enableExtraSocket = true;
+    enableSSHSupport = true;
+    enableBrowserSocket = true;
+    pinentryPackage = pkgs.pinentry-qt;
+  };
   environment.systemPackages = with pkgs; [
     commit-mono
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
