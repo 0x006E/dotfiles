@@ -6,13 +6,13 @@
 }:
 stdenv.mkDerivation rec {
   name = "acer-wmi-battery-${version}-${kernel.version}";
-  version = "0.1.0";
+  version = "unstable-2023-06-12";
 
   src = fetchFromGitHub {
     owner = "frederik-h";
     repo = "acer-wmi-battery";
-    rev = "v${version}";
-    sha256 = "2uVIMvUxIXWz0nK61ukUg7Rh9SVQbyjWr7++hh8mEC0=";
+    rev = "4e605fb2c78412e0c431a06e9f8ee17c9e0e0095";
+    sha256 = "0b8h4qgqdgmzmzb2hvsh4psn3d432klxdfkjsarpa89iylr4irfs";
   };
 
   sourceRoot = "source";

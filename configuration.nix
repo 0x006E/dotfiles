@@ -185,7 +185,7 @@ in
     enableExtraSocket = true;
     enableSSHSupport = true;
     enableBrowserSocket = true;
-    pinentryPackage = pkgs.pinentry-qt;
+    pinentryPackage = pkgs.pinentry-curses;
   };
   environment.systemPackages = with pkgs; [
     commit-mono

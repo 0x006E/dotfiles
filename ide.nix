@@ -51,6 +51,15 @@ let
       hash = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
     };
   });
+  remote-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "remote-nvim.nvim";
+    src = pkgs.fetchFromGitHub {
+      owner = "amitds1997";
+      repo = "remote-nvim.nvim";
+      rev = "ffbf91f6132289a8c43162aba12c7365c28d601c";
+      hash = "sha256-8gKQ7DwubWKfoXY4HDvPeggV+kxhlpz3yBmG9+SZ8AI=";
+    };
+  };
   tiny-inline-diagnostic = pkgs.vimUtils.buildVimPlugin {
     name = "tiny-inline-diagnostic";
     src = pkgs.fetchFromGitHub {
@@ -75,7 +84,6 @@ in
     goimports-reviser
     nodejs
     nodePackages.svelte-language-server
-    nodePackages.typescript-language-server
     npm-check-updates
     php
     lazygit
@@ -95,6 +103,7 @@ in
       tiny-inline-diagnostic
       format-on-save
       workspace-diagnostics
+      remote-nvim
     ];
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
@@ -102,6 +111,12 @@ in
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
       require('tiny-inline-diagnostic').setup()
+      require('remote-nvim').setup({
+        devpod = {
+          gpg_agent_forwarding = true,
+        }
+      })
+
       format_on_save.setup({
 
         experiments = {
@@ -486,6 +501,7 @@ in
     ];
 
     plugins = {
+      nui.enable = true;
       bufdelete.enable = true;
       noice.enable = true;
       hardtime.enable = true;

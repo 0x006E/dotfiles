@@ -150,6 +150,7 @@
 
   home.packages = with pkgs; [
     vimgolf
+    devpod
     zen-browser
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
