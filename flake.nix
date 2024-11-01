@@ -51,6 +51,7 @@
       home-manager,
       chaotic,
       lanzaboote,
+    conky,
       niri,
       lix-module,
       stylix,
@@ -73,6 +74,9 @@
         # Inherit the changes into the overlay
         inherit (nixpkgs-kuglimon.legacyPackages.${prev.system})
           vtsls
+          ;
+        inherit (inputs.conky.packages.${prev.system})
+          conky
           ;
       };
     in

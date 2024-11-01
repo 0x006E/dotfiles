@@ -84,7 +84,7 @@
     ];
     mutableExtensionsDir = false;
   };
-
+  services.conky.enable = true;
   services.udiskie.enable = true;
   services.flameshot = {
     enable = true;
