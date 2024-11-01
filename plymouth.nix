@@ -23,15 +23,7 @@
   boot.initrd.verbose = false;
   boot.consoleLogLevel = 0;
 
-  boot.plymouth =
-    let
-      theme = "deus_ex";
-    in
-    {
-      enable = true;
-      inherit theme;
-      themePackages = [ (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ theme ]; }) ];
-    };
+  boot.plymouth.enable = true;
 
   environment.systemPackages = with pkgs; [ plymouth ];
 }

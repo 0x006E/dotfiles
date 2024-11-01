@@ -68,7 +68,8 @@ in
 
       prefer-no-csd = true;
       workspaces = {
-        "terminal" = { };
+        terminal = { };
+        browser = { };
       };
       layout = {
         gaps = 10;
@@ -215,8 +216,7 @@ in
         }
 
         { command = [ "xwayland-satellite" ]; }
-        { command = [ "swaybg" ]; }
-        { command = [ "variety" ]; }
+        { command = [ "swww-daemon" ]; }
       ];
 
       animations.shaders.window-resize = ''
@@ -283,6 +283,12 @@ in
           open-on-workspace = "terminal";
         }
         {
+          matches = [ { app-id = "zen"; } ];
+          opacity = 0.97;
+          open-maximized = true;
+          open-on-workspace = "browser";
+        }
+        {
           matches = [
             {
               app-id = "^firefox$";
@@ -298,7 +304,6 @@ in
     enable = true;
     shellIntegration.enableBashIntegration = true;
     themeFile = "Nightfox";
-    font.name = "Commit Mono";
     environment = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
       QT_QPA_PLATFORM = "wayland";
@@ -319,7 +324,6 @@ in
     slurp
     xwayland
     xwayland-satellite-unstable
-    variety
-    swaybg
+    swww
   ];
 }

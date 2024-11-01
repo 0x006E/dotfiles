@@ -6,17 +6,19 @@
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     nixpkgs-kuglimon.url = "github:kuglimon/nixpkgs/vtsls";
+    stylix.url = "github:danth/stylix";
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    conky.url = "github:brndnmtthws/conky";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nil.url = "github:oxalica/nil";
     niri.url = "github:sodiboo/niri-flake";
-    ags.url = "github:Aylur/ags";
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -36,8 +38,6 @@
       inputs.lix.follows = "lix";
     };
     blink-cmp.url = "github:Saghen/blink.cmp";
-    wezterm-flake.url = "github:wez/wezterm/main?dir=nix";
-    wezterm-flake.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
@@ -53,6 +53,7 @@
       lanzaboote,
       niri,
       lix-module,
+      stylix,
       ...
     }@inputs:
     let
@@ -86,6 +87,7 @@
             inherit pkgs-unstable;
           };
           modules = [
+            stylix.nixosModules.stylix
             lix-module.nixosModules.default
             niri.nixosModules.niri
             {

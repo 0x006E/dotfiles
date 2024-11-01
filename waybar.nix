@@ -8,19 +8,19 @@
     enable = true;
     package = pkgs-unstable.waybar;
     systemd.enable = true;
-    style = ''
-      ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
-
-      window#waybar {
-        background: transparent;
-
-        border-bottom: none;
-      }
-
-      * {
-        font-size: 12px;
-      }
-    '';
+    # style = ''
+    #
+    #   window#waybar {
+    #     background: transparent;
+    #
+    #     border-bottom: none;
+    #   }
+    #
+    #   * {
+    #     font-size: 12px;
+    #     font-family: monospace;
+    #   }
+    # '';
     settings = [
       {
         layer = "top";
@@ -43,6 +43,17 @@
           "clock"
           "tray"
         ];
+        "niri/workspaces" = {
+          format = "{icon}";
+          format-icons = {
+            terminal = "";
+            browser = "";
+            discord = "";
+            chat = "<b></b>";
+            active = "";
+            default = "";
+          };
+        };
         battery = {
           format = "{capacity}%\n{icon}";
           format-alt = "{time}\n{icon}";

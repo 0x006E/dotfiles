@@ -31,6 +31,7 @@ in
     ./plymouth.nix
     ./virtualization.nix
     ./printing.nix
+    ./stylix.nix
     # ./fingerprint.nix
   ];
 

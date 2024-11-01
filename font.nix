@@ -11,8 +11,7 @@
     fontconfig = {
       defaultFonts = {
         monospace = [
-          "Iosevka"
-          "Commit Mono"
+          "CommitMono Nerd Font"
         ];
       };
     };
@@ -24,8 +23,13 @@
       powerline-fonts
       corefonts
       noto-fonts
-      iosevka-bin
-      commit-mono
+      noto-fonts-cjk-sans
+      noto-fonts-emoji
+      (nerdfonts.override { fonts = [ "CommitMono" ]; })
+      liberation_ttf
+      fira-code
+      fira-code-symbols
+      mplus-outline-fonts.githubRelease
     ];
   };
 }

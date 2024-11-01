@@ -3,6 +3,7 @@
   pkgs,
   pkgs-stable,
   pkgs-unstable,
+  lib,
   ...
 }:
 {
@@ -20,7 +21,6 @@
   # release notes.
 
   imports = [
-    inputs.ags.homeManagerModules.default
     inputs.walker.homeManagerModules.default
     inputs.nix-index-database.hmModules.nix-index
     inputs.nixvim.homeManagerModules.nixvim
@@ -28,19 +28,6 @@
     ./waybar.nix
     ./ide.nix
   ];
-  programs.ags = {
-    # enable = true;
-
-    # null or path, leave as null if you don't want hm to manage the config
-    configDir = ./ags;
-
-    # additional packages to add to gjs's runtime
-    extraPackages = with pkgs; [
-      gtksourceview
-      webkitgtk
-      accountsservice
-    ];
-  };
 
   programs.walker = {
     enable = true;
@@ -50,44 +37,6 @@
 
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
-  home.pointerCursor = {
-    gtk.enable = true;
-    # x11.enable = true;
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Classic";
-    size = 16;
-  };
-
-  gtk = {
-    enable = true;
-    theme = {
-      package = pkgs.flat-remix-gtk;
-      name = "Flat-Remix-GTK-Grey-Darkest";
-    };
-
-    iconTheme = {
-      package = pkgs.gnome.adwaita-icon-theme;
-      name = "Adwaita";
-    };
-
-    font = {
-      name = "Sans";
-      size = 11;
-    };
-  };
-
-  qt = {
-    enable = true;
-    platformTheme.name = "qtct";
-    style.name = "kvantum";
-  };
-
-  xdg.configFile = {
-    "Kvantum/ArcDark".source = "${pkgs.arc-kde-theme}/share/Kvantum/ArcDark";
-    "Kvantum/kvantum.kvconfig".text = "[General]\ntheme=ArcDark";
-  };
-
-  # The home.packages option allows you to install Nix packages into your
   # environment.
   programs.nix-index = {
     enable = true;
@@ -166,7 +115,6 @@
     pinentry-qt
     distrobox
     xorg.xhost
-    swww
     nixfmt-rfc-style
     (lutris.override {
       extraLibraries = pkgs: [
