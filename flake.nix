@@ -51,7 +51,6 @@
       home-manager,
       chaotic,
       lanzaboote,
-    conky,
       niri,
       lix-module,
       stylix,
@@ -112,7 +111,17 @@
                 inherit pkgs-unstable;
                 inherit pkgs-stable;
               };
-              home-manager.users.nithin = import ./home.nix;
+              home-manager.users =
+
+                {
+                  nithin = import ./home.nix;
+                  # greeter =
+                  #   { lib, ... }:
+                  #   {
+                  #     home.stateVersion = "24.05"; # Please read the comment before changing.
+                  #     home.homeDirectory = lib.mkDefault "/tmp/greeter-hm";
+                  #   };
+                };
 
               home-manager.backupFileExtension = "bak"; # Optionally, use home-manager.extraSpecialArgs to pass
             }

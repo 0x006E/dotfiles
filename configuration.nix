@@ -4,6 +4,8 @@
 {
   pkgs,
   inputs,
+  lib,
+  config,
   pkgs-stable,
   ...
 }:
@@ -14,6 +16,11 @@ let
   acer-wmi-battery-kernel-module =
     pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix
       { };
+  configFile = pkgs.writeText "niri-config.kdl" ''
+    spawn-at-startup '${lib.makeBinPath [ config.programs.regreet.package ]}/regreet; ${
+      lib.makeBinPath [ config.programs.niri.package ]
+    }/niri msg exit'"
+  '';
 in
 {
   nix = {
@@ -120,9 +127,24 @@ in
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.enable = false;
   services.xserver.displayManager.gdm.wayland = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.greetd = {
+    enable = true;
+    greeterManagesPlymouth = false;
+    settings = {
+      default_session = {
+        command = ''
+          ${lib.makeBinPath [ pkgs.cage ]}/cage -s -- ${
+            lib.makeBinPath [ config.programs.regreet.package ]
+          }/regreet
+        '';
+        user = "greeter";
+      };
+    };
+  };
+  programs.regreet.enable = false;
   #  services.spice-vdagentd.enable = true;
   #  services.qemuGuest.enable = true;
 

@@ -84,7 +84,13 @@
     ];
     mutableExtensionsDir = false;
   };
-  services.conky.enable = true;
+  services.conky = {
+    enable = true;
+    extraConfig = ''
+      out_to_x = false,
+      out_to_wayland = true,
+    '';
+  };
   services.udiskie.enable = true;
   services.flameshot = {
     enable = true;
