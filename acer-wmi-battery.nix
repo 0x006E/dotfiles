@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
     "format"
   ]; # 1
   nativeBuildInputs = kernel.moduleBuildDependencies; # 2
-  patches = [ ./kernel/00_nixos.patch ];
+  patches = [ ./patches/00_nixos.patch ];
 
   makeFlags = kernel.makeFlags ++ [
     # Variable refers to the local Makefile.

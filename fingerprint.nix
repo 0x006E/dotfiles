@@ -6,6 +6,8 @@
 {
   services.fprintd = {
     enable = true;
+    package = pkgs.fprintd.override {
+      libfprint = pkgs.callPackage ./libfprint.nix { };
+    };
   };
-  environment.systemPackages = with pkgs; [ (callPackage ./fprintd-tod.nix { }) ];
 }

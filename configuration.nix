@@ -27,7 +27,6 @@ in
     nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     extraOptions = ''
       experimental-features = nix-command flakes
-      deprecated-features = url-literals
     '';
   };
   imports = [
@@ -39,7 +38,7 @@ in
     ./virtualization.nix
     ./printing.nix
     ./stylix.nix
-    # ./fingerprint.nix
+    ./fingerprint.nix
   ];
 
   nixpkgs.overlays = [ inputs.niri.overlays.niri ];
