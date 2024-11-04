@@ -104,6 +104,9 @@
   };
 
   home.packages = with pkgs; [
+    libreoffice
+    gimp
+
     vimgolf
     devpod
     zen-browser

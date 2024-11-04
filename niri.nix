@@ -217,6 +217,7 @@ in
 
         { command = [ "xwayland-satellite" ]; }
         { command = [ "swww-daemon" ]; }
+        { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
       ];
 
       animations.shaders.window-resize = ''

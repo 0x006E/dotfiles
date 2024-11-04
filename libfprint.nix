@@ -7,7 +7,6 @@
 # external .so's.
 pkgs.libfprint.overrideAttrs (old: rec {
   pname = "libfprint";
-  version = "1.94.7+tod1";
 
   src = fetchFromGitLab {
     domain = "gitlab.freedesktop.org";

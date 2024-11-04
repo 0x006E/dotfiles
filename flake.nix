@@ -85,8 +85,8 @@
             inherit pkgs-unstable;
           };
           modules = [
-            stylix.nixosModules.stylix
             lix-module.nixosModules.default
+            stylix.nixosModules.stylix
             niri.nixosModules.niri
             {
               nixpkgs.overlays = [
