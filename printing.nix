@@ -1,42 +1,66 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 let
   boomaga = pkgs.libsForQt5.callPackage ./boomaga.nix { };
 in
 {
+  # Networking and Discovery
   services.avahi = {
     enable = true;
     nssmdns4 = true;
     openFirewall = true;
   };
-  environment.systemPackages = with pkgs; [ boomaga ];
 
-  hardware.printers = {
-    ensurePrinters = [
-      {
-        name = "Boomaga";
-        deviceUri = "boomaga:/";
-        model = "boomaga/boomaga.ppd";
-        description = "Boomaga Virtual Printer";
-        location = "Local Virtual Printer";
-        ppdOptions = {
-          # Add any specific PPD options here if needed
-        };
-      }
+  # Printer Configuration
+  hardware = {
+    # Virtual Printer Setup
+    printers = {
+      ensurePrinters = [
+        {
+          name = "Boomaga";
+          deviceUri = "boomaga:/";
+          model = "boomaga/boomaga.ppd";
+          description = "Boomaga Virtual Printer";
+          location = "Local Virtual Printer";
+          ppdOptions = {
+            # Add any specific PPD options here if needed
+          };
+        }
+      ];
+    };
+
+    # Scanner Support
+    sane.enable = true;
+  };
+
+  # Printing Services
+  services = {
+    # D-Bus Integration
+    dbus.packages = [ boomaga ];
+
+    # Printer Drivers
+    printing.drivers = with pkgs; [
+      hplipWithPlugin
+      boomaga
     ];
   };
 
+  # User and Group Configuration
   users.users.nithin.extraGroups = [
     "scanner"
     "lp"
   ];
-  hardware.sane.enable = true;
+
+  # Temporary Files Setup
   systemd.tmpfiles.rules = [
     "d /var/cache/boomaga 0775 root lp - -"
     "d /var/cache/boomaga/nithin 0770 nithin lp - -"
   ];
-  services.dbus.packages = [ boomaga ];
-  services.printing.drivers = with pkgs; [
-    hplipWithPlugin
+
+  # Required Packages
+  environment.systemPackages = with pkgs; [
     boomaga
   ];
 }

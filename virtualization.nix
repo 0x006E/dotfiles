@@ -4,19 +4,41 @@
   ...
 }:
 {
-  virtualisation.libvirtd.enable = true;
+  # Virtualization Services
+  virtualisation = {
+    # QEMU/KVM Configuration
+    libvirtd.enable = true;
+    spiceUSBRedirection.enable = true;
+
+    # Container Systems
+    docker.enable = true;
+    incus.enable = true;
+  };
+
+  # Virtual Machine Management
   programs.virt-manager.enable = true;
-  services.qemuGuest.enable = true;
-  services.spice-webdavd.enable = true;
-  virtualisation.incus.enable = true;
-  virtualisation.docker.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
-  networking.nftables.enable = true;
-  networking.firewall.trustedInterfaces = [ "virbr0" ];
+
+  # Guest Services
+  services = {
+    qemuGuest.enable = true;
+    spice-webdavd.enable = true;
+  };
+
+  # Network Configuration
+  networking = {
+    nftables.enable = true;
+    firewall.trustedInterfaces = [ "virbr0" ];
+  };
+
+  # User Permissions
   users.users.nithin.extraGroups = [
-    "libvirtd"
-    "incus-admin"
-    "docker"
-  ]; # Enable ‘sudo’ for the user.
-  environment.systemPackages = with pkgs; [ virtiofsd ];
+    "libvirtd" # KVM/QEMU management
+    "incus-admin" # Incus container management
+    "docker" # Docker container access
+  ];
+
+  # Required Packages
+  environment.systemPackages = with pkgs; [
+    virtiofsd # VirtioFS daemon for enhanced filesystem sharing
+  ];
 }
