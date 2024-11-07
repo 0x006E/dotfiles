@@ -772,6 +772,8 @@ in
         enable = true;
         extensions = {
           ui-select.enable = true;
+          frecency.enable = true;
+          fzf-native.enable = true;
         };
         keymaps = {
           "<leader>ff" = "find_files";

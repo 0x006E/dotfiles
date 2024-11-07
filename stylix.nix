@@ -4,7 +4,7 @@
   stylix = {
     enable = true;
     image = ./wallpaper.jpg;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/3024.yaml";
+    # base16Scheme = "${pkgs.base16-schemes}/share/themes/3024.yaml";
     fonts = {
       serif = config.stylix.fonts.monospace;
       sansSerif = config.stylix.fonts.monospace;

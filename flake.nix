@@ -82,7 +82,7 @@
       overlay = final: prev: {
         # Browser and Tools
         inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
-          zen-browser
+          zen-browser-unwrapped
           ;
 
         # Development Tools
