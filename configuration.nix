@@ -103,6 +103,11 @@ in
   };
 
   services = {
+    kanata = {
+      enable = true; # Disabled because of errors
+
+      keyboards.default.configFile = ./homerow-mods.kdb;
+    };
     kmscon = {
       enable = true;
       hwRender = true;
@@ -265,6 +270,7 @@ in
 
   hardware = {
     pulseaudio.enable = false;
+    uinput.enable = true;
     cpu.intel.updateMicrocode = true;
   };
 

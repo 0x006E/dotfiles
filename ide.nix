@@ -264,7 +264,7 @@ in
       foldcolumn = "auto:9";
       foldlevel = 99;
       foldlevelstart = 99;
-      fillchars = "eob: ,fold: ,foldopen:,foldsep:|,foldclose:";
+      # fillchars = "eob: ,fold: ,foldopen:,foldsep:|,foldclose:";
     };
     keymaps = [
       {
@@ -768,6 +768,7 @@ in
         };
       };
 
+      auto-session.enable = true;
       telescope = {
         enable = true;
         extensions = {
