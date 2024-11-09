@@ -104,7 +104,7 @@ in
 
   services = {
     kanata = {
-      enable = true; # Disabled because of errors
+      enable = false; # Disabled because of errors
 
       keyboards.default.configFile = ./homerow-mods.kdb;
     };
@@ -276,7 +276,7 @@ in
 
   chaotic.scx = {
     enable = true;
-    package = pkgs.scx_git.full;
+    package = pkgs.scx.full;
     scheduler = "scx_bpfland";
   };
 
