@@ -129,13 +129,13 @@ in
     xserver = {
       enable = true;
       displayManager.gdm = {
-        enable = false;
+        enable = true;
         wayland = true;
       };
       desktopManager.gnome.enable = true;
     };
     greetd = {
-      enable = true;
+      enable = false;
       greeterManagesPlymouth = false;
       settings.default_session = {
         command = ''
