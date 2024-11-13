@@ -797,7 +797,7 @@ in
           templ.enable = true;
           vtsls = {
             enable = true;
-            package = pkgs.vtsls;
+            package = pkgs-unstable.vtsls;
             extraOptions = {
               commands = {
                 OrganizeImports = {
@@ -805,7 +805,7 @@ in
                     {
                       function()
                         local params = {
-                          command = "_typescript.organizeImports",
+                          command = "typescript.organizeImports",
                           arguments = {vim.api.nvim_buf_get_name(0)},
                           title = ""
                         }
