@@ -8,7 +8,6 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
 
     # Custom Nixpkgs Forks
-    nixpkgs-kuglimon.url = "github:kuglimon/nixpkgs/vtsls";
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
 
     # Home Manager
@@ -54,7 +53,6 @@
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-unstable,
-      nixpkgs-kuglimon,
       nixpkgs-matthewpi,
       home-manager,
       chaotic,
@@ -83,11 +81,6 @@
         # Browser and Tools
         inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
           zen-browser-unwrapped
-          ;
-
-        # Development Tools
-        inherit (nixpkgs-kuglimon.legacyPackages.${prev.system})
-          vtsls
           ;
 
         # System Utilities

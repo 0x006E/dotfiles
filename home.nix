@@ -109,6 +109,7 @@
             (extension "tabliss" "extension@tabliss.io")
             (extension "don-t-fuck-with-paste" "DontFuckWithPaste@raim.ist")
             (extension "clearurls" "{74145f27-f039-47ce-a470-a662b129930a}")
+            (extension "react-devtools" "@react-devtools")
           ];
         # To add additional extensions, find it on addons.mozilla.org, find
         # the short ID in the url (like https://addons.mozilla.org/en-US/firefox/addon/!SHORT_ID!/)
@@ -151,6 +152,7 @@
         esbenp.prettier-vscode
         bradlc.vscode-tailwindcss
         ms-vscode.live-server
+        dbaeumer.vscode-eslint
 
         # Documentation
         yzhang.markdown-all-in-one

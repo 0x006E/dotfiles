@@ -7,7 +7,7 @@
   programs.waybar = {
     enable = true;
     package = pkgs-unstable.waybar;
-    systemd.enable = true;
+    systemd.enable = false;
     # style = ''
     #
     #   window#waybar {

@@ -239,6 +239,7 @@ in
             ];
         }
         { command = [ "xwayland-satellite" ]; }
+        { command = [ "sleep 1; unset DISPLAY; waybar" ]; }
         { command = [ "swww-daemon" ]; }
         { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
       ];
