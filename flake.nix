@@ -95,7 +95,7 @@
           conky
           ;
 
-        rio = rio-term.packages.${prev.system}.overrideAttrs (old: {
+        rio = rio-term.packages.${prev.system}.rio.overrideAttrs (old: {
           checkPhase = '''';
         });
       };
