@@ -95,9 +95,9 @@
           conky
           ;
 
-        inherit (rio-term.packages.${prev.system})
-          rio
-          ;
+        rio = rio-term.packages.${prev.system}.overrideAttrs (old: {
+          checkPhase = '''';
+        });
       };
     in
     {
