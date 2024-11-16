@@ -126,6 +126,7 @@ in
       rulesProvider = pkgs.ananicy-rules-cachyos;
     };
     fwupd.enable = true;
+    desktopManager.cosmic.enable = true;
     xserver = {
       enable = true;
       displayManager.gdm = {
@@ -133,6 +134,7 @@ in
         wayland = true;
       };
       desktopManager.gnome.enable = true;
+
     };
     greetd = {
       enable = false;

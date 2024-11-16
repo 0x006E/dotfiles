@@ -209,7 +209,7 @@ in
         ];
       };
     };
-    package = pkgs-unstable.neovim-unwrapped.overrideAttrs (old: {
+    package = pkgs.neovim-unwrapped.overrideAttrs (old: {
       patches = old.patches ++ [
         # Fix byte index encoding bounds.
         # - https://github.com/neovim/neovim/pull/30747
@@ -261,7 +261,7 @@ in
       clipboard = "unnamedplus";
       # nvim-ufo
       foldenable = true;
-      foldcolumn = "auto:9";
+      foldcolumn = "1";
       foldlevel = 99;
       foldlevelstart = 99;
       # fillchars = "eob: ,fold: ,foldopen:,foldsep:|,foldclose:";
@@ -512,7 +512,41 @@ in
     ];
 
     plugins = {
-      statuscol.enable = true;
+      statuscol = {
+        enable = true;
+        settings = {
+          relculright = true;
+          segments = [
+            { text = [ "%s" ]; }
+            {
+              text = [
+                {
+                  __raw = "require('statuscol.builtin').lnumfunc";
+                }
+              ];
+            }
+            {
+              text = [
+                " "
+                {
+                  __raw = "require('statuscol.builtin').foldfunc";
+                }
+                "  "
+              ];
+              condition = [
+                {
+                  __raw = "require('statuscol.builtin').not_empty";
+                }
+                true
+                {
+                  __raw = "require('statuscol.builtin').not_empty";
+                }
+              ];
+            }
+          ];
+        };
+      };
+      smartcolumn.enable = true;
       nui.enable = true;
       bufdelete.enable = true;
       noice.enable = true;

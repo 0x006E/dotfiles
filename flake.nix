@@ -6,6 +6,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
@@ -26,6 +27,9 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rio = {
+      url = "github:raphamorim/rio";
+    };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
     blink-cmp.url = "github:Saghen/blink.cmp";
 
@@ -35,6 +39,7 @@
       url = "github:nix-community/lanzaboote/v0.4.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     walker.url = "github:abenz1267/walker";
 
     # Utilities
@@ -60,6 +65,8 @@
       niri,
       lix-module,
       stylix,
+      nixos-cosmic,
+      rio,
       ...
     }@inputs:
     let
@@ -86,6 +93,10 @@
         # System Utilities
         inherit (inputs.conky.packages.${prev.system})
           conky
+          ;
+
+        inherit (rio.packages.${prev.system})
+          rio
           ;
       };
     in
@@ -114,6 +125,7 @@
                   };
                 })
                 inputs.nix-vscode-extensions.overlays.default
+                inputs.neovim-nightly-overlay.overlays.default
                 overlay
               ];
             }
@@ -140,6 +152,14 @@
             # Additional Modules
             chaotic.nixosModules.default
             lanzaboote.nixosModules.lanzaboote
+            {
+              nix.settings = {
+                substituters = [ "https://cosmic.cachix.org/" ];
+                trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+              };
+            }
+            nixos-cosmic.nixosModules.default
+
             ./secureboot.nix
           ];
         };

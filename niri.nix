@@ -81,10 +81,12 @@ in
 
       # Layout Configuration
       layout = {
-        gaps = 10;
+        gaps = 4;
         struts = {
+          top = 0;
+          bottom = 0;
           left = 0;
-          right = 0;
+          right = -4;
         };
         focus-ring.enable = false;
         border = {
@@ -104,7 +106,7 @@ in
         lib.attrsets.mergeAttrsList [
           # Basic Application Controls
           {
-            "Mod+T".action = sh "niri msg action focus-workspace terminal && kitty";
+            "Mod+T".action = sh "niri msg action focus-workspace terminal && rio";
             "Mod+D".action = spawn "walker";
             "Mod+E".action = spawn "nautilus";
             "Mod+L".action = spawn "blurred-locker";
@@ -218,28 +220,8 @@ in
 
       # Startup Applications
       spawn-at-startup = [
-        {
-          command =
-            let
-              units = [
-                "niri"
-                "graphical-session.target"
-                "xdg-desktop-portal"
-                "xdg-desktop-portal-gnome"
-                "waybar"
-              ];
-              commands = builtins.concatStringsSep ";" (map (unit: "systemctl --user status ${unit}") units);
-            in
-            [
-              "kitty"
-              "--"
-              "sh"
-              "-c"
-              "env SYSTEMD_COLORS=1 watch -n 1 -d --color '${commands}'"
-            ];
-        }
         { command = [ "xwayland-satellite" ]; }
-        { command = [ "sleep 1; unset DISPLAY; waybar" ]; }
+        { command = [ "sleep 5; unset DISPLAY; waybar" ]; }
         { command = [ "swww-daemon" ]; }
         { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
       ];
@@ -293,7 +275,7 @@ in
           opacity = 0.95;
         }
         {
-          matches = [ { app-id = "kitty"; } ];
+          matches = [ { app-id = "rio"; } ];
           opacity = 0.8;
           open-maximized = true;
           open-on-workspace = "terminal";
@@ -317,11 +299,35 @@ in
     };
   };
 
-  programs.kitty = {
+  programs.zellij.enable = true;
+  programs.rio = {
     enable = true;
-    shellIntegration.enableBashIntegration = true;
+    settings = {
+      window = {
+        foreground-opacity = 1.0;
+        background-opacity = 0.96;
+        blur = true;
+        decorations = "Disabled";
+        mode = "Maximized";
+      };
+      env-vars = [
+        "TERM=xterm-256color"
+        "COLORTERM=truecolor"
+        "WINIT_X11_SCALE_FACTOR=1"
+      ];
+      fonts = {
+        family = config.stylix.fonts.monospace.name;
+        size = 16;
+      };
+      navigation = {
+        mode = "Plain";
+      };
+      shell = {
+        program = "${lib.makeBinPath [ config.programs.zellij.package ]}/zellij";
+        args = [ ];
+      };
+    };
   };
-
   services.swaync.enable = true;
 
   home.packages = with pkgs; [

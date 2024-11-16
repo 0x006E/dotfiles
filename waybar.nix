@@ -1,134 +1,160 @@
 {
   pkgs,
-  pkgs-unstable,
+  lib,
+  config,
   ...
 }:
+let
+  colorNames = [
+    "base00"
+    "base01"
+    "base02"
+    "base03"
+    "base04"
+    "base05"
+    "base06"
+    "base07"
+    "base08"
+    "base09"
+    "base0A"
+    "base0B"
+    "base0C"
+    "base0D"
+    "base0E"
+    "base0F"
+  ];
+
+  # Colors used in the markup
+  colors = config.lib.stylix.colors.withHashtag;
+  yellow = colors.base0A;
+  peach = colors.base09;
+  red = colors.base08;
+  green = colors.base0B;
+  secondary = colors.base0E;
+
+  defineColor = name: value: "@define-color ${name} ${value};";
+
+  markup = color: text: "<span color=\"${color}\" style=\"oblique\">${text}</span>";
+in
 {
+  # Stylix injects CSS that I do not want,
+  # so we style waybar for ourselves
+  stylix.targets.waybar.enable = false;
+
   programs.waybar = {
     enable = true;
-    package = pkgs-unstable.waybar;
-    systemd.enable = false;
-    # style = ''
-    #
-    #   window#waybar {
-    #     background: transparent;
-    #
-    #     border-bottom: none;
-    #   }
-    #
-    #   * {
-    #     font-size: 12px;
-    #     font-family: monospace;
-    #   }
-    # '';
+
+    style =
+      lib.strings.concatStringsSep "\n" (
+        # Convert the colors attribute set to GTK color declarations
+        builtins.map (color: defineColor color colors.${color}) colorNames
+      )
+      +
+        # Append the main CSS file
+        (builtins.readFile ./style.css)
+      +
+        # Use monospace font
+        ''
+          /* Font family injected by Nix */
+          * {
+            font-family: ${config.stylix.fonts.monospace.name};
+          }
+        '';
     settings = [
       {
         layer = "top";
         position = "left";
-        tray = {
-          spacing = 10;
-        };
-        modules-center = [ "niri/window" ];
+        width = 28;
+        margin = "2 0 2 2";
+        spacing = 2;
         modules-left = [
-          "niri/workspaces"
-          "niri/mode"
-        ];
-        modules-right = [
-          "pulseaudio"
-          "network"
-          "cpu"
-          "memory"
-          "temperature"
-          "battery"
           "clock"
+          "custom/sep"
           "tray"
         ];
-        "niri/workspaces" = {
-          format = "{icon}";
-          format-icons = {
-            terminal = "";
-            browser = "";
-            discord = "";
-            chat = "<b></b>";
-            active = "";
-            default = "";
-          };
+        modules-center = [
+          "niri/workspaces"
+        ];
+        modules-right = [
+          "custom/bluetooth_devices"
+          "custom/sep"
+          "temperature"
+          "custom/sep"
+          "privacy"
+          "custom/sep"
+          "pulseaudio"
+          "custom/powermenu"
+        ];
+        "custom/sep" = {
+          format = "";
         };
-        battery = {
-          format = "{capacity}%\n{icon}";
-          format-alt = "{time}\n{icon}";
-          format-charging = "{capacity}%\n";
-          format-icons = [
-            ""
-            ""
-            ""
-            ""
-            ""
-          ];
-          format-plugged = "{capacity}%\n";
-          states = {
-            critical = 15;
-            warning = 30;
-          };
-        };
-        "niri/window" = {
-          # format = "{}";
-          # icon = true;
-        };
-        clock = {
-          format = "{:%H}\n{:%M}";
-          # format-alt = "{:%Y-%m-%d}";
-          tooltip-format = "{:%Y-%m-%d | %H:%M}";
-        };
-        cpu = {
-          format = "{usage}%\n";
+        "custom/powermenu" = {
+          on-click = "~/.config/wofi/scripts/wofipowermenu.py";
+          rotate = 90;
+          format = "";
+          icon-size = 16;
           tooltip = false;
         };
-        memory = {
-          format = "{}%\n";
-        };
-        network = {
-          interval = 1;
-          format-alt = "{ifname}: {ipaddr}/{cidr}";
-          format-disconnected = "Disconnected\n⚠";
-          format-ethernet = "{ifname}: {ipaddr}/{cidr}   up: {bandwidthUpBits} down: {bandwidthDownBits}";
-          format-linked = "{ifname}\n(No IP)\n ";
-          format-wifi = "({signalStrength}%)\n ";
-          tooltip-format = "{essid}";
-        };
-        pulseaudio = {
-          format = "{volume}%\n{format_source}";
-          format-bluetooth = "{volume}%\n{icon}\n{format_source}";
-          format-bluetooth-muted = "\n{icon}\n{format_source}";
+        "niri/workspaces" = {
+          format = "{icon}";
+          icon-size = 16;
+          rotate = 90;
           format-icons = {
-            car = "";
-            default = [
-              ""
-              ""
-              ""
-            ];
-            handsfree = "";
-            headphones = "";
-            headset = "";
-            phone = "";
-            portable = "";
+            # active = "";
+            browser = "z";
+            # chat = "<b></b>";
+            default = "o";
+            # discord = "";
+            terminal = "t";
           };
-          format-muted = "\n{format_source}";
-          format-source = "{volume}%\n";
-          format-source-muted = "";
-          on-click = "pavucontrol";
         };
-        "niri/mode" = {
-          format = ''<span style="italic">{}</span>'';
+        clock = {
+          tooltip = true;
+          format = "{:%H\n%M}";
+          tooltip-format = "{:%Y-%m-%d}";
+        };
+        tray = {
+          icon-size = 16;
+          show-passive-items = "true";
         };
         temperature = {
+          rotate = 90;
+          hwmon-path = "/sys/class/hwmon/hwmon3/temp1_input";
           critical-threshold = 80;
-          format = "{temperatureC}°C\n{icon}";
+          format = "{icon} {temperatureC}°C";
           format-icons = [
-            ""
+            ""
             ""
-            ""
+            ""
           ];
+        };
+        privacy = {
+          rotate = 90;
+          icon-size = 16;
+          modules = [
+            { type = "screenshare"; }
+            { type = "audio-in"; }
+          ];
+        };
+        pulseaudio = {
+          rotate = 90;
+          icon-size = 16;
+          format = "{icon} {volume}% {format_source}";
+          format-bluetooth = "${markup secondary "vol bt"} {volume}% {format_source}";
+          format-bluetooth-muted = "${markup red "muted bt"} {format_source}";
+          format-muted = "${markup red "muted"} {format_source}";
+          format-source = "${markup secondary "mic"} {volume}%";
+          format-source-muted = markup red "mic";
+          format-icons = {
+            headphone = "${markup secondary "vol"}";
+            hands-free = "${markup secondary "handsfree"}";
+            headset = "${markup secondary "headset"}";
+            phone = "${markup secondary "phone"}";
+            portable = "${markup secondary "portable"}";
+            car = "${markup secondary "car"}";
+            default = "${markup secondary "vol"}";
+          };
+          on-click = "${pkgs.pavucontrol}/bin/pavucontrol";
         };
       }
     ];
