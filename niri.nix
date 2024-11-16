@@ -324,7 +324,10 @@ in
       };
       shell = {
         program = "${lib.makeBinPath [ config.programs.zellij.package ]}/zellij";
-        args = [ ];
+        args = [
+          "-l "
+          ./layout.kdl
+        ];
       };
     };
   };
