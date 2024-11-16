@@ -96,7 +96,8 @@
           ;
 
         rio = rio-term.packages.${prev.system}.rio.overrideAttrs (old: {
-          checkPhase = '''';
+          doCheck = false;
+          buildFeatures = [ "wayland" ];
         });
       };
     in
