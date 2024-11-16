@@ -1544,7 +1544,7 @@
         "type": "github"
       }
     },
-    "rio": {
+    "rio-term": {
       "inputs": {
         "flake-parts": "flake-parts_6",
         "nixpkgs": "nixpkgs_9",
@@ -1583,7 +1583,7 @@
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixvim": "nixvim",
-        "rio": "rio",
+        "rio-term": "rio-term",
         "stylix": "stylix",
         "walker": "walker"
       }

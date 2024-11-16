@@ -27,7 +27,7 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rio = {
+    rio-term = {
       url = "github:raphamorim/rio";
     };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
@@ -66,7 +66,7 @@
       lix-module,
       stylix,
       nixos-cosmic,
-      rio,
+      rio-term,
       ...
     }@inputs:
     let
@@ -95,7 +95,7 @@
           conky
           ;
 
-        inherit (rio.packages.${prev.system})
+        inherit (rio-term.packages.${prev.system})
           rio
           ;
       };
