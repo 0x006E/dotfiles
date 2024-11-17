@@ -126,7 +126,7 @@ in
       rulesProvider = pkgs.ananicy-rules-cachyos;
     };
     fwupd.enable = true;
-    desktopManager.cosmic.enable = true;
+    desktopManager.cosmic.enable = false;
     xserver = {
       enable = true;
       displayManager.gdm = {
