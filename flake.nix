@@ -5,7 +5,7 @@
     # Core Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
 
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
@@ -22,7 +22,6 @@
     conky.url = "github:brndnmtthws/conky";
 
     # Development Tools
-    zed.url = "github:zed-industries/zed";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -89,10 +88,6 @@
         inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
           zen-browser-unwrapped
           ;
-        inherit (inputs.zed.packages.${prev.system})
-          zed-editor
-          ;
-
         # System Utilities
         inherit (inputs.conky.packages.${prev.system})
           conky
