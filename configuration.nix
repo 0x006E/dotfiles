@@ -113,6 +113,11 @@ in
 
       keyboards.default.configFile = ./homerow-mods.kdb;
     };
+    scx = {
+      enable = true;
+      package = pkgs.scx.full;
+      scheduler = "scx_bpfland";
+    };
     kmscon = {
       enable = true;
       hwRender = true;
@@ -280,12 +285,6 @@ in
     pulseaudio.enable = false;
     uinput.enable = true;
     cpu.intel.updateMicrocode = true;
-  };
-
-  chaotic.scx = {
-    enable = true;
-    package = pkgs.scx.full;
-    scheduler = "scx_bpfland";
   };
 
   system.stateVersion = "24.05";

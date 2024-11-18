@@ -10,6 +10,7 @@
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
     nixpkgs-k900.url = "github:K900/nixpkgs/kernels-20241118";
+    nixpkgs-john.url = "github:JohnRTitor/nixpkgs/scx-module";
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -59,6 +60,7 @@
       nixpkgs-unstable,
       nixpkgs-matthewpi,
       nixpkgs-k900,
+      nixpkgs-john,
       home-manager,
       chaotic,
       lanzaboote,
@@ -87,7 +89,6 @@
         inherit system;
         config.allowUnfree = true;
       };
-
       # Custom Overlay
       overlay = final: prev: {
         # Browser and Tools
@@ -143,6 +144,11 @@
 
           modules = [
             # Core Modules
+            {
+              imports = [
+                "${nixpkgs-john}/nixos/modules/services/scheduling/scx"
+              ];
+            }
             lix-module.nixosModules.default
             stylix.nixosModules.stylix
             niri.nixosModules.niri
