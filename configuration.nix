@@ -7,11 +7,9 @@
   ...
 }:
 let
-  uvcvideo-kernel-module =
-    pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix
-      { };
+  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-rc.callPackage ./uvcvideo-kernel-module.nix { };
   acer-wmi-battery-kernel-module =
-    pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix
+    pkgs.linuxPackages_cachyos-rc.callPackage ./acer-wmi-battery.nix
       { };
   configFile = pkgs.writeText "niri-config.kdl" ''
     spawn-at-startup '${lib.makeBinPath [ config.programs.regreet.package ]}/regreet; ${
@@ -69,7 +67,7 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackages_cachyos-lto;
+    kernelPackages = pkgs.linuxPackages_cachyos-rc;
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module
@@ -123,7 +121,7 @@ in
     ananicy = {
       enable = true;
       package = pkgs.ananicy-cpp;
-      rulesProvider = pkgs.ananicy-rules-cachyos;
+      rulesProvider = pkgs.ananicy-rules-cachyos_git;
     };
     fwupd.enable = true;
     desktopManager.cosmic.enable = false;
