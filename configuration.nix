@@ -118,6 +118,7 @@ in
     };
     tailscale.enable = true;
     resolved.enable = true;
+    bpftune.enable = true;
     ananicy = {
       enable = true;
       package = pkgs.ananicy-cpp;
