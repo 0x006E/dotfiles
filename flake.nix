@@ -92,6 +92,29 @@
         inherit (inputs.conky.packages.${prev.system})
           conky
           ;
+        bpftune = prev.bpftune.overrideAttrs (old: {
+          version = "0-unstable-2024-10-25";
+
+          src = old.src.override {
+            rev = "6a50f5ff619caeea6f04d889e3a60de6c12feb76";
+            hash = "sha256-yol6VFelqQiPKLg1UUeP+r/+XO4fjYeDbIeI29gZ7j4=";
+          };
+
+          postPatch = ''
+            # otherwise shrink rpath would drop $out/lib from rpath
+            substituteInPlace src/Makefile \
+              --replace-fail /sbin    /bin \
+              --replace-fail ldconfig true
+            substituteInPlace src/bpftune.service \
+              --replace-fail /usr/sbin/bpftune "$out/bin/bpftune"
+            substituteInPlace src/libbpftune.c \
+              --replace-fail /lib/modules /run/booted-system/kernel-modules/lib/modules
+          '';
+          makeFlags = old.makeFlags ++ [
+            "libdir=lib"
+          ];
+
+        });
 
         rio = rio-term.packages.${prev.system}.rio.overrideAttrs (old: {
           doCheck = false;
