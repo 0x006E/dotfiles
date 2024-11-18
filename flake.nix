@@ -146,7 +146,7 @@
             # Core Modules
             {
               imports = [
-                "${nixpkgs-john}/nixos/modules/services/scheduling/scx"
+                "${nixpkgs-john}/nixos/modules/services/scheduling/scx.nix"
               ];
             }
             lix-module.nixosModules.default

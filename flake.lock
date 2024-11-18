@@ -987,6 +987,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-john": {
+      "locked": {
+        "lastModified": 1730378573,
+        "narHash": "sha256-MXZOPD4WnAXm81PkASpt/J49AVDLeEhg6Cz7xmclcec=",
+        "owner": "JohnRTitor",
+        "repo": "nixpkgs",
+        "rev": "1f6ff249fe86a678965436f4d3c9c4a7e5601562",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JohnRTitor",
+        "ref": "scx-module",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-k900": {
       "locked": {
         "lastModified": 1731910487,
@@ -1394,6 +1410,7 @@
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs_7",
+        "nixpkgs-john": "nixpkgs-john",
         "nixpkgs-k900": "nixpkgs-k900",
         "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_4",
