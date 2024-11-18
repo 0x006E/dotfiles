@@ -1,6 +1,7 @@
 {
   pkgs,
   pkgs-unstable,
+  pkgs-stable,
   inputs,
   ...
 }:
@@ -903,6 +904,7 @@ in
           pyright.enable = true;
           nixd = {
             enable = true;
+            package = pkgs-stable.nixd;
             settings = {
               nixpkgs = {
                 expr = "import <nixpkgs> { }";
