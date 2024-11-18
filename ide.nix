@@ -209,7 +209,7 @@ in
         ];
       };
     };
-    package = pkgs.neovim-unwrapped.overrideAttrs (old: {
+    package = pkgs-unstable.neovim-unwrapped.overrideAttrs (old: {
       patches = old.patches ++ [
         # Fix byte index encoding bounds.
         # - https://github.com/neovim/neovim/pull/30747

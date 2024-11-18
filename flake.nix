@@ -6,7 +6,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
@@ -126,7 +125,6 @@
                   };
                 })
                 inputs.nix-vscode-extensions.overlays.default
-                inputs.neovim-nightly-overlay.overlays.default
                 overlay
               ];
             }
