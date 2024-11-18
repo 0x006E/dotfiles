@@ -249,7 +249,7 @@ in
       darktable
       shotwell
       krita
-      pkgs-stable.zed-editor
+      zed-editor
     ];
     sessionVariables = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";

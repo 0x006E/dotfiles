@@ -22,6 +22,7 @@
     conky.url = "github:brndnmtthws/conky";
 
     # Development Tools
+    zed.url = "github:zed-industries/zed";
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -87,6 +88,9 @@
         # Browser and Tools
         inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
           zen-browser-unwrapped
+          ;
+        inherit (inputs.zed.packages.${prev.system})
+          zed-editor
           ;
 
         # System Utilities
