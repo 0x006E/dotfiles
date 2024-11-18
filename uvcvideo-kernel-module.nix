@@ -1,7 +1,7 @@
 {
   pkgs,
   lib,
-  kernel ? pkgs.linuxPackages_cachyos.kernel,
+  kernel,
 }:
 pkgs.stdenv.mkDerivation {
   pname = "uvcvideo-kernel-module";

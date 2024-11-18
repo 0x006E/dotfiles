@@ -987,6 +987,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-k900": {
+      "locked": {
+        "lastModified": 1731910487,
+        "narHash": "sha256-iCh23+sbNVH8bZkQ8F1XtI6wbu/SdtECz9zI9IckYR0=",
+        "owner": "K900",
+        "repo": "nixpkgs",
+        "rev": "1386871d141e254e4fbebd89fefcd4eb46ccf2d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "K900",
+        "ref": "kernels-20241118",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1730504152,
@@ -1378,6 +1394,7 @@
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs_7",
+        "nixpkgs-k900": "nixpkgs-k900",
         "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",

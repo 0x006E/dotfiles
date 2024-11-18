@@ -7,15 +7,8 @@
   ...
 }:
 let
-  uvcvideo-kernel-module = pkgs.linuxPackages_cachyos-lto.callPackage ./uvcvideo-kernel-module.nix { };
-  acer-wmi-battery-kernel-module =
-    pkgs.linuxPackages_cachyos-lto.callPackage ./acer-wmi-battery.nix
-      { };
-  configFile = pkgs.writeText "niri-config.kdl" ''
-    spawn-at-startup '${lib.makeBinPath [ config.programs.regreet.package ]}/regreet; ${
-      lib.makeBinPath [ config.programs.niri.package ]
-    }/niri msg exit'"
-  '';
+  uvcvideo-kernel-module = config.boot.kernelPackages.callPackage ./uvcvideo-kernel-module.nix { };
+  acer-wmi-battery-kernel-module = config.boot.kernelPackages.callPackage ./acer-wmi-battery.nix { };
 in
 {
   imports = [
@@ -67,7 +60,21 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackages_cachyos-lto;
+    kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.linuxPackages_latest.kernel.override {
+        structuredExtraConfig = with lib.kernel; {
+          BPF = yes;
+          BPF_EVENTS = yes;
+          BPF_JIT = yes;
+          BPF_SYSCALL = yes;
+          DEBUG_INFO_BTF = yes;
+          FTRACE = yes;
+          SCHED_CLASS_EXT = yes;
+        };
+        ignoreConfigErrors = false;
+      }
+    );
+
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module
@@ -276,7 +283,7 @@ in
   };
 
   chaotic.scx = {
-    enable = true;
+    enable = false;
     package = pkgs.scx.full;
     scheduler = "scx_bpfland";
   };

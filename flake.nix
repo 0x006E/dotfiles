@@ -9,7 +9,7 @@
 
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
-
+    nixpkgs-k900.url = "github:K900/nixpkgs/kernels-20241118";
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -58,6 +58,7 @@
       nixpkgs-stable,
       nixpkgs-unstable,
       nixpkgs-matthewpi,
+      nixpkgs-k900,
       home-manager,
       chaotic,
       lanzaboote,
@@ -78,6 +79,11 @@
       };
 
       pkgs-unstable = import nixpkgs-unstable {
+
+        inherit system;
+        config.allowUnfree = true;
+      };
+      pkgs-k900 = import nixpkgs-k900 {
         inherit system;
         config.allowUnfree = true;
       };
@@ -89,6 +95,9 @@
           zen-browser-unwrapped
           ;
         # System Utilities
+        inherit (pkgs-k900)
+          linuxPackages_latest
+          ;
         inherit (inputs.conky.packages.${prev.system})
           conky
           ;
