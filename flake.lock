@@ -1698,11 +1698,11 @@
         "nixpkgs": "nixpkgs_11"
       },
       "locked": {
-        "lastModified": 1731948444,
-        "narHash": "sha256-E3lkCI1PjPSwD7DeQcxqJU7mGa5bcAlM0g7803NSsrQ=",
+        "lastModified": 1731996819,
+        "narHash": "sha256-BNzbaPEInRHsawZTL02VI66vIMH6dlorYN9jc2iNK9A=",
         "owner": "abenz1267",
         "repo": "walker",
-        "rev": "651779f813f62edba9227b41111360592532f52b",
+        "rev": "7f6d46b4da3f0548d5dba259a68498adfd0d3203",
         "type": "github"
       },
       "original": {
