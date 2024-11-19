@@ -987,6 +987,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-imadnyc": {
+      "locked": {
+        "lastModified": 1717797852,
+        "narHash": "sha256-ewLlYL4O5LcLt1lgPEE8nhbLI5m//rb3QbS95ZElByk=",
+        "owner": "imadnyc",
+        "repo": "nixpkgs",
+        "rev": "3581a17928b093f4b26a91e74263cc64dedf848e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "imadnyc",
+        "ref": "zoho-mail",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-john": {
       "locked": {
         "lastModified": 1730378573,
@@ -999,6 +1015,22 @@
       "original": {
         "owner": "JohnRTitor",
         "ref": "scx-module",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-kashw2": {
+      "locked": {
+        "lastModified": 1726307438,
+        "narHash": "sha256-dUjhIlIzLrRLmar0p8G4PVFq17KqxOrchs3yBAZt2j0=",
+        "owner": "kashw2",
+        "repo": "nixpkgs",
+        "rev": "6d72d7bdc109f54966e480502abf0c715fc3df1c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kashw2",
+        "ref": "responsively",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1394,7 +1426,9 @@
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs_7",
+        "nixpkgs-imadnyc": "nixpkgs-imadnyc",
         "nixpkgs-john": "nixpkgs-john",
+        "nixpkgs-kashw2": "nixpkgs-kashw2",
         "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",

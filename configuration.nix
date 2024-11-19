@@ -60,15 +60,9 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackagesFor (
-      pkgs.linuxPackages_latest.kernel.override {
+    kernelPackages = pkgs-stable.linuxPackagesFor (
+      pkgs-stable.linuxPackages_latest.kernel.override {
         structuredExtraConfig = with lib.kernel; {
-          BPF = yes;
-          BPF_EVENTS = yes;
-          BPF_JIT = yes;
-          BPF_SYSCALL = yes;
-          DEBUG_INFO_BTF = yes;
-          FTRACE = yes;
           SCHED_CLASS_EXT = yes;
         };
         ignoreConfigErrors = false;
@@ -92,7 +86,11 @@ in
       "nowatchdog"
       "resume_offset=1058048"
     ];
-    kernel.sysctl."kernel.sysrq" = 438;
+    kernel.sysctl = {
+      "vm.admin_reserve_kbytes" = 1048576;
+      "vm.oom_kill_allocating_task" = 1;
+      "kernel.sysrq" = 438;
+    };
   };
 
   networking = {

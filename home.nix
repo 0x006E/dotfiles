@@ -60,9 +60,13 @@
       onedriver
 
       # Custom Packages
-      (pkgs.callPackage ./responsively-app.nix { })
-      (pkgs.callPackage ./zoho-mail.nix { })
-
+      responsively-desktop
+      (zoho-mail.overrideAttrs {
+        version = "1.6.5";
+        src = src.overrideAttrs {
+          hash = "";
+        };
+      })
       # Gaming
       (lutris.override {
         extraLibraries = pkgs: [
