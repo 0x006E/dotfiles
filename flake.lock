@@ -803,7 +803,7 @@
         "narHash": "sha256-6U0CyPycIBc04hbYy2hBINnVso58n/ZyywY2BD3hu+s=",
         "rev": "9098ac95768f7006d7e070b88bae76939f6034e6",
         "type": "tarball",
-        "url": "https://git.lix.systems/api/v1/repos/lix-project/nixos-module/archive/9098ac95768f7006d7e070b88bae76939f6034e6.tar.gz"
+        "url": "https://git.lix.systems/api/v1/repos/lix-project/nixos-module/archive/9098ac95768f7006d7e070b88bae76939f6034e6.tar.gz?rev=9098ac95768f7006d7e070b88bae76939f6034e6"
       },
       "original": {
         "type": "tarball",
@@ -937,11 +937,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1731894894,
-        "narHash": "sha256-HB7VHbDE+05HqreoLp9QG4sntsqV0IHo2yB1bpD1tVw=",
+        "lastModified": 1731981189,
+        "narHash": "sha256-EnDFNJq3CuPLZ+3BxGDAqIckbK5pBkUFt3nqLafni4o=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "0982ffd1c37d8ef1a202d920e33b27b59ff30ca7",
+        "rev": "6f1845dd71ddeb7463856750c5e0cb6c122bb87a",
         "type": "github"
       },
       "original": {
@@ -999,22 +999,6 @@
       "original": {
         "owner": "JohnRTitor",
         "ref": "scx-module",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-k900": {
-      "locked": {
-        "lastModified": 1731931122,
-        "narHash": "sha256-rX6O35gINaTg6b7EcEqFFlO1hxkrpUNXXI8UmYvxD4c=",
-        "owner": "K900",
-        "repo": "nixpkgs",
-        "rev": "9dd1da7475146cdc8937038b9341e8e19bcf5278",
-        "type": "github"
-      },
-      "original": {
-        "owner": "K900",
-        "ref": "kernels-20241118",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1411,7 +1395,6 @@
         "nixos-cosmic": "nixos-cosmic",
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-john": "nixpkgs-john",
-        "nixpkgs-k900": "nixpkgs-k900",
         "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
