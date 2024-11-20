@@ -1,9 +1,11 @@
 {
   pkgs,
+  fetchFromGitLab,
 }:
 pkgs.libfprint.overrideAttrs (old: {
 
-  src = old.src.overrideAttrs {
+  src = fetchFromGitLab {
+    domain = "gitlab.freedesktop.org";
     owner = "0x00002a";
     repo = "libfprint";
     rev = "bfb77a332632822196af95ea3763872d293ccd7a";
