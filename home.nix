@@ -58,7 +58,6 @@
 
       # Cloud and Sync
       onedriver
-      windsurf
 
       # Custom Packages
       responsively-desktop
