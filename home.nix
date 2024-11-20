@@ -233,19 +233,8 @@
     swaync.enable = true;
 
     conky = {
-      package = pkgs.conky.override {
-        waylandSupport = true;
-        x11Support = false;
-        luaSupport = true;
-        luaCairoSupport = true;
-        wirelessSupport = true;
-        pulseSupport = true;
-        curlSupport = true;
-        journalSupport = true;
-        nvidiaSupport = true;
-        ncursesSupport = false;
-      };
       enable = true;
+      package = pkgs.conky-wayland;
       extraConfig = builtins.readFile ./conky.conf;
     };
 
