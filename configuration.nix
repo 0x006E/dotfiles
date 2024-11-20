@@ -3,7 +3,7 @@
   inputs,
   lib,
   config,
-  pkgs-stable,
+  pkgs-master,
   ...
 }:
 let
@@ -60,8 +60,8 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs-stable.linuxPackagesFor (
-      pkgs-stable.linuxPackages_latest.kernel.override {
+    kernelPackages = pkgs-master.linuxPackagesFor (
+      pkgs-master.linuxPackages_latest.kernel.override {
         structuredExtraConfig = with lib.kernel; {
           SCHED_CLASS_EXT = yes;
         };
@@ -167,7 +167,7 @@ in
       };
       pulse.enable = true;
       wireplumber = {
-        package = pkgs-stable.wireplumber;
+        package = pkgs.wireplumber;
         extraConfig = {
           "disable-camera" = {
             "wireplumber.profiles".main."monitor.libcamera" = "disabled";

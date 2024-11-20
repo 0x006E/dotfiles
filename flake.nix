@@ -6,7 +6,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
-
+    nixpkgs-master.url = "github:nixos/nixpkgs/master";
     # Custom Nixpkgs Forks
     nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
     nixpkgs-john.url = "github:JohnRTitor/nixpkgs/scx-module";
@@ -57,9 +57,11 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-unstable,
+      nixpkgs-master,
       nixpkgs-matthewpi,
       nixpkgs-john,
       nixpkgs-kashw2,
@@ -84,7 +86,11 @@
       };
 
       pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
 
+      pkgs-master = import nixpkgs-master {
         inherit system;
         config.allowUnfree = true;
       };
@@ -111,13 +117,31 @@
       };
     in
     {
+      packages.${system} = import ./pkgs {
+        inherit
+          nixpkgs
+          pkgs-stable
+          pkgs-unstable
+          pkgs-master
+          ;
+        pkgs = nixpkgs.legacyPackages.${system};
+      };
+
       nixosConfigurations = {
+
         ntsv = nixpkgs.lib.nixosSystem {
           inherit system;
 
           # Special Arguments
           specialArgs = {
-            inherit inputs pkgs-stable pkgs-unstable;
+            inherit
+              inputs
+              pkgs-stable
+              pkgs-unstable
+              pkgs-master
+              self
+              system
+              ;
           };
 
           modules = [
@@ -130,17 +154,13 @@
             lix-module.nixosModules.default
             stylix.nixosModules.stylix
             niri.nixosModules.niri
-
+            ./overlays
             # Overlays
             {
               nixpkgs.overlays = [
-                (self: super: {
-                  mpv = super.mpv.override {
-                    scripts = [ self.mpvScripts.mpris ];
-                  };
-                })
                 inputs.nix-vscode-extensions.overlays.default
                 overlay
+
               ];
             }
 

@@ -2,9 +2,6 @@
   pkgs,
   ...
 }:
-let
-  boomaga = pkgs.libsForQt5.callPackage ./boomaga.nix { };
-in
 {
   # Networking and Discovery
   services.avahi = {
@@ -38,7 +35,7 @@ in
   # Printing Services
   services = {
     # D-Bus Integration
-    dbus.packages = [ boomaga ];
+    dbus.packages = [ pkgs.boomaga ];
 
     # Printer Drivers
     printing.drivers = with pkgs; [

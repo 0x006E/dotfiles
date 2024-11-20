@@ -1059,6 +1059,22 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/cc2f28000298e1269cea6612cd06ec9979dd5d7f.tar.gz"
       }
     },
+    "nixpkgs-master": {
+      "locked": {
+        "lastModified": 1732070850,
+        "narHash": "sha256-TJ9PRuDfk7MPGwg7OnfkLn4+5MevNoUIqNNchCysXRg=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "ef58249afdb9a4e99d95540383ccac064b5168f1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-matthewpi": {
       "locked": {
         "lastModified": 1731699950,
@@ -1429,6 +1445,7 @@
         "nixpkgs-imadnyc": "nixpkgs-imadnyc",
         "nixpkgs-john": "nixpkgs-john",
         "nixpkgs-kashw2": "nixpkgs-kashw2",
+        "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-matthewpi": "nixpkgs-matthewpi",
         "nixpkgs-stable": "nixpkgs-stable_4",
         "nixpkgs-unstable": "nixpkgs-unstable",
