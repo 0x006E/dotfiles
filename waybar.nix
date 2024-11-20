@@ -43,7 +43,7 @@ in
 
   programs.waybar = {
     enable = true;
-
+    systemd.enable = true;
     style =
       lib.strings.concatStringsSep "\n" (
         # Convert the colors attribute set to GTK color declarations
@@ -70,17 +70,19 @@ in
         modules-left = [
           "clock"
           "custom/sep"
+          "group/connection"
+          "custom/sep"
           "tray"
         ];
         modules-center = [
           "niri/workspaces"
         ];
         modules-right = [
-          "custom/bluetooth_devices"
-          "custom/sep"
           "temperature"
           "custom/sep"
           "privacy"
+          "custom/sep"
+          "battery"
           "custom/sep"
           "pulseaudio"
           "custom/powermenu"
@@ -128,8 +130,111 @@ in
             ""
           ];
         };
-        privacy = {
+        network = {
+          format = "{icon}";
+          format-icons = {
+            wifi = [
+              "󰤨"
+            ];
+            ethernet = [
+              "󰈀"
+            ];
+            disconnected = [
+              "󰖪"
+            ];
+          };
+          format-wifi = "󰤨";
+          format-ethernet = "󰈀";
+          format-disconnected = "󰖪";
+          format-linked = "󰈁";
+          tooltip = false;
+          on-click = "pgrep -x rofi &>/dev/null && notify-send rofi || networkmanager_dmenu";
+        };
+        "network#speed" = {
+          format = " {bandwidthDownBits} ";
           rotate = 90;
+          interval = 5;
+          tooltip-format = "{ipaddr}";
+          tooltip-format-wifi = "{essid} ({signalStrength}%)   \n{ipaddr} | {frequency} MHz{icon} ";
+          tooltip-format-ethernet = "{ifname} 󰈀 \n{ipaddr} | {frequency} MHz{icon} ";
+          tooltip-format-disconnected = "Not Connected to any type of Network";
+          tooltip = true;
+          on-click = "pgrep -x rofi &>/dev/null && notify-send rofi || networkmanager_dmenu";
+        };
+        bluetooth = {
+          format-on = "";
+          format-off = "󰂲";
+          format-disabled = "";
+          format-connected = "<b></b>";
+          tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+          tooltip-format-enumerate-connected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+          on-click = "rofi-bluetooth -config ~/.config/rofi/menu.d/network.rasi -i";
+        };
+        "bluetooth#status" = {
+          format-on = "";
+          format-off = "";
+          format-disabled = "";
+          format-connected = "<b>{num_connections}</b>";
+          format-connected-battery = "<small><b>{device_battery_percentage}%</b></small>";
+          tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
+          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
+          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
+          tooltip-format-enumerate-connected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+          on-click = "rofi-bluetooth -config ~/.config/rofi/menu.d/network.rasi -i";
+        };
+        "group/network" = {
+          orientation = "vertical";
+          drawer = {
+            transition-duration = 500;
+            transition-left-to-right = true;
+          };
+          modules = [
+            "network"
+            "network#speed"
+          ];
+        };
+        "group/bluetooth" = {
+          orientation = "inherit";
+          drawer = {
+            transition-duration = 500;
+            transition-left-to-right = true;
+          };
+          modules = [
+            "bluetooth"
+            "bluetooth#status"
+          ];
+        };
+        "group/connection" = {
+          orientation = "vertical";
+          modules = [
+            "group/network"
+            "group/bluetooth"
+          ];
+        };
+        battery = {
+          rotate = 90;
+          states = {
+            good = 95;
+            warning = 30;
+            critical = 15;
+          };
+          format = "{icon}";
+          format-charging = "<b>{icon} </b>";
+          format-full = "<span color='#82A55F'><b>{icon}</b></span>";
+          format-icons = [
+            "󰁻"
+            "󰁼"
+            "󰁾"
+            "󰂀"
+            "󰂂"
+            "󰁹"
+          ];
+          tooltip-format = "{timeTo} {capacity} % | {power} W";
+        };
+        privacy = {
+          orientation = "vertical";
           icon-size = 16;
           modules = [
             { type = "screenshare"; }

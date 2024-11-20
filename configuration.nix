@@ -77,7 +77,10 @@ in
       "iTCO_wdt"
       "iTCO_vendor_support"
     ];
-    kernelModules = [ "acer-wmi-battery" ];
+    kernelModules = [
+      "acer-wmi-battery"
+      "coretemp"
+    ];
     extraModprobeConfig = ''
       options iwlwifi 11n_disable=8 
     '';
@@ -106,6 +109,7 @@ in
   };
 
   services = {
+    speechd.enable = lib.mkForce false;
     kanata = {
       enable = false; # Disabled because of errors
 
@@ -136,14 +140,10 @@ in
       rulesProvider = pkgs.ananicy-rules-cachyos_git;
     };
     fwupd.enable = true;
-    desktopManager.cosmic.enable = false;
     xserver = {
       enable = true;
-      displayManager.gdm = {
-        enable = true;
-        wayland = true;
-      };
-      desktopManager.gnome.enable = true;
+      displayManager.lightdm.enable = true;
+      desktopManager.cinnamon.enable = true;
 
     };
     greetd = {
@@ -239,6 +239,7 @@ in
   environment = {
     systemPackages = with pkgs; [
       comma
+      lm_sensors
       commit-mono
       vim
       kvmtool
@@ -253,7 +254,6 @@ in
       wayland-utils
       libsecret
       cage
-      gamescope
       dwarfs
       deluge
       darktable

@@ -22,7 +22,6 @@
     # Desktop and UI
     stylix.url = "github:danth/stylix";
     niri.url = "github:sodiboo/niri-flake";
-    conky.url = "github:brndnmtthws/conky";
 
     # Development Tools
     nixvim = {
@@ -41,7 +40,6 @@
       url = "github:nix-community/lanzaboote/v0.4.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
     walker.url = "github:abenz1267/walker";
 
     # Utilities
@@ -72,7 +70,6 @@
       niri,
       lix-module,
       stylix,
-      nixos-cosmic,
       rio-term,
       ...
     }@inputs:
@@ -104,9 +101,6 @@
           zen-browser-unwrapped
           ;
         # System Utilities
-        inherit (inputs.conky.packages.${prev.system})
-          conky
-          ;
         rio = rio-term.packages.${prev.system}.rio.overrideAttrs (old: {
           doCheck = false;
           buildFeatures = [ "wayland" ];
@@ -191,14 +185,6 @@
             # Additional Modules
             chaotic.nixosModules.default
             lanzaboote.nixosModules.lanzaboote
-            {
-              nix.settings = {
-                substituters = [ "https://cosmic.cachix.org/" ];
-                trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
-              };
-            }
-            nixos-cosmic.nixosModules.default
-
             ./secureboot.nix
           ];
         };

@@ -52,7 +52,7 @@ in
       environment = {
         VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
         QT_QPA_PLATFORM = "wayland";
-        DISPLAY = ":0";
+        DISPLAY = ":12";
         EDITOR = "nvim";
         WLR_NO_HARDWARE_CURSORS = "1";
         NIXOS_OZONE_WL = "1";
@@ -220,9 +220,16 @@ in
 
       # Startup Applications
       spawn-at-startup = [
-        { command = [ "xwayland-satellite" ]; }
-        { command = [ "sleep 5; unset DISPLAY; waybar" ]; }
+        {
+          command = [
+            "${lib.makeBinPath [ pkgs.xwayland-satellite-unstable ]}/xwayland-satellite"
+            ":12"
+          ];
+        }
+        { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
+        { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
         { command = [ "swww-daemon" ]; }
+        { command = [ "dex" ]; }
         { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
       ];
 
@@ -334,10 +341,10 @@ in
   services.swaync.enable = true;
 
   home.packages = with pkgs; [
+    dex
     brightnessctl
     grim
     slurp
-    xwayland
     xwayland-satellite-unstable
     swww
   ];

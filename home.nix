@@ -215,7 +215,7 @@
       enableCompletion = true;
       bashrcExtra = ''
         eval "$(direnv hook bash)"
-        export DISPLAY=:0
+        export DISPLAY=:12
         export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
       '';
       shellAliases = {
@@ -233,11 +233,20 @@
     swaync.enable = true;
 
     conky = {
+      package = pkgs.conky.override {
+        waylandSupport = true;
+        x11Support = false;
+        luaSupport = true;
+        luaCairoSupport = true;
+        wirelessSupport = true;
+        pulseSupport = true;
+        curlSupport = true;
+        journalSupport = true;
+        nvidiaSupport = true;
+        ncursesSupport = false;
+      };
       enable = true;
-      extraConfig = ''
-        out_to_x = false,
-        out_to_wayland = true,
-      '';
+      extraConfig = builtins.readFile ./conky.conf;
     };
 
     udiskie.enable = true;

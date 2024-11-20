@@ -1,8 +1,6 @@
 {
   pkgs,
   pkgs-unstable,
-  pkgs-stable,
-  inputs,
   ...
 }:
 
@@ -210,12 +208,13 @@ in
         ];
       };
     };
-    package = pkgs-unstable.neovim-unwrapped.overrideAttrs (old: {
+    package = pkgs.neovim-unwrapped.overrideAttrs (old: {
       patches = old.patches ++ [
         # Fix byte index encoding bounds.
         # - https://github.com/neovim/neovim/pull/30747
         # - https://github.com/nix-community/nixvim/issues/2390
-        (pkgs-unstable.fetchpatch {
+        (pkgs.fetchpatch {
+
           name = "fix-lsp-str_byteindex_enc-bounds-checking-30747.patch";
           url = "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/30747.patch";
           hash = "sha256-2oNHUQozXKrHvKxt7R07T9YRIIx8W3gt8cVHLm2gYhg=";
@@ -832,7 +831,7 @@ in
           templ.enable = true;
           vtsls = {
             enable = true;
-            package = pkgs-unstable.vtsls;
+            package = pkgs.vtsls;
             extraOptions = {
               commands = {
                 OrganizeImports = {
@@ -904,7 +903,7 @@ in
           pyright.enable = true;
           nixd = {
             enable = true;
-            package = pkgs-stable.nixd;
+            package = pkgs-unstable.nixd;
             settings = {
               nixpkgs = {
                 expr = "import <nixpkgs> { }";
