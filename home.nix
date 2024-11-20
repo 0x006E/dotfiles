@@ -58,15 +58,11 @@
 
       # Cloud and Sync
       onedriver
+      windsurf
 
       # Custom Packages
       responsively-desktop
-      (zoho-mail.overrideAttrs {
-        version = "1.6.5";
-        src = src.overrideAttrs {
-          hash = "";
-        };
-      })
+      zoho-mail
       # Gaming
       (lutris.override {
         extraLibraries = pkgs: [

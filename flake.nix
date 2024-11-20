@@ -97,9 +97,6 @@
       # Custom Overlay
       overlay = final: prev: {
         # Browser and Tools
-        inherit (nixpkgs-imadnyc.legacyPackages.${prev.system})
-          zoho-mail
-          ;
         inherit (nixpkgs-kashw2.legacyPackages.${prev.system})
           responsively-desktop
           ;
@@ -114,6 +111,14 @@
           doCheck = false;
           buildFeatures = [ "wayland" ];
         });
+
+        zoho-mail = nixpkgs-imadnyc.legacyPackages.${prev.system}.zoho-mail.overrideAttrs (old: {
+          version = "1.6.5";
+          src = old.src.overrideAttrs {
+            hash = "sha256-Rt2lPHzxdbf6jjMmCnTg7Fyo/shc7CESisdRYm+HSg4=";
+          };
+        });
+
       };
     in
     {
