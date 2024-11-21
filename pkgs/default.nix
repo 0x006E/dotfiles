@@ -5,6 +5,7 @@
 }:
 let
   inherit (pkgs) callPackage libsForQt5;
+  customVimPlugins = import ./vimPlugins { inherit pkgs; };
 in
 rec {
   libfprint = callPackage ./libfprint { };
@@ -14,3 +15,4 @@ rec {
   fprintd = callPackage ./fprintd.nix { libfprint = libfprint; };
   windsurf = callPackage ./windsurf.nix { inherit nixpkgs; };
 }
+// customVimPlugins

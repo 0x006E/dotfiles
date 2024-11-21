@@ -3,7 +3,6 @@ let
   inherit (pkgs) callPackage;
 in
 {
-
   format-on-save = callPackage ./format-on-save.nix { };
   magazine = callPackage ./magazine.nix { };
   remote-nvim = callPackage ./remote-nvim.nix { };

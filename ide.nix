@@ -878,7 +878,7 @@ in
 
       cmp = {
         enable = true;
-        package = pkgs.magazine;
+        package = pkgs.vimPlugins.magazine;
         autoEnableSources = true;
         settings = {
           completion = {
