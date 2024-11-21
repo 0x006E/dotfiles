@@ -1,6 +1,7 @@
 { pkgs, fetchFromGitHub }:
 pkgs.vimUtils.buildVimPlugin {
   name = "workspace-diagnostics.nvim";
+  version = "0-unstable-2024-08-10";
   src = fetchFromGitHub {
     owner = "artemave";
     repo = "workspace-diagnostics.nvim";
