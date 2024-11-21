@@ -41,4 +41,4 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Update flake packages
-        uses: selfuryon/nix-update-action@v1
+        uses: selfuryon/nix-update-action@v1.1.0
