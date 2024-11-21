@@ -1,11 +1,12 @@
 { pkgs, fetchFromGitHub, ... }:
 
-pkgs.vimUtils.buildVimPlugin {
+pkgs.vimUtils.buildVimPlugin rec {
   name = "magazine.nvim";
+  version = "0.4.1";
   src = fetchFromGitHub {
     owner = "iguanacucumber";
     repo = "magazine.nvim";
-    rev = "4aec249cdcef9b269e962bf73ef976181ee7fdd9";
-    hash = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
+    rev = "${version}";
+    hash = "";
   };
 }
