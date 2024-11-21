@@ -142,6 +142,7 @@ in
           "nvim-treesitter"
           "copilot.lua"
           "smart-splits.nvim"
+          "magazine.nvim"
         ];
       };
     };
