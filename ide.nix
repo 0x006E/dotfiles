@@ -866,7 +866,6 @@ in
 
       cmp = {
         enable = true;
-        package = pkgs.vimPlugins.magazine;
         autoEnableSources = true;
         settings = {
           completion = {
