@@ -5,6 +5,7 @@
 }:
 pkgs.vimUtils.buildVimPlugin {
   name = "format-on-save";
+  version = "0-unstable-2024-05-20";
   src = fetchFromGitHub {
     owner = "elentok";
     repo = "format-on-save.nvim";
