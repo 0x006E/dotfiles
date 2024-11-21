@@ -7,6 +7,6 @@ pkgs.vimUtils.buildVimPlugin rec {
     owner = "iguanacucumber";
     repo = "magazine.nvim";
     rev = "${version}";
-    hash = "";
+    hash = "sha256-qZsyQ6C8ODtJLT2XW5Mt2uD/WVrPSJzvGhnDeaAiqPA=";
   };
 }
