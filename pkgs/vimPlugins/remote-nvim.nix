@@ -1,7 +1,7 @@
 { pkgs, fetchFromGitHub, ... }:
 pkgs.vimUtils.buildVimPlugin {
   name = "remote-nvim.nvim";
-  version = "0.3.11-unstable-2024-08-04";
+  version = "0.3.11";
   src = fetchFromGitHub {
     owner = "amitds1997";
     repo = "remote-nvim.nvim";
