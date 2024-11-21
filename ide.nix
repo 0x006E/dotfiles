@@ -903,7 +903,6 @@ in
           pyright.enable = true;
           nixd = {
             enable = true;
-            package = pkgs-unstable.nixd;
             settings = {
               nixpkgs = {
                 expr = "import <nixpkgs> { }";

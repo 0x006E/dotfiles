@@ -4,14 +4,13 @@
   inputs = {
     # Core Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
     # Custom Nixpkgs Forks
-    nixpkgs-matthewpi.url = "github:matthewpi/nixpkgs/zen-browser";
-    nixpkgs-john.url = "github:JohnRTitor/nixpkgs/scx-module";
-    nixpkgs-kashw2.url = "github:kashw2/nixpkgs/responsively";
-    nixpkgs-imadnyc.url = "github:imadnyc/nixpkgs/zoho-mail";
+    nixpkgs-zen-mr.url = "github:nixos/nixpkgs/refs/pull/347222/merge";
+    nixpkgs-responsively-mr.url = "github:nixos/nixpkgs/refs/pull/307444/merge";
+    nixpkgs-zoho-mail-mr.url = "github:nixos/nixpkgs/refs/pull/291451/merge";
 
     # Home Manager
     home-manager = {
@@ -60,10 +59,9 @@
       nixpkgs-stable,
       nixpkgs-unstable,
       nixpkgs-master,
-      nixpkgs-matthewpi,
-      nixpkgs-john,
-      nixpkgs-kashw2,
-      nixpkgs-imadnyc,
+      nixpkgs-zen-mr,
+      nixpkgs-responsively-mr,
+      nixpkgs-zoho-mail-mr,
       home-manager,
       chaotic,
       lanzaboote,
@@ -94,10 +92,10 @@
       # Custom Overlay
       overlay = final: prev: {
         # Browser and Tools
-        inherit (nixpkgs-kashw2.legacyPackages.${prev.system})
+        inherit (nixpkgs-responsively-mr.legacyPackages.${prev.system})
           responsively-desktop
           ;
-        inherit (nixpkgs-matthewpi.legacyPackages.${prev.system})
+        inherit (nixpkgs-zen-mr.legacyPackages.${prev.system})
           zen-browser-unwrapped
           ;
         # System Utilities
@@ -105,14 +103,6 @@
           doCheck = false;
           buildFeatures = [ "wayland" ];
         });
-
-        zoho-mail = nixpkgs-imadnyc.legacyPackages.${prev.system}.zoho-mail.overrideAttrs (old: {
-          version = "1.6.5";
-          src = old.src.overrideAttrs {
-            hash = "sha256-Rt2lPHzxdbf6jjMmCnTg7Fyo/shc7CESisdRYm+HSg4=";
-          };
-        });
-
       };
     in
     {
@@ -147,7 +137,7 @@
             # Core Modules
             {
               imports = [
-                "${nixpkgs-john}/nixos/modules/services/scheduling/scx.nix"
+                "${nixpkgs-unstable}/nixos/modules/services/scheduling/scx.nix"
               ];
             }
             lix-module.nixosModules.default

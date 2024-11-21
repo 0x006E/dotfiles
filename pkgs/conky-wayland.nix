@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, fetchFromGitHub, ... }:
 (pkgs.conky.override {
   waylandSupport = true;
   x11Support = false;
@@ -11,10 +11,15 @@
   nvidiaSupport = true;
   ncursesSupport = false;
 }).overrideAttrs
-  (old: {
+  (old: rec {
     version = "1.21.8";
-    src = old.src.overrideAttrs {
+    src = fetchFromGitHub {
+      owner = "brndnmtthws";
+      repo = "conky";
+      rev = "v${version}";
       hash = "sha256-bKWy/vWqHXqE3q8N3V6HV7/EKIOZ7CwTHgQ8btYkOvM=";
     };
+    buildInputs = old.buildInputs ++ [ pkgs.gperf ];
+
     cmakeFlags = old.cmakeFlags ++ [ "-DBUILD_LUA_CAIRO_XLIB=ON" ];
   })

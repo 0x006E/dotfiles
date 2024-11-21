@@ -3,7 +3,6 @@
   inputs,
   lib,
   config,
-  pkgs-master,
   ...
 }:
 let
@@ -60,8 +59,8 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs-master.linuxPackagesFor (
-      pkgs-master.linuxPackages_latest.kernel.override {
+    kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.linuxPackages_latest.kernel.override {
         structuredExtraConfig = with lib.kernel; {
           SCHED_CLASS_EXT = yes;
         };
