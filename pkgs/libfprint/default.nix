@@ -3,7 +3,7 @@
   fetchFromGitLab,
 }:
 pkgs.libfprint.overrideAttrs (old: {
-
+  version = "1.94.5";
   src = fetchFromGitLab {
     domain = "gitlab.freedesktop.org";
     owner = "0x00002a";
