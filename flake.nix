@@ -10,7 +10,6 @@
     # Custom Nixpkgs Forks
     nixpkgs-zen-mr.url = "github:nixos/nixpkgs/refs/pull/347222/merge";
     nixpkgs-responsively-mr.url = "github:nixos/nixpkgs/refs/pull/307444/merge";
-    nixpkgs-zoho-mail-mr.url = "github:nixos/nixpkgs/refs/pull/291451/merge";
 
     # Home Manager
     home-manager = {
@@ -61,7 +60,6 @@
       nixpkgs-master,
       nixpkgs-zen-mr,
       nixpkgs-responsively-mr,
-      nixpkgs-zoho-mail-mr,
       home-manager,
       chaotic,
       lanzaboote,

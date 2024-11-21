@@ -1,7 +1,7 @@
 { pkgs, fetchFromGitHub, ... }:
 (pkgs.conky.override {
   waylandSupport = true;
-  x11Support = false;
+  x11Support = true;
   luaSupport = true;
   luaCairoSupport = true;
   wirelessSupport = true;
@@ -9,7 +9,7 @@
   curlSupport = true;
   journalSupport = true;
   nvidiaSupport = true;
-  ncursesSupport = false;
+  ncursesSupport = true;
 }).overrideAttrs
   (old: rec {
     version = "1.21.8";
