@@ -6,7 +6,7 @@
 
 pkgs.vimUtils.buildVimPlugin rec {
   pname = "tiny-inline-diagnostic-nvim";
-  version = "unstable-2024-11-08";
+  version = "0-unstable-2024-11-08";
 
   src = fetchFromGitHub {
     owner = "rachartier";
