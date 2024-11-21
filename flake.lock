@@ -1048,22 +1048,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-zoho-mail-mr": {
-      "locked": {
-        "lastModified": 1732202451,
-        "narHash": "sha256-yKuuveDjItbWEpIjpE+KooaFO3iTuSfyZAx5XGy64LQ=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "00ef9333dbaa427edca63c4feeaf099e22268bc3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "refs/pull/291451/merge",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1732014248,
@@ -1307,7 +1291,6 @@
         "nixpkgs-stable": "nixpkgs-stable_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "nixpkgs-zen-mr": "nixpkgs-zen-mr",
-        "nixpkgs-zoho-mail-mr": "nixpkgs-zoho-mail-mr",
         "nixvim": "nixvim",
         "rio-term": "rio-term",
         "stylix": "stylix",
