@@ -5,69 +5,6 @@
 }:
 
 let
-  format-on-save = pkgs.vimUtils.buildVimPlugin {
-    name = "format-on-save";
-    src = pkgs.fetchFromGitHub {
-      owner = "elentok";
-      repo = "format-on-save.nvim";
-      rev = "fed870bb08d9889580f5ca335649da2074bd4b6f";
-      hash = "sha256-07RWMrBDVIH3iGgo2RcNDhThSrR/Icijcd//MOnBzpA=";
-    };
-    patches = [
-      (pkgs.fetchpatch {
-        url = "https://github.com/elentok/format-on-save.nvim/pull/24.patch";
-        hash = "sha256-g1SSjxCaoP/AAUBkOY1ZSVI9wuDl5o5Sie8YzZt6zgQ=";
-      })
-
-    ];
-  };
-
-  tailwindcss-colorizer-cmp = pkgs.vimUtils.buildVimPlugin {
-    name = "tailwindcss-colorizer-cmp";
-    src = pkgs.fetchFromGitHub {
-      owner = "roobert";
-      repo = "tailwindcss-colorizer-cmp.nvim";
-      rev = "3d3cd95e4a4135c250faf83dd5ed61b8e5502b86";
-      hash = "sha256-PIkfJzLt001TojAnE/rdRhgVEwSvCvUJm/vNPLSWjpY=";
-    };
-  };
-
-  workspace-diagnostics = pkgs.vimUtils.buildVimPlugin {
-    name = "workspace-diagnostics.nvim";
-    src = pkgs.fetchFromGitHub {
-      owner = "artemave";
-      repo = "workspace-diagnostics.nvim";
-      rev = "573ff93c47898967efdfbc6587a1a39e3c2d365e";
-      hash = "sha256-lBj4KUPmmhtpffYky/HpaTwY++d/Q9socp/Ys+4VeX0=";
-    };
-  };
-
-  magazine = pkgs.vimPlugins.nvim-cmp.overrideAttrs (old: {
-    src = pkgs.fetchFromGitHub {
-      owner = "iguanacucumber";
-      repo = "magazine.nvim";
-      rev = "4aec249cdcef9b269e962bf73ef976181ee7fdd9";
-      hash = "sha256-qobf9Oyt9Voa2YUeZT8Db7O8ztbGddQyPh5wIMpK/w8=";
-    };
-  });
-  remote-nvim = pkgs.vimUtils.buildVimPlugin {
-    name = "remote-nvim.nvim";
-    src = pkgs.fetchFromGitHub {
-      owner = "amitds1997";
-      repo = "remote-nvim.nvim";
-      rev = "ffbf91f6132289a8c43162aba12c7365c28d601c";
-      hash = "sha256-8gKQ7DwubWKfoXY4HDvPeggV+kxhlpz3yBmG9+SZ8AI=";
-    };
-  };
-  tiny-inline-diagnostic = pkgs.vimUtils.buildVimPlugin {
-    name = "tiny-inline-diagnostic";
-    src = pkgs.fetchFromGitHub {
-      owner = "rachartier";
-      repo = "tiny-inline-diagnostic.nvim";
-      rev = "a4f8b29eb318b507a5e5c11e6d69bea4f5bc2ab2";
-      hash = "sha256-S+O5hI0hF3drTwTwIlQ3aPl9lTBErt53lgUFlQGSCA8=";
-    };
-  };
 in
 
 {
@@ -941,7 +878,7 @@ in
 
       cmp = {
         enable = true;
-        package = magazine;
+        package = pkgs.magazine;
         autoEnableSources = true;
         settings = {
           completion = {
