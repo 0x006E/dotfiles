@@ -12,7 +12,7 @@
 }:
 stdenv.mkDerivation rec {
   pname = "boomaga";
-  version = "unstable-2022-02-21"; # Update this to the correct version
+  version = "3.0.0"; # Update this to the correct version
 
   src = fetchFromGitHub {
     owner = "Boomaga";
