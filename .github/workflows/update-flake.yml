@@ -42,3 +42,5 @@ jobs:
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
       - name: Update flake packages
         uses: 0x006e/nix-update-action@1.1.1
+        with:
+          blacklist: "zoho-mail,windsurf"
