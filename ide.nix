@@ -109,7 +109,7 @@ in
             }),
             formatters.if_file_exists({
               pattern = { ".prettierrc", ".prettierrc.*", "prettier.config.*" },
-              formatter = formatters.prettierd,
+             formatter = formatters.prettierd,
             }),
           },
         },
@@ -132,18 +132,6 @@ in
         enable = true;
         nvimRuntime = true;
         plugins = true;
-      };
-      combinePlugins = {
-        enable = true;
-        # pathsToLink = [
-        #   ""
-        # ];
-        standalonePlugins = [
-          "nvim-treesitter"
-          "copilot.lua"
-          "smart-splits.nvim"
-          "magazine.nvim"
-        ];
       };
     };
 
