@@ -2,6 +2,7 @@
 pkgs.vimUtils.buildVimPlugin {
   name = "remote-nvim.nvim";
   version = "0.3.11";
+  dontPatchShebangs = true;
   src = fetchFromGitHub {
     owner = "amitds1997";
     repo = "remote-nvim.nvim";

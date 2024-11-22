@@ -34,6 +34,7 @@ in
     enable = true;
     vimAlias = false;
     extraPlugins = with pkgs.vimPlugins; [
+      signup-nvim
       tailwindcss-colors-nvim
       tailwindcss-colorizer-cmp
       tiny-inline-diagnostic
@@ -45,8 +46,9 @@ in
       local format_on_save = require("format-on-save")
       local formatters = require("format-on-save.formatters")
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
-      require("tailwindcss-colorizer-cmp").setup({})
+      require("tailwindcss-colorizer-cmp").setup()
       require('tiny-inline-diagnostic').setup()
+      require("signup").setup()
       require('remote-nvim').setup({
         devpod = {
           gpg_agent_forwarding = true,

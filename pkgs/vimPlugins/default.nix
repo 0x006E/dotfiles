@@ -5,6 +5,7 @@ in
 {
   format-on-save = callPackage ./format-on-save.nix { };
   nvim-cmp = callPackage ./magazine.nix { };
+  signup-nvim = callPackage ./signup-nvim.nix { };
   remote-nvim = callPackage ./remote-nvim.nix { };
   tailwindcss-colorizer-cmp = callPackage ./tailwindcss-colorizer-cmp.nix { };
   tiny-inline-diagnostic = callPackage ./tiny-inline-diagnostic.nix { };
