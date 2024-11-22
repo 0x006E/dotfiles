@@ -165,7 +165,7 @@ in
         plugins = true;
       };
       combinePlugins = {
-        enable = true;
+        enable = false;
         standalonePlugins = [
           "nvim-cmp"
           "smart-splits.nvim"
