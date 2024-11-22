@@ -48,7 +48,36 @@ in
       local vim_notify = require("format-on-save.error-notifiers.vim-notify")
       require("tailwindcss-colorizer-cmp").setup({})
       require('tiny-inline-diagnostic').setup({})
-      require("signup").setup({})
+      require("signup").setup(
+      {
+          win = nil,
+          buf = nil,
+          timer = nil,
+          visible = false,
+          current_signatures = nil,
+          enabled = false,
+          normal_mode_active = false,
+          config = {
+            silent = false,
+            number = true,
+            icons = {
+              parameter = " ",
+              method = " ",
+              documentation = " ",
+            },
+            colors = {
+              parameter = "#86e1fc",
+              method = "#c099ff",
+              documentation = "#4fd6be",
+            },
+            active_parameter_colors = {
+              bg = "#86e1fc",
+              fg = "#1a1a1a",
+            },
+            border = "solid",
+            winblend = 10,
+          }
+      })
       require('remote-nvim').setup({
         devpod = {
           gpg_agent_forwarding = true,
@@ -135,6 +164,17 @@ in
         nvimRuntime = true;
         plugins = true;
       };
+      combinePlugins = {
+        enable = true;
+        standalonePlugins = [
+          "nvim-cmp"
+          "smart-splits.nvim"
+        ];
+        pathsToLink = [
+          "/scripts"
+        ];
+      };
+
     };
 
     autoGroups = {
