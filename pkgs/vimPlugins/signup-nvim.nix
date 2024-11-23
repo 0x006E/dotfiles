@@ -6,7 +6,7 @@
 
 vimUtils.buildVimPlugin {
   pname = "signup-nvim";
-  version = "unstable-2024-11-22";
+  version = "0-unstable-2024-11-22";
 
   src = fetchFromGitHub {
     owner = "Dan7h3x";
