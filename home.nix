@@ -7,7 +7,6 @@
 {
   imports = [
     inputs.walker.homeManagerModules.default
-    inputs.nix-index-database.hmModules.nix-index
     inputs.nixvim.homeManagerModules.nixvim
     ./niri.nix
     ./waybar.nix
@@ -126,7 +125,6 @@
       enable = true;
       enableBashIntegration = true;
     };
-    nix-index-database.comma.enable = true;
 
     vscode = {
       enable = true;

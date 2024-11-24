@@ -5,6 +5,43 @@
 }:
 
 let
+  icons = {
+  diagnostics = {
+    BoldError = " ";
+    Error = " ";
+    BoldWarning = " ";
+    Warning = " ";
+    BoldInformation = " ";
+    Information = " ";
+    BoldQuestion = " ";
+    Question = " ";
+    BoldHint = " ";
+    Hint = " ";
+    Debug = " ";
+    Trace = "✎ ";
+  };
+
+  git = {
+    LineAdded = " ";
+    LineModified = " ";
+    LineRemoved = " ";
+    FileDeleted = " ";
+    FileIgnored = "◌ ";
+    FileRenamed = " ";
+    FileStaged = "✓ ";
+    FileUnmerged = " ";
+    FileUnstaged = " ";
+    FileUntracked = "★ ";
+    Diff = " ";
+    Repo = " ";
+    Octoface = " ";
+    Branch = " ";
+  };
+
+  ui = {
+    Time = " ";
+  };
+};
 in
 
 {
@@ -42,6 +79,18 @@ in
       workspace-diagnostics
       remote-nvim
     ];
+    extraConfigLuaPre = ''
+      vim.fn.sign_define("diagnosticsignerror", { text = " ", texthl = "diagnosticerror", linehl = "", numhl = "" })
+      vim.fn.sign_define("diagnosticsignwarn", { text = " ", texthl = "diagnosticwarn", linehl = "", numhl = "" })
+      vim.fn.sign_define("diagnosticsignhint", { text = "󰌵", texthl = "diagnostichint", linehl = "", numhl = "" })
+      vim.fn.sign_define("diagnosticsigninfo", { text = " ", texthl = "diagnosticinfo", linehl = "", numhl = "" })
+    '';
+
+    # feature that enhances the way Neovim loads and executes Lua modules, 
+    # offering improved performance and flexibility.
+    luaLoader.enable = true;
+
+    clipboard.providers.wl-copy.enable = true;
     extraConfigLua = ''
       local format_on_save = require("format-on-save")
       local formatters = require("format-on-save.formatters")
@@ -157,6 +206,94 @@ in
         -- To prevent that set `run_with_sh` to `false`.
         -- run_with_sh = false,
       })
+      local ui = {}
+
+      function ui.fg(name)
+        local hl = vim.api.nvim_get_hl and vim.api.nvim_get_hl(0, { name = name }) or vim.api.nvim_get_hl_by_name(name, true)
+        local fg = hl and (hl.fg or hl.foreground)
+        return fg and { fg = string.format("#%06x", fg) } or nil
+      end
+
+      ---@param opts? {relative: "cwd"|"root", modified_hl: string?}
+      function ui.pretty_path(opts)
+        opts = vim.tbl_extend("force", {
+          relative = "cwd",
+          modified_hl = "Constant",
+        }, opts or {})
+
+        return function(self)
+          local path = vim.fn.expand("%:p") --[[@as string]]
+
+          if path == "" then
+            return ""
+          end
+
+          local bufname = vim.fn.bufname(vim.fn.bufnr())
+          local sep = package.config:sub(1, 1)
+          
+          local root = (opts.relative == "root") and vim.fn.getcwd() or vim.fn.fnamemodify(bufname, ":h")
+          local cwd = vim.fn.getcwd()
+
+          path = (opts.relative == "cwd" and path:find(cwd, 1, true) == 1) and path:sub(#cwd + 2) or path:sub(#root + 2)
+
+          local parts = vim.split(path, "[\\/]")
+          if #parts > 3 then
+            parts = { parts[1], "…", parts[#parts - 1], parts[#parts] }
+          end
+
+          if opts.modified_hl and vim.bo.modified then
+            local modified_hl_fg = ui.fg(opts.modified_hl)
+            if modified_hl_fg then
+              parts[#parts] = string.format("%%#%s#%s%%*", opts.modified_hl, parts[#parts])
+            end
+          end
+
+          return table.concat(parts, sep)
+        end
+      end
+
+      require("lualine").setup({
+          sections = {
+            lualine_c = {
+                {
+                  "diagnostics",
+                  symbols = {
+                    error = "${icons.diagnostics.Error}",
+                    warn  = "${icons.diagnostics.Warning}",
+                    hint  = "${icons.diagnostics.Hint}",
+                    info  = "${icons.diagnostics.BoldInformation}",
+                  },
+                },
+                { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+                { ui.pretty_path() },
+              },
+            lualine_x = {
+          {
+            function() return require("noice").api.status.command.get() end,
+            cond = function() return package.loaded["noice"] and require("noice").api.status.command.has() end,
+            color = ui.fg("Statement"),
+          },
+          {
+            function() return require("noice").api.status.mode.get() end,
+            cond = function() return package.loaded["noice"] and require("noice").api.status.mode.has() end,
+            color = ui.fg("Constant"),
+          },
+          {
+            function() return "${icons.diagnostics.Debug}" .. require("dap").status() end,
+            cond = function () return package.loaded["dap"] and require("dap").status() ~= "" end,
+            color = ui.fg("Debug"),
+          },
+          {
+          "diff",
+          symbols = {
+            added = "${icons.git.LineAdded}",
+            modified = "${icons.git.LineModified}",
+            removed= "${icons.git.LineRemoved}",
+            },
+          },
+        }
+      }
+    })
     '';
     performance = {
       byteCompileLua = {
@@ -220,8 +357,14 @@ in
       foldlevel = 99;
       foldlevelstart = 99;
       # fillchars = "eob: ,fold: ,foldopen:,foldsep:|,foldclose:";
-    };
-    keymaps = [
+          ignorecase = true;
+      smartcase = true; # Don't ignore case with capitals
+      grepprg = "rg --vimgrep";
+      grepformat = "%f:%l:%c:%m";
+
+      # Better colors
+      termguicolors = true;
+    };keymaps = [
       {
         key = "<leader>ss";
         action = "<cmd>Spectre<cr>";
@@ -583,10 +726,41 @@ in
           };
         };
       };
-      airline = {
+      lualine = {
         enable = true;
         settings = {
-          powerline_fonts = 1;
+          options = {
+            always_divide_middle = true;
+            ignore_focus = [ "neo-tree" ];
+            globalstatus = true; # have a single statusline at bottom of neovim instead of one for every window
+            disabled_filetypes.statusline = [
+              "dashboard"
+              "alpha"
+            ];
+            section_separators = {
+              left = "";
+              right = "";
+            };
+          };
+          extensions = [ "fzf" ];
+          sections = {
+            lualine_a = [ "mode" ];
+            lualine_b = [ "branch" ];
+            lualine_y = [
+              "progress"
+              {
+                separator = "";
+              }
+              "location"
+              {
+                padding = {
+                  left = 0;
+                  right = 1;
+                };
+              }
+            ];
+            lualine_z = [ ''"${icons.ui.Time}" .. os.date("%R")'' ];
+          };
         };
       };
       autoclose.enable = true;
@@ -894,20 +1068,55 @@ in
           };
         };
       };
-
+      luasnip = {
+        enable = true;
+        settings = {
+          enable_autosnippets = true;
+          store_selection_keys = "<Tab>";
+        };
+        fromVscode = [
+          {
+            lazyLoad = true;
+            paths = "${pkgs.vimPlugins.friendly-snippets}";
+          }
+        ];
+      };
+      cmp-nvim-lsp.enable = true;
+      cmp-emoji.enable = true;
+      cmp-buffer.enable = true;
+      cmp-path.enable = true;
+      cmp_luasnip.enable = true;
+      cmp-cmdline.enable = true;
       cmp = {
         enable = true;
         autoEnableSources = true;
-        settings = {
-          completion = {
-            keyword_length = 2;
+        cmdline = {
+          "/" = {
+            mapping.__raw = "cmp.mapping.preset.cmdline()";
+            sources = [ { name = "buffer"; } ];
           };
-          sources = [
-            { name = "nvim_lsp"; }
-            { name = "luasnip"; }
-            { name = "path"; }
+          ":" = {
+            mapping.__raw = "cmp.mapping.preset.cmdline()";
+            sources = [
+              { name = "path"; }
+              {
+                name = "cmdline";
+                option.ignore_cmds = [
+                  "Man"
+                  "!"
+                ];
+              }
+            ];
+          };
+        };
+
+        filetype = {
+          sql.sources = [
             { name = "buffer"; }
+            { name = "vim-dadbod-completion"; }
           ];
+        };
+        settings = {
           formatting = {
             format = ''
               function (entry, vim_item) 
@@ -915,13 +1124,66 @@ in
               end
             '';
           };
-          mapping = {
-            "<C-Space>" = "cmp.mapping.complete()";
-            "<C-e>" = "cmp.mapping.close()";
-            "<CR>" = "cmp.mapping.confirm({ select = true })";
-            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
-            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+          completion.completeopt = "menu,menuone,noinsert";
+          sources = [
+            { name = "nvim_lsp"; } # lsp
+            { name = "luasnip"; }
+            # { name = "copilot"; }
+            {
+              name = "buffer";
+              # Words from other open buffers can also be suggested.
+              option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
+              keywordLength = 3;
+            }
+            { name = "path"; }
+          ];
+
+          window = {
+            completion.border = "rounded";
+            documentation.border = "rounded";
           };
+          experimental.ghost_text = true;
+
+          mapping = {
+            "<Tab>".__raw = ''
+              cmp.mapping(function(fallback)
+                local luasnip = require("luasnip")
+                if luasnip.locally_jumpable(1) then
+                  luasnip.jump(1)
+                else
+                  fallback()
+                end
+              end, { "i", "s" })
+            '';
+
+            "<S-Tab>".__raw = ''
+              cmp.mapping(function(fallback)
+                local luasnip = require("luasnip")
+                if luasnip.jumpable(-1) then
+                  luasnip.jump(-1)
+                else
+                  fallback()
+                end
+              end, { "i", "s" })
+            '';
+
+            "<c-n>" = "cmp.mapping(cmp.mapping.select_next_item())";
+            "<c-p>" = "cmp.mapping(cmp.mapping.select_prev_item())";
+            "<c-e>" = "cmp.mapping.abort()";
+            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+            "<Up>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
+            "<Down>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+            "<CR>" = "cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })";
+            "<C-Space>" = "cmp.mapping.complete()";
+          };
+
+          snippet.expand = ''
+            function(args)
+              require('luasnip').lsp_expand(args.body)
+            end
+          '';
+
         };
       };
     };

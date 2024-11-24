@@ -192,6 +192,7 @@ in
   };
 
   programs = {
+    nix-index-database.comma.enable = true;
     nh = {
       enable = true;
       clean = {

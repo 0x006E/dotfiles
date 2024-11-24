@@ -60,6 +60,7 @@
       nixpkgs-master,
       nixpkgs-zen-mr,
       nixpkgs-responsively-mr,
+      nix-index-database,
       home-manager,
       chaotic,
       lanzaboote,
@@ -171,6 +172,7 @@
             }
 
             # Additional Modules
+            nix-index-database.nixosModules.nix-index
             chaotic.nixosModules.default
             lanzaboote.nixosModules.lanzaboote
             ./secureboot.nix
