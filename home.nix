@@ -28,8 +28,6 @@
       devpod
       # zen-browser
       pre-commit
-      cabal-install
-      ghc
       nixfmt-rfc-style
       hoppscotch
 
@@ -47,9 +45,9 @@
       kbfs
       pkgs-stable.bitwarden
 
+      ignis
       # Media and Entertainment
       mpv
-      ff2mpv-rust
       stirling-pdf
       stremio
       vesktop

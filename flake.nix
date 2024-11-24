@@ -30,7 +30,6 @@
       url = "github:raphamorim/rio";
     };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    blink-cmp.url = "github:Saghen/blink.cmp";
 
     # System Management
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
@@ -68,6 +67,7 @@
       lix-module,
       stylix,
       rio-term,
+
       ...
     }@inputs:
     let

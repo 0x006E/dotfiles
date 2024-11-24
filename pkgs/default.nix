@@ -14,5 +14,6 @@ rec {
   zoho-mail = callPackage ./zoho-mail.nix { };
   fprintd = callPackage ./fprintd.nix { libfprint = libfprint; };
   windsurf = callPackage ./windsurf.nix { inherit nixpkgs; };
+  ignis = callPackage ./ignis.nix { };
 }
 // customVimPlugins
