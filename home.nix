@@ -34,7 +34,7 @@
       # System Tools
       foot
       blueman
-      pinentry-qt
+      pinentry-curses
       distrobox
       xorg.xhost
       udiskie

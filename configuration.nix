@@ -213,7 +213,7 @@ in
       enableExtraSocket = true;
       enableSSHSupport = true;
       enableBrowserSocket = true;
-      pinentryPackage = pkgs.pinentry-curses;
+      pinentryPackage = pkgs.pinentry-gtk2;
     };
   };
 
