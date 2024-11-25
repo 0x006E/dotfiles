@@ -103,10 +103,7 @@ pkgs.stdenv.mkDerivation rec {
     homepage = "https://github.com/linkfrg/ignis";
     changelog = "https://github.com/linkfrg/ignis/releases/tag/v${version}";
     license = licenses.gpl3;
-    maintainers = with maintainers; [
-      frdiener
-      somokill
-    ];
+    maintainers = [ ];
     main_program = "ignis";
   };
 }
