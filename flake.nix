@@ -26,9 +26,6 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rio-term = {
-      url = "github:raphamorim/rio";
-    };
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
 
     # System Management
@@ -66,7 +63,6 @@
       niri,
       lix-module,
       stylix,
-      rio-term,
 
       ...
     }@inputs:
@@ -97,11 +93,6 @@
         inherit (nixpkgs-zen-mr.legacyPackages.${prev.system})
           zen-browser-unwrapped
           ;
-        # System Utilities
-        rio = rio-term.packages.${prev.system}.rio.overrideAttrs (old: {
-          doCheck = false;
-          buildFeatures = [ "wayland" ];
-        });
       };
     in
     {
