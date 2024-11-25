@@ -180,6 +180,10 @@
         signByDefault = true;
         key = null;
       };
+      extraConfig = {
+        commit.gpgsign = true;
+        tag.gpgSign = true;
+      };
     };
 
     starship = {
