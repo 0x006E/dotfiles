@@ -306,7 +306,6 @@ in
     };
   };
 
-  programs.zellij.enable = true;
   programs.rio = {
     enable = true;
     settings = {
@@ -325,16 +324,6 @@ in
       fonts = {
         family = config.stylix.fonts.monospace.name;
         size = 16;
-      };
-      navigation = {
-        mode = "Plain";
-      };
-      shell = {
-        program = "${lib.makeBinPath [ config.programs.zellij.package ]}/zellij";
-        args = [
-          "-l "
-          ./layout.kdl
-        ];
       };
     };
   };

@@ -1,2 +1,1 @@
 *.key filter=git-crypt diff=git-crypt
-wg-keys/** filter=git-crypt diff=git-crypt

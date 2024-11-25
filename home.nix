@@ -11,6 +11,8 @@
     ./niri.nix
     ./waybar.nix
     ./ide.nix
+    ./wayprompt
+    ./gpg
   ];
 
   home = {
@@ -28,6 +30,7 @@
       devpod
       # zen-browser
       pre-commit
+
       nixfmt-rfc-style
       hoppscotch
 

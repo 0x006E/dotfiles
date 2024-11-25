@@ -212,13 +212,6 @@ in
       package = pkgs.niri-unstable;
     };
     dconf.enable = true;
-    gnupg.agent = {
-      enable = true;
-      enableExtraSocket = true;
-      enableSSHSupport = true;
-      enableBrowserSocket = true;
-      pinentryPackage = pkgs.wayprompt;
-    };
   };
 
   swapDevices = [
