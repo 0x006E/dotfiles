@@ -55,7 +55,11 @@ pkgs.stdenv.mkDerivation rec {
       --set PYTHONPATH "${
         concatStringsSep ":" (
           map (pkg: "${pkg}/lib/python3.12/site-packages") [
+            pkgs.python312Packages.materialyoucolor
+            pkgs.python312Packages.pillow
             pkgs.python312Packages.markupsafe
+            pkgs.python312Packages.jinja2
+            pkgs.python312Packages.gst-python
             pkgs.python312Packages.pygobject3
             pkgs.python312Packages.pycairo
             pkgs.python312Packages.loguru
