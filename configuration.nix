@@ -194,6 +194,10 @@ in
   programs = {
     nix-index-database.comma.enable = true;
 
+    nix-index = {
+      enable = true;
+      enableBashIntegration = true;
+    };
     nh = {
       enable = true;
       clean = {
@@ -213,7 +217,7 @@ in
       enableExtraSocket = true;
       enableSSHSupport = true;
       enableBrowserSocket = true;
-      pinentryPackage = pkgs.pinentry-gtk2;
+      pinentryPackage = pkgs.wayprompt;
     };
   };
 

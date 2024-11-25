@@ -34,7 +34,6 @@
       # System Tools
       foot
       blueman
-      pinentry-curses
       distrobox
       xorg.xhost
       udiskie
@@ -117,11 +116,6 @@
     walker = {
       enable = true;
       runAsService = true;
-    };
-
-    nix-index = {
-      enable = true;
-      enableBashIntegration = true;
     };
 
     vscode = {
