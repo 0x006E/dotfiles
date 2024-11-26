@@ -31,9 +31,7 @@ pkgs.stdenv.mkDerivation rec {
     pkgs.python312Packages.pycairo
     pkgs.python312Packages.click
     pkgs.python312Packages.charset-normalizer
-
     pkgs.gst_all_1.gstreamer
-    pkgs.gst_all_1.gst-plugins-base
     pkgs.dart-sass
   ];
 
@@ -80,8 +78,6 @@ pkgs.stdenv.mkDerivation rec {
             pkgs.networkmanager
             pkgs.gobject-introspection-unwrapped
             pkgs.gst_all_1.gstreamer
-            pkgs.gst_all_1.gst-plugins-base
-            pkgs.gst_all_1.gst-plugins-ugly
           ]
         )
       }:$GI_TYPELIB_PATH" \
@@ -89,9 +85,10 @@ pkgs.stdenv.mkDerivation rec {
       --set GST_PLUGIN_PATH "${
         concatStringsSep ":" (
           map (pkg: "${pkg}/lib/gstreamer-1.0") [
-            pkgs.gst_all_1.gst-plugins-base
             pkgs.pipewire
+            pkgs.gst_all_1.gst-plugins-base
             pkgs.gst_all_1.gst-plugins-good
+            pkgs.gst_all_1.gst-plugins-bad
             pkgs.gst_all_1.gst-plugins-ugly
           ]
         )
