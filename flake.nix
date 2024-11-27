@@ -125,11 +125,6 @@
 
           modules = [
             # Core Modules
-            {
-              imports = [
-                "${nixpkgs-unstable}/nixos/modules/services/scheduling/scx.nix"
-              ];
-            }
             lix-module.nixosModules.default
             stylix.nixosModules.stylix
             niri.nixosModules.niri
