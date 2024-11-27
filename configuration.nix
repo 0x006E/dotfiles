@@ -34,12 +34,10 @@ in
       ];
       substituters = [
         "https://cache.garnix.io"
-        "https://walker-git.cachix.org"
         "https://0x006e-nix.cachix.org"
       ];
       trusted-public-keys = [
         "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-        "walker-git.cachix.org-1:vmC0ocfPWh0S/vRAQGtChuiZBTAe4wiKDeyyXM0/7pM="
         "0x006e-nix.cachix.org-1:JV0ESHZ7I9+ihTkFJ81RtqsjzV/2845VPwpU8OD8JL8="
       ];
     };
@@ -213,7 +211,6 @@ in
     };
     dconf.enable = true;
   };
-
   swapDevices = [
     {
       device = "/swap/swapfile";
