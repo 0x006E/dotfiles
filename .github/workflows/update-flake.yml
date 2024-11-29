@@ -43,3 +43,4 @@ jobs:
         uses: 0x006e/nix-update-action@1.1.1
         with:
           blacklist: "zoho-mail,windsurf"
+          token: ${{ secrets.GITHUB_TOKEN }}
