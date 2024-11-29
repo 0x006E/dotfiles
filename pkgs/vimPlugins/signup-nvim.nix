@@ -6,13 +6,13 @@
 
 vimUtils.buildVimPlugin {
   pname = "signup-nvim";
-  version = "0-unstable-2024-11-22";
+  version = "0-unstable-2024-11-27";
 
   src = fetchFromGitHub {
     owner = "Dan7h3x";
     repo = "signup.nvim";
-    rev = "06722cbff6f1aa4924474d755fcd26bfb67d62a1";
-    hash = "sha256-vl2a4wv7GtqIxEUsLyr/+QLy81QYNFw/00ZV4Cpdnmk=";
+    rev = "2b21a2aa51efbdeb9454a3f5d62659368d87d420";
+    hash = "sha256-EKsvX+vSQLszioosknDReukmlz4yJsxy+3gAJOrvSZA=";
   };
 
   meta = {
