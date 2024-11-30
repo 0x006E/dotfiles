@@ -25,7 +25,6 @@ in
     nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     extraOptions = ''
       experimental-features = nix-command flakes
-      use-sqlite-wal = false
     '';
     settings = {
       auto-optimise-store = true;
