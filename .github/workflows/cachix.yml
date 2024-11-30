@@ -30,4 +30,4 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         installCommand: nix profile install --accept-flake-config nixpkgs#cachix
     - uses: DeterminateSystems/magic-nix-cache-action@v2
-    - run: nix-fast-build -- --skip-cached --flake .#packages --no-nom  --cachix-cache 0x006e-nix
+    - run: nix-fast-build --skip-cached --flake .#packages --no-nom  --cachix-cache 0x006e-nix
