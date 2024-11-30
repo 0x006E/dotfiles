@@ -97,7 +97,7 @@
 
     firefox = {
       enable = true;
-      package = pkgs.zen-browser;
+      package = pkgs.zen-browser-bin;
       policies = {
         ExtensionSettings =
           with builtins;
