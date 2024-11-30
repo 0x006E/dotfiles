@@ -95,7 +95,7 @@
   programs = {
     home-manager.enable = true;
 
-    firefox = {
+    zen = {
       enable = true;
       package = pkgs.zen-browser-bin;
       policies = {
