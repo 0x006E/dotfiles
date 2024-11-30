@@ -44,6 +44,10 @@
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.1-1.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-github-actions = {
+      url = "github:nix-community/nix-github-actions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -55,6 +59,7 @@
       nixpkgs-master,
       nixpkgs-responsively-mr,
       nix-index-database,
+      nix-github-actions,
       home-manager,
       chaotic,
       lanzaboote,
@@ -101,6 +106,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
       };
 
+      githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
       nixosConfigurations = {
 
         ntsv = nixpkgs.lib.nixosSystem {
