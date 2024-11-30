@@ -16,7 +16,8 @@ in
       mpv = prev.mpv.override {
         scripts = [ final.mpvScripts.mpris ];
       };
-      zen-browser = pkgs.wrapFirefox prev.zen-browser-unwrapped {
+      zen-browser = prev.wrapFirefox prev.zen-browser-unwrapped {
+
         pname = "zen-browser";
         libName = "zen";
       };
