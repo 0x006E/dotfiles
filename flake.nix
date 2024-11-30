@@ -102,7 +102,10 @@
           pkgs-stable
           pkgs-unstable
           pkgs-master
+          inputs
+          system
           ;
+
         pkgs = nixpkgs.legacyPackages.${system};
       };
 

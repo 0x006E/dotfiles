@@ -131,6 +131,7 @@
       };
     };
     walker = {
+      package = pkgs.walker;
       enable = true;
       runAsService = true;
     };

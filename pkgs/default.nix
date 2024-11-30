@@ -1,6 +1,8 @@
 {
   pkgs,
   nixpkgs,
+  inputs,
+  system,
   ...
 }:
 let
@@ -20,5 +22,6 @@ rec {
     pname = "zen-browser-bin";
     libName = "zen";
   };
+  walker = inputs.walker.packages.${system}.default;
 }
 // customVimPlugins
