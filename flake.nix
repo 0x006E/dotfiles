@@ -8,7 +8,6 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
     # Custom Nixpkgs Forks
-    nixpkgs-zen-mr.url = "github:nixos/nixpkgs/refs/pull/347222/merge";
     nixpkgs-responsively-mr.url = "github:nixos/nixpkgs/refs/pull/307444/merge";
 
     # Home Manager
@@ -54,7 +53,6 @@
       nixpkgs-stable,
       nixpkgs-unstable,
       nixpkgs-master,
-      nixpkgs-zen-mr,
       nixpkgs-responsively-mr,
       nix-index-database,
       home-manager,
@@ -89,9 +87,6 @@
         # Browser and Tools
         inherit (nixpkgs-responsively-mr.legacyPackages.${prev.system})
           responsively-desktop
-          ;
-        inherit (nixpkgs-zen-mr.legacyPackages.${prev.system})
-          zen-browser-unwrapped
           ;
       };
     in

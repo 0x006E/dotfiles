@@ -97,10 +97,7 @@
 
     firefox = {
       enable = true;
-      package = pkgs.wrapFirefox pkgs.zen-browser-unwrapped {
-        pname = "zen-browser";
-        libName = "zen";
-      };
+      package = pkgs.zen-browser;
       policies = {
         ExtensionSettings =
           with builtins;

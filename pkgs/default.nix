@@ -15,5 +15,7 @@ rec {
   fprintd = callPackage ./fprintd.nix { libfprint = libfprint; };
   windsurf = callPackage ./windsurf.nix { inherit nixpkgs; };
   ignis = callPackage ./ignis.nix { };
+  zen-browser-unwrapped = callPackage ./zen-browser-unwrapped { };
+  zen-browser = callPackage ./zen-browser { };
 }
 // customVimPlugins
