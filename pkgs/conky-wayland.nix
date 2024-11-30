@@ -12,12 +12,12 @@
   ncursesSupport = true;
 }).overrideAttrs
   (old: rec {
-    version = "1.21.8";
+    version = "1.21.9";
     src = fetchFromGitHub {
       owner = "brndnmtthws";
       repo = "conky";
       rev = "v${version}";
-      hash = "sha256-bKWy/vWqHXqE3q8N3V6HV7/EKIOZ7CwTHgQ8btYkOvM=";
+      hash = "sha256-iGUWeEKNDsTrEenQF5IuzVQhkQcKDBYCvdBgM0BnHPI=";
     };
     buildInputs = old.buildInputs ++ [ pkgs.gperf ];
 
