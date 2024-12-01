@@ -130,10 +130,9 @@
         # `jq .applications.gecko.id manifest.json` to get the UUID
       };
     };
-    walker = {
-      package = pkgs.walker;
+    rofi = {
       enable = true;
-      runAsService = true;
+      package = pkgs.rofi-wayland;
     };
 
     vscode = {

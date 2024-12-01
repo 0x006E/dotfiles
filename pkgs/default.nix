@@ -22,8 +22,5 @@ rec {
     pname = "zen-browser-bin";
     libName = "zen";
   };
-  walker = inputs.walker.packages.${system}.default.overrideAttrs {
-    doCheck = false;
-  };
 }
 // customVimPlugins

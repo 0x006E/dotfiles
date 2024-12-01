@@ -124,7 +124,7 @@ in
       fonts = [
         {
           name = "CommitMono Nerd Font";
-          package = (pkgs.nerdfonts.override { fonts = [ "CommitMono" ]; });
+          package = pkgs.nerd-fonts.commit-mono;
         }
       ];
     };

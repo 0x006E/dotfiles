@@ -10,7 +10,7 @@
       sansSerif = config.stylix.fonts.monospace;
       emoji = config.stylix.fonts.monospace;
       monospace = {
-        package = (pkgs.nerdfonts.override { fonts = [ "CommitMono" ]; });
+        package = pkgs.nerd-fonts.commit-mono;
         name = "CommitMono Nerd Font";
       };
     };
