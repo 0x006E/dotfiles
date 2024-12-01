@@ -107,7 +107,7 @@ in
           # Basic Application Controls
           {
             "Mod+T".action = sh "niri msg action focus-workspace terminal && rio";
-            "Mod+D".action = spawn "rofi -show drun";
+            "Mod+D".action = spawn "${config.programs.rofi.package}/bin/rofi" "-show" "drun";
             "Mod+E".action = spawn "nautilus";
             "Mod+L".action = spawn "blurred-locker";
             "Mod+Q".action = close-window;

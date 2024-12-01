@@ -233,7 +233,7 @@ in
 
   environment = {
     systemPackages = with pkgs; [
-      comma
+      jujutsu
       lm_sensors
       commit-mono
       vim

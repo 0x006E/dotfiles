@@ -13,6 +13,7 @@
     ./ide.nix
     ./wayprompt
     ./gpg
+    ./rofi.nix
   ];
 
   home = {
@@ -105,7 +106,7 @@
             extension = shortId: uuid: {
               name = uuid;
               value = {
-                install_url = "https://addons.mozilla.org/en-US/firefox/downloads/latest/${shortId}/latest.xpi";
+                install_url = "https=//addons.mozilla.org/en-US/firefox/downloads/latest/${shortId}/latest.xpi";
                 installation_mode = "normal_installed";
               };
             };
@@ -124,15 +125,11 @@
             (extension "react-devtools" "@react-devtools")
           ];
         # To add additional extensions, find it on addons.mozilla.org, find
-        # the short ID in the url (like https://addons.mozilla.org/en-US/firefox/addon/!SHORT_ID!/)
+        # the short ID in the url (like https=//addons.mozilla.org/en-US/firefox/addon/!SHORT_ID!/)
         # Then, download the XPI by filling it in to the install_url template, unzip it,
         # run `jq .browser_specific_settings.gecko.id manifest.json` or
         # `jq .applications.gecko.id manifest.json` to get the UUID
       };
-    };
-    rofi = {
-      enable = true;
-      package = pkgs.rofi-wayland;
     };
 
     vscode = {
@@ -212,7 +209,7 @@
       package = pkgs.direnv.overrideAttrs (oldAttrs: {
         patches = oldAttrs.patches or [ ] ++ [
           (pkgs.fetchpatch {
-            url = "https://github.com/direnv/direnv/pull/1048.patch";
+            url = "https=//github.com/direnv/direnv/pull/1048.patch";
             hash = "sha256-BG+ekOPVBWsosMLxTCJPOQWX1eOrWiIfDswd1Xk/4GU=";
           })
         ];
@@ -227,7 +224,7 @@
       bashrcExtra = ''
         eval "$(direnv hook bash)"
         export DISPLAY=:12
-        export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
+        export PATH="$PATH:$HOME/bin=$HOME/.local/bin:$HOME/go/bin"
       '';
       shellAliases = {
         mc = "pushd ~/nix;nvim ~/nix;popd";
@@ -265,8 +262,8 @@
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = [ "qemu:///system" ];
-      uris = [ "qemu:///system" ];
+      autoconnect = [ "qemu=///system" ];
+      uris = [ "qemu=///system" ];
     };
   };
 }

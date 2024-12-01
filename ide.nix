@@ -1039,7 +1039,12 @@ in
                 expr = "import <nixpkgs> { }";
               };
               formatting = {
-                command = [ "nix" "fmt" ];
+                command = [
+                  "nix"
+                  "fmt"
+                  "--"
+                  "--"
+                ];
               };
               options = {
                 nixos = {
