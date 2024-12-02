@@ -149,8 +149,8 @@ in
       # Configuration
       modi = "drun";
       show-icons = true;
-      display-format-drun = "{name}";
-      drun-display = "";
+      drun-display-format = "{name}";
+      display-drun = "";
 
     };
 
