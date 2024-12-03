@@ -25,15 +25,9 @@ let
     "x86_64-linux" = "linux-x86_64";
   };
 
-  policies = {
-    DisableAppUpdate = true;
-  } // config.firefox.policies or { };
-
-  policiesJson = writeText "firefox-policies.json" (builtins.toJSON { inherit policies; });
-
 in
 stdenv.mkDerivation rec {
-  pname = "zen-browser-unwrapped";
+  pname = "zen-browser-bin-unwrapped";
   version = "1.0.1-a.22";
 
   src = fetchurl {
@@ -66,17 +60,12 @@ stdenv.mkDerivation rec {
   patchelfFlags = [ "--no-clobber-old-sections" ];
 
   installPhase = ''
-    mkdir -p "$prefix/lib/zen-bin-${version}"
-    cp -r * "$prefix/lib/zen-bin-${version}"
+    mkdir -p "$prefix/lib/${pname}"
+    cp -r * "$prefix/lib/${pname}"
 
     mkdir -p "$out/bin"
-    ln -s "$prefix/lib/zen-bin-${version}/zen" "$out/bin/zen"
+    ln -s "$prefix/lib/${pname}/zen" "$out/bin/zen"
 
-    # See: https://github.com/mozilla/policy-templates/blob/master/README.md
-    mkdir -p "$out/lib/zen-bin-${version}/distribution";
-
-
-    ln -s ${policiesJson} "$out/lib/zen-bin-${version}/distribution/policies.json";
     install -D browser/chrome/icons/default/default16.png $out/share/icons/hicolor/16x16/apps/zen.png
     install -D browser/chrome/icons/default/default32.png $out/share/icons/hicolor/32x32/apps/zen.png
     install -D browser/chrome/icons/default/default48.png $out/share/icons/hicolor/48x48/apps/zen.png
@@ -95,12 +84,9 @@ stdenv.mkDerivation rec {
 
   passthru = {
     updateScript = ./update.sh;
-
-    # These values are used by `wrapFirefox`.
-    # ref; `pkgs/applications/networking/browsers/zen/wrapper.nix'
     binaryName = meta.mainProgram;
     execdir = "/bin";
-    libName = "zen-bin-${version}";
+    libName = "${pname}";
     ffmpegSupport = true;
     gssSupport = true;
     gtk3 = gtk3;

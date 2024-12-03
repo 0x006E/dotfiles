@@ -18,9 +18,6 @@ rec {
   windsurf = callPackage ./windsurf.nix { inherit nixpkgs; };
   ignis = callPackage ./ignis.nix { };
   zen-browser-unwrapped = callPackage ./zen-browser-unwrapped { };
-  zen-browser-bin = pkgs.wrapFirefox zen-browser-unwrapped {
-    pname = "zen-browser-bin";
-    libName = "zen";
-  };
+  zen-browser-bin = pkgs.wrapFirefox zen-browser-unwrapped { };
 }
 // customVimPlugins
