@@ -150,6 +150,7 @@ in
         };
       };
       policies = {
+        PasswordManagerEnabled = false;
         ExtensionSettings =
           with builtins;
           let
@@ -164,7 +165,6 @@ in
           listToAttrs [
             (extension "ublock-origin" "uBlock0@raymondhill.net")
             (extension "bitwarden-password-manager" "{446900e4-71c2-419f-a6a7-df9c091e268b}")
-            (extension "libredirect" "7esoorv3@alefvanoon.anonaddy.me")
             (extension "2fas-two-factor-authentication" "admin@2fas.com")
             (extension "sponsorblock" "sponsorBlocker@ajay.app")
             (extension "dearrow" "deArrow@ajay.app")
