@@ -1,8 +1,6 @@
 {
   pkgs,
   nixpkgs,
-  inputs,
-  system,
   ...
 }:
 let
@@ -19,5 +17,6 @@ rec {
   ignis = callPackage ./ignis.nix { };
   zen-browser-unwrapped = callPackage ./zen-browser-unwrapped { };
   zen-browser-bin = pkgs.wrapFirefox zen-browser-unwrapped { };
+  anything-llm-desktop = callPackage ./anything-llm.nix { };
 }
 // customVimPlugins
