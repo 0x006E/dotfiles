@@ -12,7 +12,7 @@
   ncursesSupport = true;
 }).overrideAttrs
   (old: rec {
-    version = "1.21.9";
+    version = "1.21.9-unstable-2024-12-06";
     src = fetchFromGitHub {
       owner = "brndnmtthws";
       repo = "conky";
