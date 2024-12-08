@@ -30,6 +30,7 @@
 
     # Scanner Support
     sane.enable = true;
+    sane.extraBackends = [ pkgs.hplipWithPlugin ];
   };
 
   # Printing Services
@@ -59,5 +60,6 @@
   # Required Packages
   environment.systemPackages = with pkgs; [
     boomaga
+    simple-scan
   ];
 }

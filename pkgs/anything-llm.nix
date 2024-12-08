@@ -5,7 +5,7 @@ let
 
   src = fetchurl {
     url = "https://s3.us-west-1.amazonaws.com/public.useanything.com/legacy/${version}/AnythingLLMDesktop.AppImage";
-    hash = "";
+    hash = "sha256-9+aDgNqAmuker8gEYZgiY2Yi53IIWdPa2521dE57Kcw=";
   };
 in
 appimageTools.wrapType2 {

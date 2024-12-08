@@ -27,6 +27,7 @@ in
     packages = with pkgs; [
       # Office and Graphics
       libreoffice
+      anything-llm-desktop
       gimp
 
       # Development Tools
