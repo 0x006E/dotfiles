@@ -28,11 +28,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "zen-browser-bin-unwrapped";
-  version = "1.0.2-b.0";
+  version = "1.0.2-b.1";
 
   src = fetchurl {
     url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-specific.tar.bz2";
-    hash = "sha256-UyBJyUbmm0trxxGVq8xQRoI1eGnGgpXRVvIpE4UOaS0=";
+    hash = "sha256-ntQGKZm3vE66E3abYaroOTlFFkN8oNcnGd9P0CnDxWU=";
 
   };
 
