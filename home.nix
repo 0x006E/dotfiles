@@ -13,7 +13,7 @@ in
     inputs.nixvim.homeManagerModules.nixvim
     ./niri.nix
     ./waybar.nix
-    ./ide.nix
+    ./ide
     ./wayprompt
     ./gpg
     ./rofi.nix
