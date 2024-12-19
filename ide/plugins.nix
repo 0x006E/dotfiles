@@ -6,6 +6,9 @@ in
   programs.nixvim.plugins = {
     remote-nvim = {
       enable = true;
+      package = pkgs.vimPlugins.remote-nvim-nvim.overrideAttrs (oldAttrs: {
+        dontPatchShebangs = true;
+      });
       settings = {
         devpod = {
           gpg_agent_forwarding = true;

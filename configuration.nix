@@ -106,6 +106,7 @@ in
   };
 
   services = {
+    flatpak.enable = true;
     speechd.enable = lib.mkForce false;
     kanata = {
       enable = false; # Disabled because of errors
@@ -233,7 +234,6 @@ in
 
   environment = {
     systemPackages = with pkgs; [
-      jujutsu
       lm_sensors
       commit-mono
       vim

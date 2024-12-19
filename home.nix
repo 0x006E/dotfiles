@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   pkgs-stable,
+  config,
   ...
 }:
 let
@@ -99,6 +100,19 @@ in
   };
   programs = {
     home-manager.enable = true;
+    jujutsu = {
+      enable = true;
+      settings = {
+        user = {
+          email = "me@ntsv.dev";
+          name = "Nithin S Varrier";
+        };
+        signing = {
+          sign-all = true;
+          backends.gpg.program = "${config.programs.gpg.package}/bin/gpg2";
+        };
+      };
+    };
 
     zen = {
       enable = true;
