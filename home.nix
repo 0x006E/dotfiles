@@ -65,7 +65,7 @@ in
       onedriver
 
       # Custom Packages
-      responsively-desktop
+      responsively-app
       zoho-mail
       # Gaming
       (lutris.override {

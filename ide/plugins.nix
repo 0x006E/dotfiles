@@ -113,14 +113,14 @@ in
     # neoterm.enable = true;
     floaterm = {
       enable = true;
-      keymaps = {
-        toggle = ",tt";
-        new = ",tN";
-        kill = ",tk";
-        next = ",tn";
-        prev = ",tp";
+      settings = {
+        keymap_toggle = ",tt";
+        keymap_new = ",tN";
+        keymap_kill = ",tk";
+        keymap_next = ",tn";
+        keymap_prev = ",tp";
+        wintype = "split";
       };
-      wintype = "split";
       height = 0.3;
     };
     copilot-lua = {

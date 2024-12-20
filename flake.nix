@@ -7,8 +7,6 @@
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-    # Custom Nixpkgs Forks
-    nixpkgs-responsively-mr.url = "github:nixos/nixpkgs/refs/pull/307444/merge";
 
     # Home Manager
     home-manager = {
@@ -57,7 +55,6 @@
       nixpkgs-stable,
       nixpkgs-unstable,
       nixpkgs-master,
-      nixpkgs-responsively-mr,
       nix-index-database,
       nix-github-actions,
       home-manager,
@@ -86,13 +83,6 @@
       pkgs-master = import nixpkgs-master {
         inherit system;
         config.allowUnfree = true;
-      };
-      # Custom Overlay
-      overlay = final: prev: {
-        # Browser and Tools
-        inherit (nixpkgs-responsively-mr.legacyPackages.${prev.system})
-          responsively-desktop
-          ;
       };
     in
     {
@@ -137,8 +127,6 @@
             {
               nixpkgs.overlays = [
                 inputs.nix-vscode-extensions.overlays.default
-                overlay
-
               ];
             }
 
