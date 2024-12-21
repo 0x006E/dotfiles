@@ -221,6 +221,7 @@ in
     };
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
+      ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{idVendor}=="0408", ATTR{idProduct}=="4033", ATTR{power/control}="auto"
       SUBSYSTEM=="pci", ATTR{power/control}="auto"
     '';
   };
