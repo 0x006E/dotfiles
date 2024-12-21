@@ -304,13 +304,6 @@ in
 
   services = {
     swaync.enable = true;
-
-    conky = {
-      enable = true;
-      package = pkgs.conky-wayland;
-      extraConfig = builtins.readFile ./conky.conf;
-    };
-
     udiskie.enable = true;
 
     flameshot = {

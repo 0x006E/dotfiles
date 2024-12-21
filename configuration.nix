@@ -80,6 +80,7 @@ in
     ];
     extraModprobeConfig = ''
       options iwlwifi 11n_disable=8 
+      options acer_wmi_battery enable_health_mode=1
     '';
     resumeDevice = "/dev/dm-0";
     kernelParams = [
@@ -90,6 +91,7 @@ in
       "vm.admin_reserve_kbytes" = 1048576;
       "vm.oom_kill_allocating_task" = 1;
       "kernel.sysrq" = 438;
+      "vm.dirty_writeback_centisecs" = 6000;
     };
   };
 
@@ -106,6 +108,21 @@ in
   };
 
   services = {
+    battery-notifier = {
+      enable = true;
+      settings = {
+        interval_ms = 3000;
+        reminder = {
+          threshold = 30;
+        };
+        threat = {
+          threshold = 20;
+        };
+        warn = {
+          threshold = 25;
+        };
+      };
+    };
     flatpak.enable = true;
     speechd.enable = lib.mkForce false;
     kanata = {
@@ -187,7 +204,25 @@ in
     libinput.enable = true;
     power-profiles-daemon.enable = false;
     thermald.enable = true;
-    tlp.enable = true;
+
+    auto-cpufreq = {
+      enable = true;
+      settings = {
+        battery = {
+          governor = "powersave";
+          turbo = "never";
+          energy_perf_bias = "power";
+        };
+        charger = {
+          governor = "performance";
+          turbo = "auto";
+        };
+      };
+    };
+    udev.extraRules = ''
+      ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
+      SUBSYSTEM=="pci", ATTR{power/control}="auto"
+    '';
   };
 
   programs = {
@@ -234,7 +269,10 @@ in
 
   environment = {
     systemPackages = with pkgs; [
+      pciutils
+      usbutils
       lm_sensors
+      powertop
       commit-mono
       vim
       kvmtool
@@ -269,6 +307,9 @@ in
   systemd = {
     extraConfig = "DefaultTimeoutStopSec=10s";
     user.extraConfig = "DefaultTimeoutStopSec=10s";
+    sleep.extraConfig = ''
+      MemorySleepMode=deep
+    '';
   };
 
   powerManagement = {

@@ -216,13 +216,13 @@ in
         battery = {
           rotate = 90;
           states = {
-            good = 95;
+            good = 80;
             warning = 30;
-            critical = 15;
+            critical = 20;
           };
-          format = "{icon}";
-          format-charging = "<b>{icon} </b>";
-          format-full = "<span color='#82A55F'><b>{icon}</b></span>";
+          format = "{icon} {capacity}%";
+          format-charging = "<b>{icon} {capacity} </b>";
+          format-full = "bat full";
           format-icons = [
             "󰁻"
             "󰁼"

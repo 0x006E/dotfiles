@@ -38,6 +38,10 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    battery-notifier = {
+      url = "github:luisnquin/battery-notifier";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     lix-module = {
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.1-1.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,6 +63,7 @@
       nix-github-actions,
       home-manager,
       chaotic,
+      battery-notifier,
       lanzaboote,
       niri,
       lix-module,
@@ -121,6 +126,7 @@
             # Core Modules
             lix-module.nixosModules.default
             stylix.nixosModules.stylix
+            battery-notifier.nixosModules.default
             niri.nixosModules.niri
             ./overlays
             # Overlays
