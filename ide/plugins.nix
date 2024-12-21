@@ -120,8 +120,8 @@ in
         keymap_next = ",tn";
         keymap_prev = ",tp";
         wintype = "split";
+        height = 0.3;
       };
-      height = 0.3;
     };
     copilot-lua = {
       enable = true;
