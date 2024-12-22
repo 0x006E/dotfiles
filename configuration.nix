@@ -212,6 +212,7 @@ in
           governor = "powersave";
           turbo = "never";
           energy_perf_bias = "power";
+          energy_performance_preference = "power";
         };
         charger = {
           governor = "performance";
