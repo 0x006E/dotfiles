@@ -79,7 +79,8 @@ in
       "coretemp"
     ];
     extraModprobeConfig = ''
-      options iwlwifi 11n_disable=8 
+      options iwlmvm power_scheme=1
+      options iwlwifi 11n_disable=8 power_save=Y power_level=5
       options acer_wmi_battery enable_health_mode=1
     '';
     resumeDevice = "/dev/dm-0";
