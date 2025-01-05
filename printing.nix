@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   ...
 }:
 {
@@ -30,7 +31,7 @@
 
     # Scanner Support
     sane.enable = true;
-    sane.extraBackends = [ pkgs.hplipWithPlugin ];
+    sane.extraBackends = [ pkgs-unstable.hplipWithPlugin ];
   };
 
   # Printing Services
@@ -40,7 +41,7 @@
 
     # Printer Drivers
     printing.drivers = with pkgs; [
-      hplipWithPlugin
+      pkgs-unstable.hplipWithPlugin
       boomaga
     ];
   };

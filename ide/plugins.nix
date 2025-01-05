@@ -499,7 +499,6 @@ in
     cmp-cmdline.enable = true;
     cmp = {
       enable = true;
-      package = pkgs.magazine;
       autoEnableSources = true;
       cmdline = {
         "/" = {

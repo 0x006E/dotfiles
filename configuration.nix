@@ -79,8 +79,8 @@ in
       "coretemp"
     ];
     extraModprobeConfig = ''
-      options iwlmvm power_scheme=1
-      options iwlwifi 11n_disable=8 power_save=Y power_level=5
+      options iwlmvm power_scheme=2
+      options iwlwifi 11n_disable=8
       options acer_wmi_battery enable_health_mode=1
     '';
     resumeDevice = "/dev/dm-0";
@@ -136,16 +136,6 @@ in
       package = pkgs.scx.full;
       scheduler = "scx_bpfland";
       extraArgs = [ ];
-    };
-    kmscon = {
-      enable = true;
-      hwRender = true;
-      fonts = [
-        {
-          name = "CommitMono Nerd Font";
-          package = pkgs.nerd-fonts.commit-mono;
-        }
-      ];
     };
     tailscale.enable = true;
     resolved.enable = true;
@@ -225,6 +215,7 @@ in
       ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
       ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{idVendor}=="0408", ATTR{idProduct}=="4033", ATTR{power/control}="auto"
       SUBSYSTEM=="pci", ATTR{power/control}="auto"
+      SUBSYSTEM=="pci", ATTR{power/control}="on", ATTR{vendor}=="0x8086", ATTR{device}=="0x4626", GOTO="pci_pm_end"
     '';
   };
 
