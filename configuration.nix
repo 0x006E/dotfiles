@@ -214,6 +214,7 @@ in
     udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
       ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{idVendor}=="0408", ATTR{idProduct}=="4033", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="input", TEST=="power/control", ATTR{power/control}="on"
       SUBSYSTEM=="pci", ATTR{power/control}="auto"
       SUBSYSTEM=="pci", ATTR{power/control}="on", ATTR{vendor}=="0x8086", ATTR{device}=="0x4626", GOTO="pci_pm_end"
     '';
