@@ -28,7 +28,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "zen-browser-bin-unwrapped";
-  version = "1.0.2-b.3";
+  version = "twilight-unstable-2025-01-11";
 
   src = fetchurl {
     url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-specific.tar.bz2";
