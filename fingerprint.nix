@@ -4,7 +4,7 @@
 }:
 {
   services.fprintd = {
-    enable = true;
+    enable = false;
     package = pkgs.fprintd;
   };
 }

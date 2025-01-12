@@ -93,6 +93,8 @@ in
       "vm.oom_kill_allocating_task" = 1;
       "kernel.sysrq" = 438;
       "vm.dirty_writeback_centisecs" = 6000;
+      "vm.dirty_background_ratio" = 5;
+      "vm.dirty_ratio" = 10;
     };
   };
 
@@ -148,7 +150,7 @@ in
     fwupd.enable = true;
     xserver = {
       enable = true;
-      displayManager.lightdm.enable = true;
+      displayManager.gdm.enable = true;
       desktopManager.cinnamon.enable = true;
 
     };
