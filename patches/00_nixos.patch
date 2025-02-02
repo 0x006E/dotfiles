@@ -1,23 +1,21 @@
 diff --git a/Makefile b/Makefile
-index c3ba9be..6a85543 100644
+index c3ba9be..14e3001 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,8 +1,14 @@
-+KERNEL ?= $(shell uname -r)
-+KERNELDIR ?= /lib/modules/$(KERNEL)/build/
-+
- obj-m += acer-wmi-battery.o
+@@ -1,8 +1,11 @@
+-obj-m += acer-wmi-battery.o
 -PWD := $(CURDIR)
- 
--all:
--	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
-+modules:
-+	@#"M=":
-+	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
- 
- clean:
--	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
-+	$(MAKE) -C $(KERNELDIR) M=$(PWD) clean
++KERNELRELEASE ?= $(shell uname -r)
++KERNEL_DIR  ?= /lib/modules/$(KERNELRELEASE)/build
++PWD := $(shell pwd)
 +
-+modules_install:
-+	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules_install
++obj-m := acer-wmi-battery.o
+ 
+ all:
+-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
++	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) modules
+ 
+-clean:
+-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
++install:
++	$(MAKE) -C $(KERNEL_DIR) M=$(PWD) modules_install
