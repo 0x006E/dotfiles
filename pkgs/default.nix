@@ -12,10 +12,8 @@ rec {
   boomaga = libsForQt5.callPackage ./boomaga.nix { };
   zoho-mail = callPackage ./zoho-mail.nix { };
   fprintd = callPackage ./fprintd.nix { libfprint = libfprint; };
-  windsurf = callPackage ./windsurf.nix { inherit nixpkgs; };
   ignis = callPackage ./ignis.nix { };
   zen-browser-unwrapped = callPackage ./zen-browser-unwrapped { };
   zen-browser-bin = pkgs.wrapFirefox zen-browser-unwrapped { };
-  anything-llm-desktop = callPackage ./anything-llm.nix { };
 }
 // customVimPlugins
