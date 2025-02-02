@@ -28,7 +28,7 @@
     # System Management
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.1";
+      url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     walker.url = "github:abenz1267/walker";
