@@ -125,10 +125,12 @@ in
     };
     copilot-lua = {
       enable = true;
-      suggestion = {
-        autoTrigger = true;
-        keymap = {
-          accept = "<C-Enter>";
+      settings = {
+        suggestion = {
+          auto_trigger = true;
+          keymap = {
+            accept = "<C-Enter>";
+          };
         };
       };
     };

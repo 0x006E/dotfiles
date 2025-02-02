@@ -113,6 +113,7 @@ in
   };
 
   services = {
+    pulseaudio.enable = false;
     battery-notifier = {
       enable = true;
       settings = {
@@ -285,14 +286,11 @@ in
       wl-clipboard
       wayland-utils
       libsecret
-      cage
-      dwarfs
       deluge
       darktable
       shotwell
       krita
       zed-editor
-      windsurf
     ];
     sessionVariables = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
@@ -317,7 +315,6 @@ in
   };
 
   hardware = {
-    pulseaudio.enable = false;
     uinput.enable = true;
     cpu.intel.updateMicrocode = true;
   };

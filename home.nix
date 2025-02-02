@@ -28,7 +28,6 @@ in
     packages = with pkgs; [
       # Office and Graphics
       libreoffice
-      anything-llm-desktop
       gimp
 
       # Development Tools
@@ -38,7 +37,6 @@ in
       pre-commit
 
       nixfmt-rfc-style
-      hoppscotch
 
       # System Tools
       foot
@@ -51,9 +49,8 @@ in
       # Security and Privacy
       keybase-gui
       kbfs
-      pkgs-stable.bitwarden
+      bitwarden
 
-      ignis
       # Media and Entertainment
       mpv
       stirling-pdf
