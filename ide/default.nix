@@ -12,17 +12,15 @@ in
   ];
   home.packages = with pkgs; [
     gcc
-    hugo
-    eslint_d
     eslint
     mkcert
     nixfmt-rfc-style
     node2nix
+    ruff
     goimports-reviser
     nodejs
     nodePackages.svelte-language-server
     npm-check-updates
-    php
     lazygit
     prettierd
     pyright
