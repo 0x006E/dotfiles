@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
   version = "1.0.2-b.3";
 
   src = fetchurl {
-    url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-specific.tar.bz2";
+    url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-x86_64.tar.xz";
     hash = "sha256-1kZTP05WuGIsxzcYYxIKJJd1OwhV5oacUbO56yADrL8=";
 
   };
