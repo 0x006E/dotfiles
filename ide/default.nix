@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-stable,
   ...
 }:
 let
@@ -12,7 +13,7 @@ in
   ];
   home.packages = with pkgs; [
     gcc
-    eslint
+    pkgs-stable.eslint
     mkcert
     nixfmt-rfc-style
     node2nix
