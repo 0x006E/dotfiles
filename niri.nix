@@ -326,7 +326,7 @@ in
       ];
       fonts = {
         family = config.stylix.fonts.monospace.name;
-        size = 16;
+        size = lib.mkForce 16;
       };
     };
   };
