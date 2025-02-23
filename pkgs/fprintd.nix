@@ -14,9 +14,9 @@
       owner = "libfprint";
       repo = "fprintd";
       rev = "refs/tags/v${version}";
-      hash = "sha256-B2g2d29jSER30OUqCkdk3+Hv5T3DA4SUKoyiqHb8FeU=";
+      hash = "sha256-aGIz50S0zfE3rV6QJp8iQz3uUVn8WAL68KU70j8GyOU=";
     };
-    version = "1.94.4";
+    version = "1.94.5";
     mesonCheckFlags = oldAttrs.mesonCheckFlags ++ [
       # PAM related checks are timing out
       "--no-suite"
