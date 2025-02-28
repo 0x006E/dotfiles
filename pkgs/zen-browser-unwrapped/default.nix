@@ -85,6 +85,7 @@ stdenv.mkDerivation rec {
   passthru = {
     updateScript = ./update.sh;
     binaryName = meta.mainProgram;
+    applicationName = "Zen";
     execdir = "/bin";
     libName = "${pname}";
     ffmpegSupport = true;

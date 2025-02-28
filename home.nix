@@ -200,7 +200,7 @@ in
       extensions = with pkgs.vscode-marketplace; [
         # Debug Tools
         vadimcn.vscode-lldb
-        ms-dotnettools.csdevkit
+        pkgs.vscode-extensions.ms-dotnettools.csdevkit
         ms-vscode.mono-debug
         ms-python.debugpy
 
@@ -211,7 +211,7 @@ in
         bbenoist.nix
         brettm12345.nixfmt-vscode
         ms-python.python
-        ms-dotnettools.csharp
+        pkgs.vscode-extensions.ms-dotnettools.csharp
 
         # Web Development
         esbenp.prettier-vscode
@@ -232,7 +232,7 @@ in
         # Remote Development
         github.codespaces
         ms-vscode-remote.remote-containers
-        ms-dotnettools.vscode-dotnet-runtime
+        pkgs.vscode-extensions.ms-dotnettools.vscode-dotnet-runtime
 
         # AI/Copilot
         github.copilot
