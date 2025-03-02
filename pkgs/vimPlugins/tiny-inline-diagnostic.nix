@@ -6,13 +6,13 @@
 
 pkgs.vimUtils.buildVimPlugin rec {
   pname = "tiny-inline-diagnostic-nvim";
-  version = "0-unstable-2025-02-26";
+  version = "0-unstable-2025-02-28";
 
   src = fetchFromGitHub {
     owner = "rachartier";
     repo = "tiny-inline-diagnostic.nvim";
-    rev = "a9ccdfd1f5d922ca3474eace59dd3a883446800c";
-    hash = "sha256-JgSOxJ9YRMynuxe+qtLWUjWMzrplKIs/opT0cSP5FPk=";
+    rev = "de01d4c9cd032d4dac69bf64d5a184fbe62e1fd1";
+    hash = "sha256-pPs4EUpSYCM+MTv2k2kfLEX9pX7CXhED90h3rf6vUUs=";
   };
 
   meta = {
