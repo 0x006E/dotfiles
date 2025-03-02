@@ -40,7 +40,8 @@ in
 
       # System Tools
       foot
-      blueman
+      overskride
+
       distrobox
       xorg.xhost
       udiskie
