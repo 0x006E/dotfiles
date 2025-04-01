@@ -3,6 +3,8 @@
   stdenv,
   fetchurl,
   config,
+  inputs,
+  system,
   wrapGAppsHook3,
   autoPatchelfHook,
   alsa-lib,
@@ -30,12 +32,7 @@ stdenv.mkDerivation rec {
   pname = "zen-browser-bin-unwrapped";
   version = "1.10.2b";
 
-  src = fetchurl {
-    url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-x86_64.tar.xz";
-    hash = "sha256-0JkB1O8CuRraJlfgVEXGbob3TnDLjU6P+RbPCKcfp1E=";
-
-  };
-
+  src = inputs.zen-browser.packages."${system}".default.src;
   nativeBuildInputs = [
     wrapGAppsHook3
     autoPatchelfHook

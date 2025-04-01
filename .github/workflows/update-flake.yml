@@ -42,5 +42,5 @@ jobs:
       - name: Update flake packages
         uses: 0x006e/nix-update-action@1.1.1
         with:
-          blacklist: "zoho-mail,windsurf"
+          blacklist: "zoho-mail,windsurf,zen-browser-unwrapped"
           token: ${{ secrets.GITHUB_TOKEN }}
