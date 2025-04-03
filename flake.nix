@@ -52,7 +52,6 @@
     };
     battery-notifier = {
       url = "github:luisnquin/battery-notifier";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-github-actions = {
       url = "github:nix-community/nix-github-actions";
