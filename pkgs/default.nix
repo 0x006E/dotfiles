@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  system,
   ...
 }:
 let
@@ -13,7 +14,7 @@ rec {
   zoho-mail = callPackage ./zoho-mail.nix { };
   fprintd = callPackage ./fprintd.nix { libfprint = libfprint; };
   ignis = callPackage ./ignis.nix { };
-  zen-browser-unwrapped = callPackage ./zen-browser-unwrapped { inherit inputs; };
-  zen-browser-bin = pkgs.wrapFirefox zen-browser-unwrapped { };
+  zen-browser-unwrapped = inputs.zen-browser.packages."${system}".beta-unwrapped;
+  zen-browser-bin = inputs.zen-browser.packages."${system}".beta;
 }
 // customVimPlugins
