@@ -126,6 +126,7 @@ in
             # "af.edgyarc.centered-url" = true;
             # "af.edgyarc.minimal-navbar" = true;
             # "af.edgyarc.thin-navbar" = true;
+            "signon.rememberSignons" = false;
             "af.sidebery.edgyarc-theme" = true;
             "browser.cache.jsbc_compression_level" = 3;
             "dom.enable_web_task_scheduling" = true;

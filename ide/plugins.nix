@@ -77,11 +77,7 @@ in
     colorizer.enable = true;
     lazygit.enable = true;
     direnv.enable = true;
-    spectre = {
-      enable = true;
-      findPackage = pkgs.ripgrep;
-      replacePackage = pkgs.gnused;
-    };
+    spectre.enable = true;
     emmet.enable = true;
     undotree = {
       enable = true;
