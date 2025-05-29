@@ -4,13 +4,13 @@ let
 in
 pkgs.stdenv.mkDerivation rec {
   pname = "ignis";
-  version = "0.5";
+  version = "0.5.1";
 
   src = pkgs.fetchFromGitHub {
     owner = "linkfrg";
     repo = "ignis";
     rev = "v${version}";
-    sha256 = "sha256-9guUCNNCZ6+3p4S8TA979zClNSj5CekqA2b2r5Xe5RM=";
+    sha256 = "sha256-/E0xqzW1qFOg3GJup/htQf6g1gz7NiHg7mOluYsArtw=";
     fetchSubmodules = true;
   };
 
