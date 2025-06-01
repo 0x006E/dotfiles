@@ -18,7 +18,6 @@ in
     ./virtualization.nix
     ./printing.nix
     ./stylix.nix
-    ./fingerprint.nix
   ];
 
   nix = {
@@ -59,15 +58,14 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackagesFor (
-      pkgs.linuxPackages_latest.kernel.override {
-        structuredExtraConfig = with lib.kernel; {
-          SCHED_CLASS_EXT = yes;
-        };
-        ignoreConfigErrors = false;
+    kernelPackages = pkgs.linuxPackages_cachyos;
+    kernelPatches = [
+      {
+        name = "disable-i2c-designware";
+        patch = null;
+        extraStructuredConfig.I2C_DESIGNWARE_PCI = lib.kernel.no;
       }
-    );
-
+    ];
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module
@@ -75,6 +73,7 @@ in
     blacklistedKernelModules = [
       "iTCO_wdt"
       "iTCO_vendor_support"
+      "i2c_designware"
     ];
     kernelModules = [
       "acer-wmi-battery"
@@ -89,6 +88,7 @@ in
     kernelParams = [
       "nowatchdog"
       "resume_offset=1058048"
+      "nvidia_drm.fbdev=1"
     ];
     kernel.sysctl = {
       "vm.admin_reserve_kbytes" = 1048576;
@@ -139,36 +139,22 @@ in
     scx = {
       enable = true;
       package = pkgs.scx.full;
-      scheduler = "scx_bpfland";
-      extraArgs = [ ];
+      scheduler = "scx_lavd";
+      extraArgs = [ "--autopower" ];
     };
     tailscale.enable = true;
     resolved.enable = true;
     bpftune.enable = true;
     ananicy = {
-      enable = true;
+      enable = false;
       package = pkgs.ananicy-cpp;
       rulesProvider = pkgs.ananicy-rules-cachyos_git;
     };
     fwupd.enable = true;
-    xserver = {
-      enable = true;
-      displayManager.gdm.enable = true;
-      desktopManager.cinnamon.enable = true;
+    desktopManager.gnome.enable = true;
 
-    };
-    greetd = {
-      enable = false;
-      greeterManagesPlymouth = false;
-      settings.default_session = {
-        command = ''
-          ${lib.makeBinPath [ pkgs.cage ]}/cage -s -- ${
-            lib.makeBinPath [ config.programs.regreet.package ]
-          }/regreet
-        '';
-        user = "greeter";
-      };
-    };
+    displayManager.gdm.enable = true;
+
     printing.enable = true;
     pipewire = {
       enable = true;
@@ -279,8 +265,6 @@ in
       xwayland
       wget
       libnotify
-      nil
-      wireguard-tools
       git-crypt
       devenv
       wl-clipboard
@@ -290,7 +274,6 @@ in
       darktable
       shotwell
       krita
-      zed-editor
     ];
     sessionVariables = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";

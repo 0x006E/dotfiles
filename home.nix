@@ -31,40 +31,19 @@ in
       gimp
 
       # Development Tools
-      vimgolf
-      devpod
-      # zen-browser
       pre-commit
-
-      nixfmt-rfc-style
 
       # System Tools
       foot
       overskride
 
-      distrobox
-      xorg.xhost
       udiskie
-      fuzzel
-
-      # Security and Privacy
-      keybase-gui
-      kbfs
-      bitwarden
 
       # Media and Entertainment
       mpv
       stirling-pdf
       stremio
-      vesktop
-      obs-studio
 
-      # Cloud and Sync
-      onedriver
-
-      # Custom Packages
-      responsively-app
-      zoho-mail
       # Gaming
       (lutris.override {
         extraLibraries = pkgs: [
@@ -76,7 +55,6 @@ in
       })
     ];
 
-    sessionVariables = { };
   };
 
   gtk = {
@@ -98,20 +76,6 @@ in
   };
   programs = {
     home-manager.enable = true;
-    jujutsu = {
-      enable = true;
-      settings = {
-        user = {
-          email = "me@ntsv.dev";
-          name = "Nithin S Varrier";
-        };
-        signing = {
-          sign-all = true;
-          backends.gpg.program = "${config.programs.gpg.package}/bin/gpg2";
-        };
-      };
-    };
-
     zen = {
       enable = true;
       package = pkgs.zen-browser-bin;
@@ -201,7 +165,7 @@ in
       mutableExtensionsDir = false;
       extensions = with pkgs.vscode-marketplace; [
         # Debug Tools
-        vadimcn.vscode-lldb
+        pkgs.vscode-extensions.vadimcn.vscode-lldb
         pkgs.vscode-extensions.ms-dotnettools.csdevkit
         ms-vscode.mono-debug
         ms-python.debugpy
@@ -314,7 +278,6 @@ in
       };
     };
 
-    keybase.enable = true;
   };
 
   dconf.settings = {

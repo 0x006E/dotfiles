@@ -7,7 +7,7 @@
 
   services.gpg-agent = {
     enable = true;
-    pinentryPackage = pkgs.wayprompt;
+    pinentry.package = pkgs.wayprompt;
   };
   home.file.".config/wayprompt/config.ini".source =
     let

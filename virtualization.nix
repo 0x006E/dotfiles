@@ -12,7 +12,6 @@
 
     # Container Systems
     docker.enable = true;
-    incus.enable = true;
   };
 
   # Virtual Machine Management
@@ -33,7 +32,6 @@
   # User Permissions
   users.users.nithin.extraGroups = [
     "libvirtd" # KVM/QEMU management
-    "incus-admin" # Incus container management
     "docker" # Docker container access
   ];
 
