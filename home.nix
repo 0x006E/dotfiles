@@ -79,6 +79,7 @@ in
     zen = {
       enable = true;
       package = pkgs.zen-browser-bin;
+      nativeMessagingHosts = [ pkgs.goldwarden ];
       profiles = {
         ${username} = {
           id = 0;
@@ -163,12 +164,13 @@ in
     vscode = {
       enable = true;
       mutableExtensionsDir = false;
-      extensions = with pkgs.vscode-marketplace; [
+      profiles.default.extensions = with pkgs.vscode-marketplace; [
         # Debug Tools
         pkgs.vscode-extensions.vadimcn.vscode-lldb
         pkgs.vscode-extensions.ms-dotnettools.csdevkit
         ms-vscode.mono-debug
         ms-python.debugpy
+        golang.go
 
         # Language Support
         rust-lang.rust-analyzer

@@ -59,13 +59,6 @@ in
       timeout = 0;
     };
     kernelPackages = pkgs.linuxPackages_cachyos;
-    kernelPatches = [
-      {
-        name = "disable-i2c-designware";
-        patch = null;
-        extraStructuredConfig.I2C_DESIGNWARE_PCI = lib.kernel.no;
-      }
-    ];
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module
@@ -73,7 +66,6 @@ in
     blacklistedKernelModules = [
       "iTCO_wdt"
       "iTCO_vendor_support"
-      "i2c_designware"
     ];
     kernelModules = [
       "acer-wmi-battery"
@@ -211,6 +203,10 @@ in
   };
 
   programs = {
+    goldwarden = {
+      enable = true;
+      useSshAgent = false;
+    };
     corectrl.enable = true;
     nix-index-database.comma.enable = true;
 
