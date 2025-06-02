@@ -109,7 +109,8 @@ in
         lib.attrsets.mergeAttrsList [
           # Basic Application Controls
           {
-            "Mod+T".action = sh "niri msg action focus-workspace terminal && rio";
+            "Mod+T".action = sh "niri msg action focus-workspace terminal && ghostty";
+
             "Mod+D".action = spawn "${config.programs.rofi.package}/bin/rofi" "-show" "drun";
             "Mod+E".action = spawn "nautilus";
             "Mod+L".action = spawn "blurred-locker";
@@ -205,6 +206,7 @@ in
           # Window Management
           {
             "Mod+Shift+T".action = focus-workspace "terminal";
+            "Mod+Shift+Z".action = focus-workspace "zen";
             "Mod+Comma".action = consume-window-into-column;
             "Mod+Period".action = expel-window-from-column;
             "Mod+R".action = switch-preset-column-width;
@@ -236,34 +238,6 @@ in
         { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
       ];
 
-      # Animations
-      animations.shaders.window-resize = ''
-        vec4 resize_color(vec3 coords_curr_geo, vec3 size_curr_geo) {
-            vec3 coords_next_geo = niri_curr_geo_to_next_geo * coords_curr_geo;
-
-            vec3 coords_stretch = niri_geo_to_tex_next * coords_curr_geo;
-            vec3 coords_crop = niri_geo_to_tex_next * coords_next_geo;
-
-            bool can_crop_by_x = niri_curr_geo_to_next_geo[0][0] <= 1.0;
-            bool can_crop_by_y = niri_curr_geo_to_next_geo[1][1] <= 1.0;
-
-            vec3 coords = coords_stretch;
-            if (can_crop_by_x)
-                coords.x = coords_crop.x;
-            if (can_crop_by_y)
-                coords.y = coords_crop.y;
-
-            vec4 color = texture2D(niri_tex_next, coords.st);
-
-            if (can_crop_by_x && (coords_curr_geo.x < 0.0 || 1.0 < coords_curr_geo.x))
-                color = vec4(0.0);
-            if (can_crop_by_y && (coords_curr_geo.y < 0.0 || 1.0 < coords_curr_geo.y))
-                color = vec4(0.0);
-
-            return color;
-        }
-      '';
-
       # Window Rules
       window-rules = [
         {
@@ -281,18 +255,13 @@ in
           clip-to-geometry = true;
         }
         {
-          matches = [ { is-focused = false; } ];
+          matches = [ { app-id = "ghostty"; } ];
           opacity = 0.95;
-        }
-        {
-          matches = [ { app-id = "rio"; } ];
-          opacity = 0.8;
           open-maximized = true;
           open-on-workspace = "terminal";
         }
         {
           matches = [ { app-id = "zen"; } ];
-          opacity = 0.97;
           open-maximized = true;
           open-on-workspace = "browser";
         }
@@ -309,25 +278,12 @@ in
     };
   };
 
-  programs.rio = {
+  programs.ghostty = {
     enable = true;
+    enableBashIntegration = true;
+    installVimSyntax = true;
     settings = {
-      window = {
-        foreground-opacity = 1.0;
-        background-opacity = 0.96;
-        blur = true;
-        decorations = "Disabled";
-        mode = "Maximized";
-      };
-      env-vars = [
-        "TERM=xterm-256color"
-        "COLORTERM=truecolor"
-        "WINIT_X11_SCALE_FACTOR=1"
-      ];
-      fonts = {
-        family = config.stylix.fonts.monospace.name;
-        size = lib.mkForce 16;
-      };
+      theme = "3024 Night";
     };
   };
   services.swaync.enable = true;

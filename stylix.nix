@@ -4,11 +4,9 @@
   stylix = {
     enable = true;
     image = ./wallpaper.jpg;
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/atelier-forest.yaml";
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/ayu-dark.yaml";
+    polarity = "dark";
     fonts = {
-      serif = config.stylix.fonts.monospace;
-      sansSerif = config.stylix.fonts.monospace;
-      emoji = config.stylix.fonts.monospace;
       monospace = {
         package = pkgs.nerd-fonts.commit-mono;
         name = "CommitMono Nerd Font";

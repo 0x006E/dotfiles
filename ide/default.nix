@@ -301,7 +301,7 @@ in
       }
     ];
     globals.mapleader = " ";
-    colorschemes.ayu = {
+    colorschemes.cyberdream = {
       enable = true;
     };
     opts = {
