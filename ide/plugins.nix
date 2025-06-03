@@ -6,9 +6,6 @@ in
   programs.nixvim.plugins = {
     remote-nvim = {
       enable = true;
-      package = pkgs.vimPlugins.remote-nvim-nvim.overrideAttrs (oldAttrs: {
-        dontPatchShebangs = true;
-      });
       settings = {
         devpod = {
           gpg_agent_forwarding = true;
@@ -53,9 +50,7 @@ in
     smartcolumn.enable = true;
     nui.enable = true;
     bufdelete.enable = true;
-    noice.enable = true;
     hardtime.enable = true;
-    notify.enable = true;
     trouble = {
       enable = true;
       settings = {

@@ -3,11 +3,14 @@
 
   inputs = {
     # Core Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
-
+    determinate = {
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Home Manager
     home-manager = {
       url = "github:0x006e/home-manager";
@@ -79,6 +82,7 @@
       niri,
       stylix,
       erosanix,
+      determinate,
 
       ...
     }@inputs:
@@ -171,6 +175,7 @@
             chaotic.nixosModules.default
             lanzaboote.nixosModules.lanzaboote
             ./secureboot.nix
+            determinate.nixosModules.default
           ];
         };
       };
