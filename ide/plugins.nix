@@ -13,6 +13,12 @@ in
       };
     };
 
+    tiny-inline-diagnostic = {
+      enable = true;
+    };
+    tailwind-tools = {
+      enable = true;
+    };
     statuscol = {
       enable = true;
       settings = {
@@ -416,9 +422,6 @@ in
             "react"
             "templ"
           ];
-          onAttach.function = ''
-            require('tailwindcss-colors').buf_attach(bufnr)
-          '';
           settings = {
             tailwindCSS = {
               includeLanguages = {
@@ -520,13 +523,6 @@ in
         ];
       };
       settings = {
-        formatting = {
-          format = ''
-            function (entry, vim_item) 
-              return require("tailwindcss-colorizer-cmp").formatter(entry, vim_item)
-            end
-          '';
-        };
         completion.completeopt = "menu,menuone,noinsert";
         sources = [
           { name = "nvim_lsp"; } # lsp

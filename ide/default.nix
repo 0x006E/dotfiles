@@ -36,11 +36,11 @@ in
     vimAlias = false;
     extraPlugins = with pkgs.vimPlugins; [
       signup-nvim
-      tailwindcss-colors-nvim
-      tailwindcss-colorizer-cmp
-      tiny-inline-diagnostic
       format-on-save
+      
       workspace-diagnostics
+      zenbones-nvim
+      lush-nvim
     ];
     extraConfigLuaPre = ''
       vim.fn.sign_define("diagnosticsignerror", { text = " ", texthl = "diagnosticerror", linehl = "", numhl = "" })
@@ -48,7 +48,7 @@ in
       vim.fn.sign_define("diagnosticsignhint", { text = "󰌵", texthl = "diagnostichint", linehl = "", numhl = "" })
       vim.fn.sign_define("diagnosticsigninfo", { text = " ", texthl = "diagnosticinfo", linehl = "", numhl = "" })
     '';
-
+    extraConfigLuaPost = ''vim.cmd [[ colorscheme kanagawabones ]]'';
     # feature that enhances the way Neovim loads and executes Lua modules,
     # offering improved performance and flexibility.
     luaLoader.enable = true;
@@ -58,8 +58,6 @@ in
         local format_on_save = require("format-on-save")
         local formatters = require("format-on-save.formatters")
         local vim_notify = require("format-on-save.error-notifiers.vim-notify")
-        require("tailwindcss-colorizer-cmp").setup({})
-        require('tiny-inline-diagnostic').setup({})
         require("signup").setup(
         {
             win = nil,
@@ -301,9 +299,6 @@ in
       }
     ];
     globals.mapleader = " ";
-    colorschemes.cyberdream = {
-      enable = true;
-    };
     opts = {
       number = true;
       shiftwidth = 2;
