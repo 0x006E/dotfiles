@@ -37,7 +37,7 @@ in
     extraPlugins = with pkgs.vimPlugins; [
       signup-nvim
       format-on-save
-      
+
       workspace-diagnostics
       zenbones-nvim
       lush-nvim

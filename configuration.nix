@@ -277,6 +277,7 @@ in
       EDITOR = "nvim";
       WLR_NO_HARDWARE_CURSORS = "1";
       QT_QPA_PLATFORM = "wayland";
+      NH_NO_CHECKS = 1;
     };
   };
 
