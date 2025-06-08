@@ -3,10 +3,9 @@
 
   inputs = {
     # Core Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-master.url = "github:nixos/nixpkgs/master";
+    nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -72,7 +71,6 @@
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-unstable,
-      nixpkgs-master,
       nix-index-database,
       nix-github-actions,
       home-manager,
@@ -100,10 +98,6 @@
         config.allowUnfree = true;
       };
 
-      pkgs-master = import nixpkgs-master {
-        inherit system;
-        config.allowUnfree = true;
-      };
     in
     {
       packages.${system} = import ./pkgs {
@@ -111,7 +105,6 @@
           nixpkgs
           pkgs-stable
           pkgs-unstable
-          pkgs-master
           inputs
           system
           ;
@@ -131,7 +124,6 @@
               inputs
               pkgs-stable
               pkgs-unstable
-              pkgs-master
               self
               system
               ;

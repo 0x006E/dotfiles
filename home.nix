@@ -76,6 +76,10 @@ in
   };
   programs = {
     home-manager.enable = true;
+    atuin = {
+      enable = true;
+      enableBashIntegration = true;
+    };
     zen = {
       enable = true;
       package = pkgs.zen-browser-bin;
@@ -171,6 +175,7 @@ in
         ms-vscode.mono-debug
         ms-python.debugpy
         golang.go
+        sumneko.lua
 
         # Language Support
         rust-lang.rust-analyzer
