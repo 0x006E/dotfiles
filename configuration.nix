@@ -251,6 +251,7 @@ in
 
   environment = {
     systemPackages = with pkgs; [
+      rquickshare
       pciutils
       usbutils
       lm_sensors

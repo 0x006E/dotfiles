@@ -276,6 +276,10 @@ in
     swaync.enable = true;
     udiskie.enable = true;
 
+    kdeconnect = {
+      enable = true;
+      indicator = true;
+    };
     flameshot = {
       enable = true;
       package = pkgs.flameshot.override { enableWlrSupport = true; };
