@@ -47,6 +47,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     erosanix.url = "github:emmanuelrosa/erosanix"; # Utilities
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -80,6 +81,7 @@
       niri,
       stylix,
       erosanix,
+      nix-flatpak,
       determinate,
 
       ...
@@ -168,6 +170,7 @@
             lanzaboote.nixosModules.lanzaboote
             ./secureboot.nix
             determinate.nixosModules.default
+            nix-flatpak.nixosModules.nix-flatpak
           ];
         };
       };

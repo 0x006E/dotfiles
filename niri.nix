@@ -256,7 +256,7 @@ in
         }
         {
           matches = [ { app-id = "ghostty"; } ];
-          opacity = 0.95;
+          opacity = 0.9;
           open-maximized = true;
           open-on-workspace = "terminal";
         }
@@ -272,7 +272,6 @@ in
               title = "Private Browsing";
             }
           ];
-          border.active.color = "purple";
         }
       ];
     };
@@ -282,11 +281,7 @@ in
     enable = true;
     enableBashIntegration = true;
     installVimSyntax = true;
-    settings = {
-      theme = "3024 Night";
-    };
   };
-  services.swaync.enable = true;
 
   home.packages = with pkgs; [
     dex

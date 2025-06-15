@@ -42,7 +42,6 @@ in
       # Media and Entertainment
       mpv
       stirling-pdf
-      stremio
 
       # Gaming
       (lutris.override {
@@ -79,6 +78,11 @@ in
     atuin = {
       enable = true;
       enableBashIntegration = true;
+      settings = {
+        style = "compact";
+        inline_height = 40;
+        enter_accept = false;
+      };
     };
     zen = {
       enable = true;

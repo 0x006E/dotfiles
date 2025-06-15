@@ -121,7 +121,21 @@ in
         };
       };
     };
-    flatpak.enable = true;
+    flatpak = {
+      enable = true;
+      remotes = [
+        {
+          name = "flathub-beta";
+          location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
+        }
+      ];
+      packages = [
+        {
+          appId = "com.stremio.Stremio";
+          origin = "flathub-beta";
+        }
+      ];
+    };
     speechd.enable = lib.mkForce false;
     kanata = {
       enable = false; # Disabled because of errors
