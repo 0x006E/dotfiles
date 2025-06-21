@@ -175,7 +175,6 @@ in
       profiles.default.extensions = with pkgs.vscode-marketplace; [
         # Debug Tools
         pkgs.vscode-extensions.vadimcn.vscode-lldb
-        pkgs.vscode-extensions.ms-dotnettools.csdevkit
         ms-vscode.mono-debug
         ms-python.debugpy
         golang.go
@@ -188,7 +187,6 @@ in
         bbenoist.nix
         brettm12345.nixfmt-vscode
         ms-python.python
-        pkgs.vscode-extensions.ms-dotnettools.csharp
 
         # Web Development
         esbenp.prettier-vscode
