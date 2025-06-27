@@ -121,6 +121,8 @@ in
         };
       };
     };
+
+    gnome.gcr-ssh-agent.enable = false;
     flatpak = {
       enable = true;
       remotes = [
