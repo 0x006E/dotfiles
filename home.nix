@@ -12,6 +12,7 @@ in
   imports = [
     inputs.walker.homeManagerModules.default
     inputs.nixvim.homeManagerModules.nixvim
+    inputs.zen-browser.homeModules.beta
     ./niri.nix
     ./waybar.nix
     ./ide
@@ -84,9 +85,8 @@ in
         enter_accept = false;
       };
     };
-    zen = {
+    zen-browser = {
       enable = true;
-      package = pkgs.zen-browser-bin;
       nativeMessagingHosts = [ pkgs.goldwarden ];
       profiles = {
         ${username} = {
