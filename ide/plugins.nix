@@ -126,7 +126,7 @@ in
         suggestion = {
           auto_trigger = true;
           keymap = {
-            accept = "<C-Enter>";
+            accept = "<C-y>";
           };
         };
       };

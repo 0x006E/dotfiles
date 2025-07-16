@@ -19,6 +19,7 @@ in
     ./wayprompt
     ./gpg
     ./rofi.nix
+    ./kanshi.nix
   ];
 
   home = {
