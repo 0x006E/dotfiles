@@ -110,10 +110,12 @@ in
           # Basic Application Controls
           {
             "Mod+T".action = sh "niri msg action focus-workspace terminal && ghostty";
-
             "Mod+D".action = spawn "${config.programs.rofi.package}/bin/rofi" "-show" "drun";
             "Mod+E".action = spawn "nautilus";
-            "Mod+L".action = spawn "blurred-locker";
+            "Mod+L".action =
+              sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && hyprlock '';
+            "Mod+Shift+L".action =
+              sh ''notify-send "Suspending Device" "System will suspend now." --icon=system-suspend && systemctl suspend'';
             "Mod+Q".action = close-window;
           }
 
@@ -274,6 +276,57 @@ in
           ];
         }
       ];
+    };
+  };
+
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        # after_sleep_cmd = "hyprctl dispatch dpms on";
+        ignore_dbus_inhibit = false;
+        lock_cmd = "pidof hyprlock || hyprlock";
+        before_sleep_cmd = "hyprlock";
+      };
+
+      listener = [
+        {
+          timeout = 300;
+          on-timeout = "hyprlock";
+        }
+        {
+          timeout = 600;
+          on-timeout = "systemctl suspend";
+        }
+      ];
+    };
+  };
+
+  programs.hyprlock = {
+    enable = true;
+    settings = {
+      general = {
+        disable_loading_bar = true;
+        grace = 300;
+        hide_cursor = true;
+        no_fade_in = false;
+      };
+
+      # input-field = [
+      #   {
+      #     size = "200, 50";
+      #     position = "0, -80";
+      #     monitor = "";
+      #     dots_center = true;
+      #     fade_on_empty = false;
+      #     font_color = "rgb(202, 211, 245)";
+      #     inner_color = "rgb(91, 96, 120)";
+      #     outer_color = "rgb(24, 25, 38)";
+      #     outline_thickness = 5;
+      #     placeholder_text = ''<span foreground="##cad3f5">Password...</span>'';
+      #     shadow_passes = 2;
+      #   }
+      # ];
     };
   };
 
