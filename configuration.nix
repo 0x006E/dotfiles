@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   inputs,
   lib,
   config,
@@ -293,7 +294,7 @@ in
       wayland-utils
       libsecret
       deluge
-      darktable
+      pkgs-unstable.darktable
       shotwell
       krita
     ];

@@ -305,23 +305,125 @@ in
   programs.hyprlock = {
     enable = true;
     settings = {
+
       general = {
         disable_loading_bar = true;
         grace = 300;
-        hide_cursor = true;
-        no_fade_in = false;
+      };
+
+      background = {
+        monitor = "";
+        blur_size = 5;
+        blur_passes = 1;
+        noise = 0.0117;
+        contrast = 1.3000;
+        brightness = 0.8000;
+        vibrancy = 0.2100;
+        vibrancy_darkness = 0.0;
       };
 
       input-field = {
-        size = "200, 50";
-        position = "0, -80";
         monitor = "";
+        size = "250, 50";
+        outline_thickness = 3;
+        dots_size = 0.33;
+        dots_spacing = 0.15;
         dots_center = true;
-        fade_on_empty = false;
-        outline_thickness = 5;
-        placeholder_text = ''<span foreground="##cad3f5">Password...</span>'';
-        shadow_passes = 2;
+        # outer_color = "$color5";
+        # inner_color = "$color0";
+        # font_color = "$color12";
+        placeholder_text = ''<i>Password...</i>'';
+        hide_input = false;
+        position = "0, 200";
+        halign = "center";
+        valign = "bottom";
       };
+
+      label = [
+        # Date
+        {
+          monitor = "";
+          text = ''cmd[update:18000000] echo "<b> "$(date +'%A, %-d %B %Y')" </b>"'';
+          # color = "$color12";
+          font_size = 34;
+          font_family = "CommitMono Nerd Font";
+          position = "0, -150";
+          halign = "center";
+          valign = "top";
+        }
+        # Week
+        {
+          monitor = "";
+          text = ''cmd[update:18000000] echo "<b> "$(date +'Week %U')" </b>"'';
+          # color = "$color5";
+          font_size = 24;
+          font_family = "CommitMono Nerd Font";
+          position = "0, -250";
+          halign = "center";
+          valign = "top";
+        }
+        # Time
+        {
+          monitor = "";
+          text = ''cmd[update:1000] echo "<b><big> $(date +"%H:%M:%S") </big></b>"'';
+          # color = "$color15";
+          font_size = 94;
+          font_family = "CommitMono Nerd Font";
+          position = "0, 0";
+          halign = "center";
+          valign = "center";
+        }
+        # User
+        {
+          monitor = "";
+          text = "$USER";
+          color = "$color12";
+          font_size = 18;
+          font_family = "Inter Display Medium";
+          position = "0, 100";
+          halign = "center";
+          valign = "bottom";
+        }
+        # Uptime
+        {
+          monitor = "";
+          text = ''cmd[update:60000] echo "<b> "$(uptime | sed -n 's/.*up \([^,]*\),.*/\1/p')" </b>"'';
+          color = "$color12";
+          font_size = 24;
+          font_family = "CommitMono Nerd Font";
+          position = "0, 0";
+          halign = "right";
+          valign = "bottom";
+        }
+        # Weather
+        {
+          monitor = "";
+          text = ''cmd[update:3600000] [ -f ~/.cache/.weather_cache ] && cat  ~/.cache/.weather_cache'';
+          color = "$color12";
+          font_size = 24;
+          font_family = "CommitMono Nerd Font";
+          position = "50, 0";
+          halign = "left";
+          valign = "bottom";
+        }
+      ];
+
+      image = [
+        {
+          monitor = "";
+          path = "${./wallpaper.jpg}";
+          size = 230;
+          rounding = -1;
+          border_size = 2;
+          # border_color = "$color11";
+          rotate = 0;
+          reload_time = -1;
+          position = "0, 300";
+          halign = "center";
+          valign = "bottom";
+        }
+      ];
+
     };
   };
 
