@@ -225,6 +225,7 @@ in
       SUBSYSTEM=="pci", ATTR{power/control}="auto"
     '';
   };
+  security.pam.services.hyprlock = { };
 
   programs = {
     goldwarden = {
