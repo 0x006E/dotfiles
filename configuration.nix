@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-unstable,
   inputs,
   lib,
   config,
@@ -294,7 +293,6 @@ in
       wayland-utils
       libsecret
       deluge
-      pkgs-unstable.darktable
       shotwell
       krita
     ];
@@ -309,7 +307,9 @@ in
   };
 
   systemd = {
-    extraConfig = "DefaultTimeoutStopSec=10s";
+    settings.Manager = {
+      DefaultTimeoutStopSec = "10s";
+    };
     user.extraConfig = "DefaultTimeoutStopSec=10s";
     sleep.extraConfig = ''
       MemorySleepMode=deep
