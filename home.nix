@@ -10,7 +10,6 @@ let
 in
 {
   imports = [
-    inputs.walker.homeManagerModules.default
     inputs.nixvim.homeManagerModules.nixvim
     inputs.zen-browser.homeModules.beta
     ./niri.nix
@@ -215,6 +214,18 @@ in
 
         # Tools
         mkhl.direnv
+
+        # Java
+
+        redhat.java
+        vscjava.vscode-java-debug
+        vscjava.vscode-java-test
+        vscjava.vscode-maven
+        vscjava.vscode-gradle
+        vscjava.vscode-java-dependency
+        vmware.vscode-spring-boot
+        vscjava.vscode-spring-initializr
+        vscjava.vscode-spring-boot-dashboard
       ];
     };
 

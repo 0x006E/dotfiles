@@ -42,10 +42,6 @@
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    walker = {
-      url = "github:abenz1267/walker";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     erosanix.url = "github:emmanuelrosa/erosanix"; # Utilities
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
 
