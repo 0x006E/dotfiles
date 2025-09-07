@@ -23,7 +23,7 @@ in
   nix = {
     nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     extraOptions = ''
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes parallel-eval
     '';
     settings = {
       auto-optimise-store = true;
@@ -304,6 +304,9 @@ in
       QT_QPA_PLATFORM = "wayland";
       NH_NO_CHECKS = 1;
     };
+    etc."nix/nix.custom.conf".text = ''
+      eval-cores = 0
+    '';
   };
 
   systemd = {
