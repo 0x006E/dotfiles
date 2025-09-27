@@ -79,7 +79,6 @@
       erosanix,
       nix-flatpak,
       determinate,
-
       ...
     }@inputs:
     let

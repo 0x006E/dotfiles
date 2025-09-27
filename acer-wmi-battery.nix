@@ -1,33 +1,32 @@
 {
+  pkgs,
   stdenv,
   lib,
   fetchFromGitHub,
-  kernel,
+  kernel ? pkgs.linuxPackages_cachyos.latest,
 }:
 stdenv.mkDerivation rec {
   name = "acer-wmi-battery-${version}-${kernel.version}";
-  version = "unstable-2023-06-12";
+  version = "unstable-2025-04-24";
 
   src = fetchFromGitHub {
     owner = "frederik-h";
     repo = "acer-wmi-battery";
-    rev = "4e605fb2c78412e0c431a06e9f8ee17c9e0e0095";
-    sha256 = "0b8h4qgqdgmzmzb2hvsh4psn3d432klxdfkjsarpa89iylr4irfs";
+    rev = "0889d3ea54655eaa88de552b334911ce7375952f";
+    sha256 = "sha256-mI6Ob9BmNfwqT3nndWf3jkz8f7tV10odkTnfApsNo+A=";
   };
 
-  hardeningDisable = [
-    "pic"
-    "format"
-  ]; # 1
-
-  nativeBuildInputs = kernel.moduleBuildDependencies; # 2
-  patches = [ ./patches/00_nixos.patch ];
+  setSourceRoot = ''export sourceRoot=$(pwd)/source'';
+  nativeBuildInputs = kernel.moduleBuildDependencies;
 
   makeFlags = [
-    "KERNELRELEASE=${kernel.modDirVersion}" # 3
-    "KERNEL_DIR=${kernel.dev}/lib/modules/${kernel.modDirVersion}/build" # 4
-    "INSTALL_MOD_PATH=$(out)" # 5
+    "-C"
+    "${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
+    "M=$(sourceRoot)"
   ];
+  buildFlags = [ "modules" ];
+  installFlags = [ "INSTALL_MOD_PATH=${placeholder "out"}" ];
+  installTargets = [ "modules_install" ];
 
   meta = with lib; {
     description = "A linux kernel driver for the Acer WMI battery health control interface";

@@ -58,7 +58,7 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackages_cachyos;
+    kernelPackages = pkgs.linuxPackages_cachyos-gcc;
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module
@@ -228,10 +228,6 @@ in
   security.pam.services.hyprlock = { };
 
   programs = {
-    goldwarden = {
-      enable = true;
-      useSshAgent = false;
-    };
     corectrl.enable = true;
     nix-index-database.comma.enable = true;
 

@@ -27,6 +27,8 @@ in
     stateVersion = "24.05";
 
     packages = with pkgs; [
+      filen-cli
+      filen-desktop
       # Office and Graphics
       libreoffice
       gimp
@@ -75,6 +77,7 @@ in
     };
   };
   programs = {
+    rclone.enable = true;
     home-manager.enable = true;
     atuin = {
       enable = true;
@@ -87,7 +90,6 @@ in
     };
     zen-browser = {
       enable = true;
-      nativeMessagingHosts = [ pkgs.goldwarden ];
       profiles = {
         ${username} = {
           id = 0;
@@ -290,6 +292,11 @@ in
     swaync.enable = true;
     udiskie.enable = true;
 
+    wlsunset = {
+      enable = true;
+      latitude = "8.5706057";
+      longitude = "76.8682843"; # replace with your longitude
+    };
     kdeconnect = {
       enable = true;
       indicator = true;
