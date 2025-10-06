@@ -105,6 +105,16 @@ in
   };
 
   services = {
+    beesd.filesystems = {
+      "-" = {
+        spec = "/dev/mapper/crypted";
+        hashTableSizeMB = 2048;
+        extraOptions = [
+          "--loadavg-target"
+          "5.0"
+        ];
+      };
+    };
     pulseaudio.enable = false;
     battery-notifier = {
       enable = true;
