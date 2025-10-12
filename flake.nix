@@ -60,6 +60,15 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    quickshell = {
+      url = "github:outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "quickshell"; # Use same quickshell version
+    };
   };
 
   outputs =
@@ -79,6 +88,7 @@
       erosanix,
       nix-flatpak,
       determinate,
+      noctalia,
       ...
     }@inputs:
     let
@@ -166,6 +176,7 @@
             ./secureboot.nix
             determinate.nixosModules.default
             nix-flatpak.nixosModules.nix-flatpak
+            noctalia.nixosModules.default
           ];
         };
       };

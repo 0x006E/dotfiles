@@ -233,7 +233,7 @@ in
             ":12"
           ];
         }
-        { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
+        # { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
         { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
         { command = [ "swww-daemon" ]; }
         { command = [ "dex" ]; }

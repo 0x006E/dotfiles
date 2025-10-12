@@ -45,8 +45,17 @@ in
   };
 
   nixpkgs = {
-    overlays = [ inputs.niri.overlays.niri ];
+    overlays = [
+      inputs.niri.overlays.niri
+      (final: prev: {
+
+        qgnomeplatform = prev.qgnomeplatform.overrideAttrs (old: {
+          cmakeFlags = old.cmakeFlags or [ ] ++ [ "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" ];
+        });
+      })
+    ];
     config.allowUnfree = true;
+
   };
 
   boot = {
@@ -105,6 +114,7 @@ in
   };
 
   services = {
+    noctalia-shell.enable = true;
     beesd.filesystems = {
       "-" = {
         spec = "/dev/mapper/crypted";

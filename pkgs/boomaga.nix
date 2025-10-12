@@ -38,11 +38,14 @@ stdenv.mkDerivation rec {
     "-DCMAKE_INSTALL_PREFIX=${placeholder "out"}"
     "-DCUPS_PPD_DIR=${placeholder "out"}/share/cups/model/boomaga"
     "-DCUPS_BACKEND_DIR=${placeholder "out"}/lib/cups/backend"
+    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
   ];
 
   postPatch = ''
     substituteInPlace src/backend/cups_backend/main.cpp \
         --replace "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))"
+    substituteInPlace CMakeLists.txt \
+        --replace "cmake_minimum_required(VERSION 3.0.0)" "cmake_minimum_required(VERSION 3.5.0)"
   '';
 
   meta = with lib; {
