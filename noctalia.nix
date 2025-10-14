@@ -12,7 +12,7 @@
         density = "compact";
         position = "left";
         showCapsule = true;
-        backgroundOpacity = 0.8;
+        backgroundOpacity = 0;
         widgets = {
           left = [
             {
@@ -39,7 +39,7 @@
             {
               hideUnoccupied = false;
               id = "Workspace";
-              labelMode = "none";
+              labelMode = "name";
             }
           ];
           right = [
@@ -90,6 +90,7 @@
       colorSchemes = {
         useWallpaperColors = true;
         darkMode = true;
+        matugenSchemeType = "scheme-expressive";
       };
       nightLight = {
         enabled = true;
