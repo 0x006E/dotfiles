@@ -3,7 +3,7 @@
 
   inputs = {
     # Core Nixpkgs
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
     determinate = {
