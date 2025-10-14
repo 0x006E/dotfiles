@@ -10,7 +10,7 @@ let
 in
 {
   imports = [
-    inputs.nixvim.homeManagerModules.nixvim
+    inputs.nixvim.homeModules.nixvim
     inputs.zen-browser.homeModules.beta
     inputs.noctalia.homeModules.default
     ./niri.nix
@@ -18,8 +18,9 @@ in
     ./ide
     ./wayprompt
     ./gpg
-    ./rofi.nix
+    # ./rofi.nix
     ./kanshi.nix
+    ./noctalia.nix
   ];
 
   home = {
@@ -287,75 +288,11 @@ in
         urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
       };
     };
-    noctalia-shell = {
-      enable = true;
-      settings = {
-        # configure noctalia here; defaults will
-        # be deep merged with these attributes.
-        bar = {
-          density = "compact";
-          position = "right";
-          showCapsule = false;
-          widgets = {
-            left = [
-              {
-                id = "SidePanelToggle";
-                useDistroLogo = true;
-              }
-              {
-                id = "WiFi";
-              }
-              {
-                id = "Bluetooth";
-              }
-            ];
-            center = [
-              {
-                hideUnoccupied = false;
-                id = "Workspace";
-                labelMode = "none";
-              }
-            ];
-            right = [
-              {
-                alwaysShowPercentage = false;
-                id = "Battery";
-                warningThreshold = 30;
-              }
-              {
-                formatHorizontal = "HH:mm";
-                formatVertical = "HH mm";
-                id = "Clock";
-                useMonospacedFont = true;
-                usePrimaryColor = true;
-              }
-            ];
-          };
-        };
-        colorSchemes.predefinedScheme = "Monochrome";
-        general = {
-          avatarImage = "/home/drfoobar/.face";
-          radiusRatio = 0.2;
-        };
-        location = {
-          monthBeforeDay = true;
-          name = "Marseille, France";
-        };
-      };
-      # this may also be a string or a path to a JSON file,
-      # but in this case must include *all* settings.
-    };
   };
 
   services = {
-    swaync.enable = true;
     udiskie.enable = true;
 
-    wlsunset = {
-      enable = true;
-      latitude = "8.5706057";
-      longitude = "76.8682843"; # replace with your longitude
-    };
     kdeconnect = {
       enable = true;
       indicator = true;

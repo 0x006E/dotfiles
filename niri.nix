@@ -50,6 +50,7 @@ in
   programs.niri = {
     settings = {
       debug = {
+        honor-xdg-activation-with-invalid-serial = true;
         render-drm-device = "/dev/dri/renderD128";
       };
       environment = {
@@ -110,13 +111,14 @@ in
           # Basic Application Controls
           {
             "Mod+T".action = sh "niri msg action focus-workspace terminal && ghostty";
-            "Mod+D".action = spawn "${config.programs.rofi.package}/bin/rofi" "-show" "drun";
+            "Mod+D".action = spawn "noctalia-shell" "ipc" "call" "launcher" "toggle";
             "Mod+E".action = spawn "nautilus";
             "Mod+L".action =
-              sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && hyprlock '';
+              sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia-shell ipc call lockScreen toggle '';
             "Mod+Shift+L".action =
               sh ''notify-send "Suspending Device" "System will suspend now." --icon=system-suspend && systemctl suspend'';
             "Mod+Q".action = close-window;
+            "Mod+V".action = spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard";
           }
 
           # Screenshot Controls
@@ -128,11 +130,12 @@ in
 
           # Media Controls
           {
-            "XF86AudioRaiseVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+";
-            "XF86AudioLowerVolume".action = sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-";
-            "XF86AudioMute".action = sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-            "XF86MonBrightnessUp".action = sh "brightnessctl set 10%+";
-            "XF86MonBrightnessDown".action = sh "brightnessctl set 10%-";
+            "XF86AudioRaiseVolume".action = sh "noctalia-shell ipc call volume increase";
+            "XF86AudioLowerVolume".action = sh "noctalia-shell ipc call volume decrease";
+            "XF86AudioMute".action = sh "noctalia-shell ipc call volume muteOutput";
+
+            "XF86MonBrightnessUp".action = sh "noctalia-shell ipc call brightness increase";
+            "XF86MonBrightnessDown".action = sh "noctalia-shell ipc call brightness decrease";
             "XF86AudioNext".action = focus-column-right;
             "XF86AudioPrev".action = focus-column-left;
           }
@@ -235,9 +238,16 @@ in
         }
         # { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
         { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
-        { command = [ "swww-daemon" ]; }
+        # { command = [ "swww-daemon" ]; }
         { command = [ "dex" ]; }
-        { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
+        # { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
+      ];
+
+      layer-rules = [
+        {
+          matches = [ { namespace = "^quickshell-overview$"; } ];
+          place-within-backdrop = true;
+        }
       ];
 
       # Window Rules
@@ -279,154 +289,6 @@ in
     };
   };
 
-  services.hypridle = {
-    enable = true;
-    settings = {
-      general = {
-        # after_sleep_cmd = "hyprctl dispatch dpms on";
-        ignore_dbus_inhibit = false;
-        lock_cmd = "pidof hyprlock || hyprlock";
-        before_sleep_cmd = "hyprlock";
-      };
-
-      listener = [
-        {
-          timeout = 300;
-          on-timeout = "hyprlock";
-        }
-        {
-          timeout = 600;
-          on-timeout = "systemctl suspend";
-        }
-      ];
-    };
-  };
-
-  programs.hyprlock = {
-    enable = true;
-    settings = {
-
-      general = {
-        disable_loading_bar = true;
-        grace = 300;
-      };
-
-      background = {
-        monitor = "";
-        blur_size = 5;
-        blur_passes = 1;
-        noise = 0.0117;
-        contrast = 1.3000;
-        brightness = 0.8000;
-        vibrancy = 0.2100;
-        vibrancy_darkness = 0.0;
-      };
-
-      input-field = {
-        monitor = "";
-        size = "250, 50";
-        outline_thickness = 3;
-        dots_size = 0.33;
-        dots_spacing = 0.15;
-        dots_center = true;
-        # outer_color = "$color5";
-        # inner_color = "$color0";
-        # font_color = "$color12";
-        placeholder_text = ''<i>Password...</i>'';
-        hide_input = false;
-        position = "0, 200";
-        halign = "center";
-        valign = "bottom";
-      };
-
-      label = [
-        # Date
-        {
-          monitor = "";
-          text = ''cmd[update:18000000] echo "<b> "$(date +'%A, %-d %B %Y')" </b>"'';
-          # color = "$color12";
-          font_size = 34;
-          font_family = "CommitMono Nerd Font";
-          position = "0, -150";
-          halign = "center";
-          valign = "top";
-        }
-        # Week
-        {
-          monitor = "";
-          text = ''cmd[update:18000000] echo "<b> "$(date +'Week %U')" </b>"'';
-          # color = "$color5";
-          font_size = 24;
-          font_family = "CommitMono Nerd Font";
-          position = "0, -250";
-          halign = "center";
-          valign = "top";
-        }
-        # Time
-        {
-          monitor = "";
-          text = ''cmd[update:1000] echo "<b><big> $(date +"%H:%M:%S") </big></b>"'';
-          # color = "$color15";
-          font_size = 94;
-          font_family = "CommitMono Nerd Font";
-          position = "0, 0";
-          halign = "center";
-          valign = "center";
-        }
-        # User
-        {
-          monitor = "";
-          text = "$USER";
-          color = "$color12";
-          font_size = 18;
-          font_family = "Inter Display Medium";
-          position = "0, 100";
-          halign = "center";
-          valign = "bottom";
-        }
-        # Uptime
-        {
-          monitor = "";
-          text = ''cmd[update:60000] echo "<b> "$(uptime | sed -n 's/.*up \([^,]*\),.*/\1/p')" </b>"'';
-          color = "$color12";
-          font_size = 24;
-          font_family = "CommitMono Nerd Font";
-          position = "0, 0";
-          halign = "right";
-          valign = "bottom";
-        }
-        # Weather
-        {
-          monitor = "";
-          text = ''cmd[update:3600000] [ -f ~/.cache/.weather_cache ] && cat  ~/.cache/.weather_cache'';
-          color = "$color12";
-          font_size = 24;
-          font_family = "CommitMono Nerd Font";
-          position = "50, 0";
-          halign = "left";
-          valign = "bottom";
-        }
-      ];
-
-      image = [
-        {
-          monitor = "";
-          path = "${./wallpaper.jpg}";
-          size = 230;
-          rounding = -1;
-          border_size = 2;
-          # border_color = "$color11";
-          rotate = 0;
-          reload_time = -1;
-          position = "0, 300";
-          halign = "center";
-          valign = "bottom";
-        }
-      ];
-
-    };
-  };
-
   programs.ghostty = {
     enable = true;
     enableBashIntegration = true;
@@ -436,9 +298,9 @@ in
   home.packages = with pkgs; [
     dex
     brightnessctl
+    cliphist
     grim
     slurp
     xwayland-satellite-unstable
-    swww
   ];
 }
