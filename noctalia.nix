@@ -96,6 +96,9 @@
         enabled = true;
         autoSchedule = true;
       };
+      audio = {
+        volumeOverdrive = true;
+      };
     };
   };
 }
