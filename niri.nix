@@ -294,6 +294,27 @@ in
     enableBashIntegration = true;
     installVimSyntax = true;
   };
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        # after_sleep_cmd = "hyprctl dispatch dpms on";
+        ignore_dbus_inhibit = false;
+        lock_cmd = "noctalia-shell ipc call lockScreen toggle";
+        before_sleep_cmd = "noctalia-shell ipc call lockScreen toggle";
+      };
+      listener = [
+        {
+          timeout = 300;
+          on-timeout = "noctalia-shell ipc call lockScreen toggle";
+        }
+        {
+          timeout = 600;
+          on-timeout = "systemctl suspend";
+        }
+      ];
+    };
+  };
 
   home.packages = with pkgs; [
     dex
