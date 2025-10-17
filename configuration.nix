@@ -90,6 +90,7 @@ in
       "nowatchdog"
       "resume_offset=1058048"
       "nvidia_drm.fbdev=1"
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=0"
     ];
     kernel.sysctl = {
       "vm.admin_reserve_kbytes" = 1048576;
