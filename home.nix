@@ -6,7 +6,7 @@
   ...
 }:
 let
-  username = "ntsv";
+  username = "nithin";
 in
 {
   imports = [
@@ -24,8 +24,8 @@ in
   ];
 
   home = {
-    username = "nithin";
-    homeDirectory = "/home/nithin";
+    username = username;
+    homeDirectory = "/home/${username}";
     stateVersion = "24.05";
 
     packages = with pkgs; [
@@ -172,7 +172,6 @@ in
         # `jq .applications.gecko.id manifest.json` to get the UUID
       };
     };
-
     vscode = {
       enable = true;
       mutableExtensionsDir = false;
@@ -289,7 +288,7 @@ in
       };
     };
   };
-
+  stylix.targets.zen-browser.profileNames = [ "nithin" ];
   services = {
     udiskie.enable = true;
 
