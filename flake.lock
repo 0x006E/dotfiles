@@ -589,7 +589,9 @@
           "nixpkgs"
         ],
         "pre-commit-hooks-nix": "pre-commit-hooks-nix",
-        "rust-overlay": "rust-overlay_2"
+        "rust-overlay": [
+          "rust-overlay"
+        ]
       },
       "locked": {
         "lastModified": 1737639419,
@@ -989,11 +991,11 @@
         "systems": "systems_4"
       },
       "locked": {
-        "lastModified": 1762029476,
-        "narHash": "sha256-mzV+bsCorAaZTW33w7OjsUr813obCgM6AX/3ip0U6oo=",
+        "lastModified": 1762091889,
+        "narHash": "sha256-qztbcbS0GAIpILm4vS4ldL31dKH3YYZ1urh5dVotV1A=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "b189b4b16454ad6737d143838ad1a1204e2adb32",
+        "rev": "98f074dddcb54aaaa04638d886b25ca1178981b6",
         "type": "github"
       },
       "original": {
@@ -1116,6 +1118,7 @@
         "nixvim": "nixvim",
         "noctalia": "noctalia",
         "quickshell": "quickshell",
+        "rust-overlay": "rust-overlay_2",
         "stylix": "stylix",
         "zen-browser": "zen-browser"
       }
@@ -1144,16 +1147,15 @@
     "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
-          "lanzaboote",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1731897198,
-        "narHash": "sha256-Ou7vLETSKwmE/HRQz4cImXXJBr/k9gp4J4z/PF8LzTE=",
+        "lastModified": 1762051177,
+        "narHash": "sha256-pESNTx/m3WnrYx+OujBtDP5Bj0/mAyHa4MgEwzkgkLE=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "0be641045af6d8666c11c2c40e45ffc9667839b5",
+        "rev": "08c33e87c4829bbdd42b5af247cf7a19e126369f",
         "type": "github"
       },
       "original": {
