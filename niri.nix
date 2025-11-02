@@ -124,8 +124,6 @@ in
           # Screenshot Controls
           {
             "Print".action = sh "flameshot full --clipboard";
-            "Mod+Print".action = screenshot;
-            "Shift+Super+S".action = screenshot;
           }
 
           # Media Controls

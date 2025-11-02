@@ -29,6 +29,7 @@ in
     stateVersion = "24.05";
 
     packages = with pkgs; [
+      winboat
       filen-cli
       filen-desktop
       # Office and Graphics

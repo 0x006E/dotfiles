@@ -17,5 +17,6 @@
         name = "CommitMono Nerd Font";
       };
     };
+    targets.qt.enable = false;
   };
 }
