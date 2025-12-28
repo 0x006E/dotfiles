@@ -114,7 +114,7 @@ in
             "Mod+D".action = spawn "noctalia-shell" "ipc" "call" "launcher" "toggle";
             "Mod+E".action = spawn "nautilus";
             "Mod+L".action =
-              sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia-shell ipc call lockScreen toggle '';
+              sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia-shell ipc call lockScreen lock '';
             "Mod+Shift+L".action =
               sh ''notify-send "Suspending Device" "System will suspend now." --icon=system-suspend && systemctl suspend'';
             "Mod+Q".action = close-window;

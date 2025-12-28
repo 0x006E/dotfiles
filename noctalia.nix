@@ -78,7 +78,7 @@
       wallpaper = {
         enabled = true;
         setWallpaperOnAllMonitors = true;
-        defaultWallpaper = ./wallpaper.jpg;
+        directory = ./.;
       };
       appLauncher = {
         enableClipboardHistory = true;
