@@ -178,6 +178,7 @@ in
       enable = true;
       mutableExtensionsDir = false;
       profiles.default.extensions = with pkgs.vscode-marketplace; [
+
         # Debug Tools
         pkgs.vscode-extensions.vadimcn.vscode-lldb
         ms-vscode.mono-debug
@@ -187,6 +188,7 @@ in
 
         # Language Support
         rust-lang.rust-analyzer
+        ziglang.vscode-zig
         tamasfe.even-better-toml
         serayuzgur.crates
         bbenoist.nix
