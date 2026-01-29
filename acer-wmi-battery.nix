@@ -16,7 +16,7 @@ stdenv.mkDerivation rec {
     sha256 = "sha256-mI6Ob9BmNfwqT3nndWf3jkz8f7tV10odkTnfApsNo+A=";
   };
 
-  setSourceRoot = ''export sourceRoot=$(pwd)/source'';
+  setSourceRoot = "export sourceRoot=$(pwd)/source";
   nativeBuildInputs = kernel.moduleBuildDependencies;
 
   makeFlags = [
