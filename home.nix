@@ -29,6 +29,7 @@ in
     stateVersion = "24.05";
 
     packages = with pkgs; [
+      google-chrome
       librum
       winboat
       filen-cli

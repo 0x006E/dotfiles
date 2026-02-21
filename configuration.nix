@@ -113,7 +113,7 @@ in
     timeZone = "Asia/Kolkata";
     hardwareClockInLocalTime = true;
   };
-
+  networking.firewall.checkReversePath = false;
   services = {
     noctalia-shell.enable = true;
     beesd.filesystems = {
@@ -293,7 +293,8 @@ in
 
   environment = {
     systemPackages = with pkgs; [
-      # rquickshare
+      wireguard-tools
+      protonvpn-gui # rquickshare
       pciutils
       usbutils
       lm_sensors
