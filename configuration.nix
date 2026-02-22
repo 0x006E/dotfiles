@@ -67,7 +67,6 @@ in
       efi.canTouchEfiVariables = true;
       timeout = 0;
     };
-    kernelPackages = pkgs.linuxPackages_cachyos-gcc;
     extraModulePackages = [
       uvcvideo-kernel-module
       acer-wmi-battery-kernel-module

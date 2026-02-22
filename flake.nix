@@ -42,7 +42,6 @@
     };
 
     # System Management
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v1.0.0";
       inputs = {
@@ -87,7 +86,6 @@
       nix-index-database,
       nix-github-actions,
       home-manager,
-      chaotic,
       battery-notifier,
       lanzaboote,
       niri,
@@ -178,7 +176,6 @@
 
             # Additional Modules
             nix-index-database.nixosModules.nix-index
-            chaotic.nixosModules.default
             lanzaboote.nixosModules.lanzaboote
             ./secureboot.nix
             determinate.nixosModules.default
