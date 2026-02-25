@@ -15,7 +15,7 @@
         widgets = {
           left = [
             {
-              id = "SidePanelToggle";
+              id = "ControlCenter";
               useDistroLogo = true;
             }
             {
