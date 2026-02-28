@@ -7,7 +7,8 @@
 {
   specialisation = {
     mini.configuration = {
-      services.xserver.desktopManager.plasma5.enable = true;
+      services.desktopManager.gnome.enable = lib.mkForce true;
+      services.desktopManager.plasma6.enable = true;
       users.users.mini = {
         isNormalUser = true;
         uid = 1002;
@@ -19,7 +20,7 @@
       };
       programs.niri.enable = lib.mkForce false;
       environment.systemPackages = with pkgs; [
-        okular
+        kdePackages.okular
       ];
     };
   };
