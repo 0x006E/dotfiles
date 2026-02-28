@@ -178,6 +178,7 @@
             nix-index-database.nixosModules.nix-index
             lanzaboote.nixosModules.lanzaboote
             ./secureboot.nix
+            ./specialization.nix
             determinate.nixosModules.default
             nix-flatpak.nixosModules.nix-flatpak
             noctalia.nixosModules.default

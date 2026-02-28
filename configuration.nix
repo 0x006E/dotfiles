@@ -292,6 +292,7 @@ in
 
   environment = {
     systemPackages = with pkgs; [
+      distrobox
       wireguard-tools
       protonvpn-gui # rquickshare
       pciutils
@@ -311,7 +312,6 @@ in
       libsecret
       deluge
       shotwell
-      krita
     ];
     sessionVariables = {
       VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
