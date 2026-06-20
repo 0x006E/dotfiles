@@ -16,7 +16,7 @@ in
     pkgs-stable.eslint
     mkcert
     nixfmt-rfc-style
-    node2nix
+
     ruff
     goimports-reviser
     nodejs
