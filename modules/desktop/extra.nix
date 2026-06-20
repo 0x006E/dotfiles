@@ -7,6 +7,7 @@ delib.module {
       inputs.noctalia.nixosModules.default
       ../../overlays/default.nix
     ];
+    services.noctalia-shell.enable = true;
     nixpkgs.overlays = [
       inputs.nix-vscode-extensions.overlays.default
     ];
