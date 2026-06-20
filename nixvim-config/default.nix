@@ -20,7 +20,7 @@ in
     ruff
     goimports-reviser
     nodejs
-    nodePackages.svelte-language-server
+    svelte-language-server
     npm-check-updates
     lazygit
     prettierd
