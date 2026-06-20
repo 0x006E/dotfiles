@@ -10,7 +10,7 @@
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     # Denix
     denix = {
       url = "github:yunfachi/denix";
@@ -86,10 +86,18 @@
   };
 
   outputs =
-    { self, denix, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-github-actions, ... }@inputs:
+    {
+      self,
+      denix,
+      nixpkgs,
+      nixpkgs-stable,
+      nixpkgs-unstable,
+      nix-github-actions,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
-      
+
       pkgs-stable = import nixpkgs-stable {
         inherit system;
         config.allowUnfree = true;
@@ -120,7 +128,13 @@
           ];
 
           specialArgs = {
-            inherit inputs pkgs-stable pkgs-unstable self system;
+            inherit
+              inputs
+              pkgs-stable
+              pkgs-unstable
+              self
+              system
+              ;
           };
         };
     in

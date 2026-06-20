@@ -10,12 +10,15 @@ delib.host {
     system.stateVersion = "24.05";
     imports = [
       ./hardware-configuration.nix
-      ({ config, ... }: {
-        boot.extraModulePackages = [
-          (config.boot.kernelPackages.callPackage ../../pkgs/uvcvideo-kernel-module { })
-          (config.boot.kernelPackages.callPackage ../../pkgs/acer-wmi-battery { })
-        ];
-      })
+      (
+        { config, ... }:
+        {
+          boot.extraModulePackages = [
+            (config.boot.kernelPackages.callPackage ../../pkgs/uvcvideo-kernel-module { })
+            (config.boot.kernelPackages.callPackage ../../pkgs/acer-wmi-battery { })
+          ];
+        }
+      )
     ];
   };
 }

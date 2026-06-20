@@ -1,4 +1,6 @@
-{ delib, inputs,
+{
+  delib,
+  inputs,
   pkgs,
   ...
 }:
