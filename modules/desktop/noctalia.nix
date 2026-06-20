@@ -10,7 +10,7 @@ delib.module {
       ...
     }:
     {
-      programs.noctalia-shell = {
+      programs.noctalia = {
         enable = true;
         settings = {
           settingsVersion = 15;
