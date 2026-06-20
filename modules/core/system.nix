@@ -15,10 +15,12 @@ delib.module {
         settings.Manager = {
           DefaultTimeoutStopSec = "10s";
         };
-        user.extraConfig = "DefaultTimeoutStopSec=10s";
-        sleep.extraConfig = ''
-          MemorySleepMode=deep
-        '';
+        user.settings.Manager = {
+          DefaultTimeoutStopSec = "10s";
+        };
+        sleep.settings.Sleep = {
+          MemorySleepMode = "deep";
+        };
       };
 
       security = {
