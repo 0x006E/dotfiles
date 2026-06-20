@@ -9,11 +9,11 @@ delib.host {
   nixos = {
     system.stateVersion = "24.05";
     imports = [
-      ../../custom-hardware/hardware-configuration.nix
+      ./hardware-configuration.nix
       ({ config, ... }: {
         boot.extraModulePackages = [
-          (config.boot.kernelPackages.callPackage ../../custom-hardware/uvcvideo-kernel-module.nix { })
-          (config.boot.kernelPackages.callPackage ../../custom-hardware/acer-wmi-battery.nix { })
+          (config.boot.kernelPackages.callPackage ../../pkgs/uvcvideo-kernel-module { })
+          (config.boot.kernelPackages.callPackage ../../pkgs/acer-wmi-battery { })
         ];
       })
     ];

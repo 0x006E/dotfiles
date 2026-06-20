@@ -15,10 +15,6 @@ delib.module {
   home.always = { myconfig, ... }: { pkgs, config, lib, ... }: {
     imports = [
       inputs.noctalia.homeModules.default
-      ../../custom-desktop/wayprompt
-      ../../custom-desktop/gpg
-      ../../custom-desktop/kanshi.nix
-      ../../custom-desktop/noctalia.nix
     ];
   };
 }
