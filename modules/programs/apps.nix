@@ -23,14 +23,8 @@ delib.module {
         overskride
         mpv
         stirling-pdf
-        (lutris.override {
-          extraLibraries = pkgs: [
-            mangohud
-            wineWow64Packages.waylandFull
-            bash
-            winetricks
-          ];
-        })
+        heroic
+        bottles
       ];
     };
 }

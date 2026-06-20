@@ -51,14 +51,8 @@ delib.module {
         stirling-pdf
         deluge
         shotwell
-        (lutris.override {
-          extraLibraries = pkgs: [
-            mangohud
-            wineWow64Packages.waylandFull
-            bash
-            winetricks
-          ];
-        })
+        heroic
+        bottles
       ];
     };
 }
