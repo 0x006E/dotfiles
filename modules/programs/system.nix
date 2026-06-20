@@ -2,24 +2,32 @@
 delib.module {
   name = "programs.system";
 
-  nixos.always = { myconfig, ... }: { pkgs, config, lib, ... }: {
-    programs = {
-      corectrl.enable = true;
-      nix-index-database.comma.enable = true;
-      
-      nix-index = {
-        enable = true;
-        enableBashIntegration = true;
-      };
+  nixos.always =
+    { myconfig, ... }:
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
+    {
+      programs = {
+        corectrl.enable = true;
+        nix-index-database.comma.enable = true;
 
-      nh = {
-        enable = true;
-        clean = {
+        nix-index = {
           enable = true;
-          extraArgs = "--keep-since 3d --keep 3";
+          enableBashIntegration = true;
         };
-        flake = "/home/nithin/nix/denix-flake";
+
+        nh = {
+          enable = true;
+          clean = {
+            enable = true;
+            extraArgs = "--keep-since 3d --keep 3";
+          };
+          flake = "/home/nithin/nix";
+        };
       };
     };
-  };
 }
