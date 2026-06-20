@@ -1,5 +1,5 @@
 {
-  description = "Nithin's NixOS Configuration";
+  description = "Nithin's NixOS Configuration with Denix";
 
   inputs = {
     # Core Nixpkgs
@@ -10,6 +10,14 @@
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    # Denix
+    denix = {
+      url = "github:yunfachi/denix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
     # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -78,28 +86,10 @@
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-stable,
-      nixpkgs-unstable,
-      nix-index-database,
-      nix-github-actions,
-      home-manager,
-      battery-notifier,
-      lanzaboote,
-      niri,
-      stylix,
-      erosanix,
-      nix-flatpak,
-      determinate,
-      noctalia,
-      ...
-    }@inputs:
+    { self, denix, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-github-actions, ... }@inputs:
     let
       system = "x86_64-linux";
-
-      # Package Sets
+      
       pkgs-stable = import nixpkgs-stable {
         inherit system;
         config.allowUnfree = true;
@@ -110,6 +100,29 @@
         config.allowUnfree = true;
       };
 
+      mkConfigurations =
+        moduleSystem:
+        denix.lib.configurations {
+          inherit moduleSystem;
+          homeManagerUser = "nithin";
+
+          paths = [
+            ./hosts
+            ./modules
+            ./rices
+          ];
+
+          extensions = with denix.lib.extensions; [
+            args
+            (base.withConfig {
+              args.enable = true;
+            })
+          ];
+
+          specialArgs = {
+            inherit inputs pkgs-stable pkgs-unstable self system;
+          };
+        };
     in
     {
       packages.${system} = import ./pkgs {
@@ -125,66 +138,8 @@
       };
 
       githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
-      nixosConfigurations = {
 
-        ntsv = nixpkgs.lib.nixosSystem {
-          inherit system;
-
-          # Special Arguments
-          specialArgs = {
-            inherit
-              inputs
-              pkgs-stable
-              pkgs-unstable
-              self
-              system
-              ;
-          };
-
-          modules = [
-            # Core Modules
-            stylix.nixosModules.stylix
-            battery-notifier.nixosModules.default
-            erosanix.nixosModules.protonvpn
-            niri.nixosModules.niri
-            ./overlays
-            # Overlays
-            {
-              nixpkgs.overlays = [
-                inputs.nix-vscode-extensions.overlays.default
-              ];
-            }
-
-            # Configuration
-            ./configuration.nix
-
-            # Home Manager
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "bak";
-
-                extraSpecialArgs = {
-                  inherit inputs pkgs-unstable pkgs-stable;
-                };
-
-                users.nithin = import ./home.nix;
-              };
-            }
-
-            # Additional Modules
-            nix-index-database.nixosModules.nix-index
-            lanzaboote.nixosModules.lanzaboote
-            ./secureboot.nix
-            ./specialization.nix
-            determinate.nixosModules.default
-            nix-flatpak.nixosModules.nix-flatpak
-            noctalia.nixosModules.default
-          ];
-        };
-      };
+      nixosConfigurations = mkConfigurations "nixos";
 
       # Formatter Configuration
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
