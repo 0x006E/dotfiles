@@ -15,7 +15,7 @@ in
     gcc
     pkgs-stable.eslint
     mkcert
-    nixfmt-rfc-style
+    nixfmt
 
     ruff
     goimports-reviser

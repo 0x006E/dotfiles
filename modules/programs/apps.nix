@@ -18,7 +18,7 @@ delib.module {
       (lutris.override {
         extraLibraries = pkgs: [
           mangohud
-          wineWowPackages.waylandFull
+          wineWow64Packages.waylandFull
           bash
           winetricks
         ];

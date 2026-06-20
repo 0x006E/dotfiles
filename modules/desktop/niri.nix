@@ -237,7 +237,7 @@ in
       spawn-at-startup = [
         {
           command = [
-            "${lib.makeBinPath [ inputs.niri.packages.${pkgs.system}.xwayland-satellite-unstable ]}/xwayland-satellite"
+            "${lib.makeBinPath [ inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable ]}/xwayland-satellite"
             ":12"
           ];
         }
@@ -327,7 +327,7 @@ in
     cliphist
     grim
     slurp
-    inputs.niri.packages.${pkgs.system}.xwayland-satellite-unstable
+    inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
   ];
 };
 }
