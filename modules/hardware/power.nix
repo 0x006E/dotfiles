@@ -8,6 +8,15 @@ delib.module {
       enable = true;
       powertop.enable = true;
     };
+    services.battery-notifier = {
+      enable = true;
+      settings = {
+        interval_ms = 3000;
+        reminder = { threshold = 30; };
+        threat = { threshold = 20; };
+        warn = { threshold = 25; };
+      };
+    };
     services.thermald.enable = true;
     services.power-profiles-daemon.enable = false;
     services.auto-cpufreq = {
