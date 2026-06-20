@@ -33,6 +33,7 @@ in
   programs.nixvim = {
 
     enable = true;
+    nixpkgs.pkgs = pkgs;
     vimAlias = false;
     extraPlugins = with pkgs.vimPlugins; [
       signup-nvim
