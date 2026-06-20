@@ -16,9 +16,6 @@ in
     tiny-inline-diagnostic = {
       enable = true;
     };
-    tailwind-tools = {
-      enable = true;
-    };
     statuscol = {
       enable = true;
       settings = {

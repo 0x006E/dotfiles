@@ -22,14 +22,12 @@ delib.module {
           signByDefault = true;
           key = null;
         };
-        extraConfig = {
+        settings = {
           commit.gpgsign = true;
           tag.gpgSign = true;
-        };
-        settings = {
           user = {
-            name = "Nithin S Varrier";
-            email = "me@ntsv.dev";
+            name = myconfig.constants.userfullname;
+            email = myconfig.constants.useremail;
           };
         };
       };

@@ -6,6 +6,7 @@ delib.module {
     imports = [ inputs.zen-browser.homeModules.beta ];
     programs.zen-browser = {
       enable = true;
+      suppressXdgMigrationWarning = true;
       profiles = {
         "${myconfig.constants.username}" = {
           id = 0;
