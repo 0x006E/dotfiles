@@ -436,12 +436,7 @@ in
               expr = "import <nixpkgs> { }";
             };
             formatting = {
-              # command = [
-              #   "nix"
-              #   "fmt"
-              #   "--"
-              #   "--"
-              # ];
+              command = [ "nixfmt" ];
             };
             options = {
               nixos = {
