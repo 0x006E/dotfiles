@@ -25,6 +25,8 @@ delib.module {
         stirling-pdf
         heroic
         bottles
+        winetricks
+        wineWow64Packages.waylandFull
       ];
     };
 }
