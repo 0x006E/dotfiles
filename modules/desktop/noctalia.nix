@@ -13,75 +13,64 @@ delib.module {
       programs.noctalia = {
         enable = true;
         settings = {
-          settingsVersion = 15;
-          bar = {
-            density = "compact";
-            position = "left";
-            showCapsule = true;
-            widgets = {
-              left = [
-                {
-                  id = "ControlCenter";
-                  useDistroLogo = true;
-                }
-                { id = "WiFi"; }
-                { id = "Bluetooth"; }
-                { id = "SystemMonitor"; }
-                { id = "ActiveWindow"; }
-                { id = "MediaMini"; }
-              ];
-              center = [
-                {
-                  hideUnoccupied = false;
-                  id = "Workspace";
-                  labelMode = "name";
-                }
-              ];
-              right = [
-                {
-                  alwaysShowPercentage = true;
-                  id = "Battery";
-                  warningThreshold = 30;
-                }
-                { id = "NotificationHistory"; }
-                { id = "Volume"; }
-                { id = "Tray"; }
-                {
-                  formatHorizontal = "HH:mm";
-                  formatVertical = "HH mm";
-                  id = "Clock";
-                  useMonospacedFont = true;
-                  usePrimaryColor = true;
-                }
-              ];
-            };
-          };
-          general = {
-            avatarImage = "/home/nithin/.face";
-            radiusRatio = 0.2;
-          };
-          location = {
-            monthBeforeDay = false;
-            name = "Trivandrum, Kerala";
+          shell = {
+            avatar_path = "/home/nithin/.face";
+            corner_radius_scale = 0.2;
+            clipboard_enabled = true;
           };
           wallpaper = {
+            directory = toString ./.;
+          };
+          theme = {
+            mode = "dark";
+          };
+          nightlight = {
             enabled = true;
-            setWallpaperOnAllMonitors = true;
-            directory = ./.;
-          };
-          appLauncher = {
-            enableClipboardHistory = true;
-          };
-          colorSchemes = {
-            useWallpaperColors = false;
-            darkMode = true;
-          };
-          nightLight = {
-            enabled = true;
-            autoSchedule = true;
+            auto_schedule = true;
           };
           audio = {
-            volumeOverdrive = true;
+            volume_overdrive = true;
+          };
+          weather = {
+            location = "Trivandrum, Kerala";
+          };
+          bar.main = {
+            density = "compact";
+            position = "left";
+            capsule = true;
+            start = [
+              "control-center"
+              "network"
+              "bluetooth"
+              "sysmon"
+              "active_window"
+              "media"
+            ];
+            center = [ "workspaces" ];
+            end = [
+              "battery"
+              "notifications"
+              "volume"
+              "tray"
+              "clock"
+            ];
+          };
+          widget.control-center = {
+            use_distro_logo = true;
+          };
+          widget.workspaces = {
+            display = "name";
+            hide_when_empty = false;
+          };
+          widget.battery = {
+            show_percentage = true;
+            warning_threshold = 30;
+          };
+          widget.clock = {
+            format = "{:%H:%M}";
+            vertical_format = "{:%H %M}";
+            use_monospaced_font = true;
+            use_primary_color = true;
           };
         };
       };

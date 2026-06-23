@@ -133,14 +133,14 @@ delib.module {
               # Basic Application Controls
               {
                 "Mod+T".action = sh "niri msg action focus-workspace terminal && ghostty";
-                "Mod+D".action = spawn "noctalia-shell" "ipc" "call" "launcher" "toggle";
+                "Mod+D".action = sh "noctalia msg panel-toggle launcher";
                 "Mod+E".action = spawn "nautilus";
                 "Mod+L".action =
-                  sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia-shell ipc call lockScreen lock '';
+                  sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia msg session lock '';
                 "Mod+Shift+L".action =
                   sh ''notify-send "Suspending Device" "System will suspend now." --icon=system-suspend && systemctl suspend'';
                 "Mod+Q".action = close-window;
-                "Mod+V".action = spawn "noctalia-shell" "ipc" "call" "launcher" "clipboard";
+                "Mod+V".action = sh "noctalia msg panel-toggle clipboard";
               }
 
               # Screenshot Controls
@@ -150,12 +150,12 @@ delib.module {
 
               # Media Controls
               {
-                "XF86AudioRaiseVolume".action = sh "noctalia-shell ipc call volume increase";
-                "XF86AudioLowerVolume".action = sh "noctalia-shell ipc call volume decrease";
-                "XF86AudioMute".action = sh "noctalia-shell ipc call volume muteOutput";
+                "XF86AudioRaiseVolume".action = sh "noctalia msg volume-up";
+                "XF86AudioLowerVolume".action = sh "noctalia msg volume-down";
+                "XF86AudioMute".action = sh "noctalia msg volume-mute";
 
-                "XF86MonBrightnessUp".action = sh "noctalia-shell ipc call brightness increase";
-                "XF86MonBrightnessDown".action = sh "noctalia-shell ipc call brightness decrease";
+                "XF86MonBrightnessUp".action = sh "noctalia msg brightness-up";
+                "XF86MonBrightnessDown".action = sh "noctalia msg brightness-down";
                 "XF86AudioNext".action = focus-column-right;
                 "XF86AudioPrev".action = focus-column-left;
               }
@@ -264,12 +264,17 @@ delib.module {
             { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
             # { command = [ "swww-daemon" ]; }
             { command = [ "dex" ]; }
+            { command = [ "noctalia" ]; }
             # { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
           ];
 
           layer-rules = [
             {
-              matches = [ { namespace = "^quickshell-overview$"; } ];
+              matches = [ { namespace = "^noctalia-backdrop$"; } ];
+              place-within-backdrop = true;
+            }
+            {
+              matches = [ { namespace = "^noctalia-wallpaper$"; } ];
               place-within-backdrop = true;
             }
           ];
@@ -324,13 +329,13 @@ delib.module {
           general = {
             # after_sleep_cmd = "hyprctl dispatch dpms on";
             ignore_dbus_inhibit = false;
-            lock_cmd = "noctalia-shell ipc call lockScreen toggle";
-            before_sleep_cmd = "noctalia-shell ipc call lockScreen toggle";
+            lock_cmd = "noctalia msg session lock";
+            before_sleep_cmd = "noctalia msg session lock";
           };
           listener = [
             {
               timeout = 300;
-              on-timeout = "noctalia-shell ipc call lockScreen toggle";
+              on-timeout = "noctalia msg session lock";
             }
             {
               timeout = 600;
