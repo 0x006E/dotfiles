@@ -26,16 +26,14 @@ delib.module {
           };
           nightlight = {
             enabled = true;
-            auto_schedule = true;
           };
           audio = {
-            volume_overdrive = true;
+            enable_overdrive = true;
           };
-          weather = {
-            location = "Trivandrum, Kerala";
+          location = {
+            name = "Trivandrum, Kerala";
           };
           bar.main = {
-            density = "compact";
             position = "left";
             capsule = true;
             start = [
@@ -55,22 +53,23 @@ delib.module {
               "clock"
             ];
           };
+
           widget.control-center = {
-            use_distro_logo = true;
+            # use_distro_logo has been removed in v5 in favor of theming/custom icons
           };
           widget.workspaces = {
             display = "name";
             hide_when_empty = false;
           };
           widget.battery = {
-            show_percentage = true;
+            show_label = true;
             warning_threshold = 30;
           };
+
           widget.clock = {
             format = "{:%H:%M}";
             vertical_format = "{:%H %M}";
-            use_monospaced_font = true;
-            use_primary_color = true;
+            # use_monospaced_font and use_primary_color are handled by the v5 theme engine now
           };
         };
       };
