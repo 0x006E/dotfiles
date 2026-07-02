@@ -241,7 +241,7 @@ delib.module {
                 "Mod+C".action = center-column;
                 "Mod+Minus".action = set-column-width "-10%";
                 "Mod+Plus".action = set-column-width "+10%";
-                "Mod+Shift+Minus".action = set-window-height "-10%";
+                "Mod+Shift+Minus".action = set-window-height "-11%";
                 "Mod+Shift+Plus".action = set-window-height "+10%";
                 "Mod+Shift+E".action = quit;
                 "Mod+Shift+P".action = power-off-monitors;
