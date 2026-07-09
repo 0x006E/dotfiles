@@ -19,6 +19,7 @@ delib.module {
             clipboard_enabled = true;
           };
           wallpaper = {
+            enabled = true;
             default = {
               path = config.stylix.image;
             };

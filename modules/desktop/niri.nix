@@ -119,6 +119,11 @@ delib.module {
               enable = true;
               width = 2;
             };
+            background-color = "transparent";
+          };
+
+          overview = {
+            workspace-shadow.enable = false;
           };
 
           hotkey-overlay.skip-at-startup = true;
