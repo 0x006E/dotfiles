@@ -19,7 +19,15 @@ delib.module {
             clipboard_enabled = true;
           };
           wallpaper = {
-            directory = toString ./.;
+            default = {
+              path = config.stylix.image;
+            };
+            directory = toString (
+              pkgs.runCommand "wallpaper-dir" { } ''
+                mkdir $out
+                cp ${config.stylix.image} $out/wallpaper.jpg
+              ''
+            );
           };
           theme = {
             mode = "dark";

@@ -83,6 +83,9 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    antigravity = {
+      url = "github:jacopone/antigravity-nix";
+    };
   };
 
   outputs =

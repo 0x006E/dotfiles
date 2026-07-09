@@ -41,13 +41,13 @@ delib.module {
           ];
           substituters = [
             "https://lanzaboote.cachix.org"
-            "https://cache.garnix.io"
             "https://0x006e-nix.cachix.org"
+            "https://noctalia.cachix.org"
           ];
           trusted-public-keys = [
             "lanzaboote.cachix.org-1:Nt9//zGmqkg1k5iu+B3bkj3OmHKjSw9pvf3faffLLNk="
-            "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
             "0x006e-nix.cachix.org-1:JV0ESHZ7I9+ihTkFJ81RtqsjzV/2845VPwpU8OD8JL8="
+            "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
           ];
         };
       };
