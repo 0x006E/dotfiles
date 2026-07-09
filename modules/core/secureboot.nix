@@ -14,6 +14,14 @@ delib.module {
       lanzaboote = {
         enable = true;
         pkiBundle = "/etc/secureboot";
+        measuredBoot = {
+          enable = true;
+          pcrs = [
+            0
+            4
+            7
+          ];
+        };
         settings = {
           reboot-for-bitlocker = true; # Enable BitLocker compatibility
         };
