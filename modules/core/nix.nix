@@ -29,8 +29,12 @@ delib.module {
         extraOptions = ''
           experimental-features = nix-command flakes parallel-eval
         '';
+        daemonCPUSchedPolicy = "idle";
+        daemonIOSchedClass = "idle";
         settings = {
           auto-optimise-store = true;
+          max-jobs = 4;
+          cores = 4;
           trusted-users = [
             "root"
             "@wheel"
@@ -53,7 +57,7 @@ delib.module {
       };
 
       environment.etc."nix/nix.custom.conf".text = ''
-        eval-cores = 0
+        eval-cores = 4
       '';
     };
 }
