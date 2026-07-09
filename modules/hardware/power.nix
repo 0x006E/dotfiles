@@ -14,7 +14,7 @@ delib.module {
       imports = [ inputs.battery-notifier.nixosModules.default ];
       powerManagement = {
         enable = true;
-        powertop.enable = true;
+        powertop.enable = false;
       };
       services.battery-notifier = {
         enable = true;
