@@ -71,10 +71,6 @@ delib.module {
     {
       programs.niri = {
         settings = {
-          debug = {
-            honor-xdg-activation-with-invalid-serial = true;
-            render-drm-device = "/dev/dri/renderD128";
-          };
           environment = {
             VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
             QT_QPA_PLATFORM = "wayland";
