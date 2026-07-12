@@ -22,11 +22,8 @@ delib.module {
         foot
         overskride
         mpv
-        stirling-pdf
-        heroic
         bottles
         winetricks
-        wineWow64Packages.waylandFull
       ];
     };
 }

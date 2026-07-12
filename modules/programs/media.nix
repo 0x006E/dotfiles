@@ -38,21 +38,6 @@ delib.module {
       ...
     }:
     {
-      home.packages = with pkgs; [
-        librum
-        winboat
-        filen-cli
-        filen-desktop
-        libreoffice
-        gimp
-        foot
-        overskride
-        mpv
-        stirling-pdf
-        deluge
-        shotwell
-        heroic
-        bottles
-      ];
+      # home packages are defined centrally in apps.nix to avoid duplication
     };
 }
