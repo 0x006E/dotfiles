@@ -73,15 +73,15 @@ delib.module {
             echo '>> Configuring Split DNS for local network and Tailscale'
             _wan_domains=$(resolvectl domain "$_wan" 2>/dev/null | cut -d':' -f2 | xargs || true)
             if [ -n "$_wan_domains" ]; then
-              _wan_routing=""
+              _wan_routing=()
               for d in $_wan_domains; do
                 if [[ "$d" != ~* ]]; then
-                  _wan_routing="$_wan_routing ~$d"
+                  _wan_routing+=("~$d" "$d")
                 else
-                  _wan_routing="$_wan_routing $d"
+                  _wan_routing+=("$d")
                 fi
               done
-              sudo resolvectl domain "$_wan" $_wan_routing || true
+              sudo resolvectl domain "$_wan" "${_wan_routing[@]}" || true
             fi
             if ip link show tailscale0 >/dev/null 2>&1; then
               sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
@@ -102,15 +102,15 @@ delib.module {
             echo '>> Configuring Split DNS for local network and Tailscale'
             _wan_domains=$(resolvectl domain "$_wan" 2>/dev/null | cut -d':' -f2 | xargs || true)
             if [ -n "$_wan_domains" ]; then
-              _wan_routing=""
+              _wan_routing=()
               for d in $_wan_domains; do
                 if [[ "$d" != ~* ]]; then
-                  _wan_routing="$_wan_routing ~$d"
+                  _wan_routing+=("~$d" "$d")
                 else
-                  _wan_routing="$_wan_routing $d"
+                  _wan_routing+=("$d")
                 fi
               done
-              sudo resolvectl domain "$_wan" $_wan_routing || true
+              sudo resolvectl domain "$_wan" "${_wan_routing[@]}" || true
             fi
             if ip link show tailscale0 >/dev/null 2>&1; then
               sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
