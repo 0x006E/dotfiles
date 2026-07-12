@@ -50,23 +50,23 @@ delib.module {
           
           # attempt
           echo '>> Test connection to WARP'
-          sudo ip route replace 8.8.8.8 via 100.96.0.1 dev wg1
+          sudo ip route replace 8.8.8.8 dev wg1
           sleep 1
           if ! ping -c 8 8.8.8.8; then
             echo '>> Failed to ping google, reverting...'
-            sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1
+            sudo ip route del 8.8.8.8 dev wg1
             exit 1
           fi
           
           if [ "''${1:-}" == "-4" ]; then
             # make default through zero-trust
             echo '>> Introduce and test default IPv4 route via WARP'
-            sudo ip route replace default via 100.96.0.1 dev wg1
+            sudo ip route replace default dev wg1
             sleep 1
             if ! ping -c 8 1.1.1.1; then
               echo '>> Failed to ping cloudflare, reverting...'
-              sudo ip route del default via 100.96.0.1 dev wg1
-              sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1
+              sudo ip route del default dev wg1
+              sudo ip route del 8.8.8.8 dev wg1
               exit 2
             fi
             
@@ -125,7 +125,7 @@ delib.module {
           elif [ -n "''${1:-}" ]; then
             dig +short "$1" |\
               xargs -tI % \
-                sudo ip route replace % via 100.96.0.1 dev wg1
+                sudo ip route replace % dev wg1
           fi
           
           echo '>> Finished with success!'
@@ -151,8 +151,8 @@ delib.module {
           
           if [ "''${1:-}" == "-4" ]; then
             echo '>> Removing default IPv4 route via WARP'
-            sudo ip route del default via 100.96.0.1 dev wg1 || true
-            sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1 || true
+            sudo ip route del default dev wg1 || true
+            sudo ip route del 8.8.8.8 dev wg1 || true
             echo '>> Reverting WARP DNS'
             sudo resolvectl revert wg1 || true
             echo '>> Restarting NetworkManager to restore default route'
@@ -169,7 +169,7 @@ delib.module {
           else
             dig +short "$1" |\
               xargs -tI % \
-                sudo ip route del % via 100.96.0.1 dev wg1 || true
+                sudo ip route del % dev wg1 || true
           fi
           
           echo '>> Finished removing routes!'
