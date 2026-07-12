@@ -57,8 +57,13 @@
         rust-overlay.follows = "rust-overlay";
       };
     };
-    erosanix.url = "github:emmanuelrosa/erosanix"; # Utilities
-    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+    erosanix = {
+      url = "github:emmanuelrosa/erosanix"; # Utilities
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-flatpak = {
+      url = "github:gmodena/nix-flatpak/?ref=latest";
+    };
 
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -66,6 +71,7 @@
     };
     battery-notifier = {
       url = "github:luisnquin/battery-notifier";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-github-actions = {
       url = "github:nix-community/nix-github-actions";
@@ -85,6 +91,7 @@
     };
     antigravity = {
       url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
