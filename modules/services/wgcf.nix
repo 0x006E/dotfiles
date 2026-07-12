@@ -25,9 +25,15 @@ delib.module {
           #!/usr/bin/env bash
           set -euo pipefail
           
-          # CHANGE THESE TO MATCH YOUR NETWORK
-          _gateway=''${GATEWAY_IP:-192.168.1.1}
-          _wan=''${WAN_INTERFACE:-eth0}
+          _default_route=$(ip route show default | head -n1)
+          _gateway=$(echo "$_default_route" | awk '/via/ {print $3}')
+          _wan=$(echo "$_default_route" | awk '/dev/ {print $5}')
+          
+          if [ -z "$_gateway" ] || [ -z "$_wan" ]; then
+            echo "Could not auto-detect default gateway or interface! Falling back..."
+            _gateway=''${GATEWAY_IP:-192.168.1.1}
+            _wan=''${WAN_INTERFACE:-eth0}
+          fi
           
           _cf=$(dig +short engage.cloudflareclient.com | tail -1)
           
