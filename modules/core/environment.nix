@@ -15,7 +15,7 @@ delib.module {
         systemPackages = with pkgs; [
           distrobox
           wireguard-tools
-          protonvpn-gui
+          proton-vpn
           pciutils
           usbutils
           lm_sensors
