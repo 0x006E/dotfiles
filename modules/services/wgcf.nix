@@ -81,7 +81,7 @@ delib.module {
                   _wan_routing+=("$d")
                 fi
               done
-              sudo resolvectl domain "$_wan" "${_wan_routing[@]}" || true
+              sudo resolvectl domain "$_wan" "''${_wan_routing[@]}" || true
             fi
             if ip link show tailscale0 >/dev/null 2>&1; then
               sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
@@ -110,7 +110,7 @@ delib.module {
                   _wan_routing+=("$d")
                 fi
               done
-              sudo resolvectl domain "$_wan" "${_wan_routing[@]}" || true
+              sudo resolvectl domain "$_wan" "''${_wan_routing[@]}" || true
             fi
             if ip link show tailscale0 >/dev/null 2>&1; then
               sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
