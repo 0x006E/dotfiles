@@ -5,7 +5,7 @@
     # Core Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
-    nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs.nixpkgs.follows = "nixpkgs";
