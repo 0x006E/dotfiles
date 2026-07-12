@@ -85,6 +85,46 @@ delib.module {
           echo '>> Finished with success!'
         '';
       };
+
+      cfwarp-rm = pkgs.writeShellApplication {
+        name = "cfwarp-rm";
+        runtimeInputs = with pkgs; [ iproute2 dnsutils ];
+        text = ''
+          #!/usr/bin/env bash
+          set -euo pipefail
+          
+          if [ -n "''${2:-}" ]; then
+            echo 'Too many arguments'
+            exit 3
+          fi
+          
+          if [ -z "''${1:-}" ]; then
+            echo "Usage: cfwarp-rm [-4 | -6 | <hostname>]"
+            exit 1
+          fi
+          
+          if [ "''${1:-}" == "-4" ]; then
+            echo '>> Removing default IPv4 route via WARP'
+            sudo ip route del default via 100.96.0.1 dev wg1 || true
+            sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1 || true
+            echo '>> Restarting NetworkManager to restore default route'
+            sudo systemctl restart NetworkManager
+            sudo ip -4 route flush cache
+          elif [ "''${1:-}" == "-6" ]; then
+            echo '>> Removing default IPv6 route via WARP'
+            sudo ip -6 route del default dev wg1 || true
+            echo '>> Restarting NetworkManager to restore default route'
+            sudo systemctl restart NetworkManager
+            sudo ip -6 route flush cache
+          else
+            dig +short "$1" |\
+              xargs -tI % \
+                sudo ip route del % via 100.96.0.1 dev wg1 || true
+          fi
+          
+          echo '>> Finished removing routes!'
+        '';
+      };
     in
     {
       imports = [
@@ -97,7 +137,7 @@ delib.module {
       
       sops.secrets."cloudflare_warp/private_key" = {};
 
-      environment.systemPackages = [ cfwarp-add ];
+      environment.systemPackages = [ cfwarp-add cfwarp-rm ];
 
       networking = {
         wireguard.interfaces.wg1 = {
