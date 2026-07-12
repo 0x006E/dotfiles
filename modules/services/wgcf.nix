@@ -20,7 +20,7 @@ delib.module {
       
       cfwarp-add = pkgs.writeShellApplication {
         name = "cfwarp-add";
-        runtimeInputs = with pkgs; [ iproute2 iputils curl dnsutils ];
+        runtimeInputs = with pkgs; [ iproute2 iputils curl dnsutils systemd ];
         text = ''
           #!/usr/bin/env bash
           set -euo pipefail
@@ -69,12 +69,18 @@ delib.module {
               sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1
               exit 2
             fi
+            echo '>> Configuring DNS to use Cloudflare WARP'
+            sudo resolvectl dns wg1 1.1.1.1 1.0.0.1
+            sudo resolvectl domain wg1 "~."
             sudo ip -4 route flush cache
           elif [ "''${1:-}" == "-6" ]; then
             echo '>> Introduce and test default IPv6 route via WARP'
             sudo ip -6 route replace default dev wg1
             sleep 1
             curl -6 'https://google.com'
+            echo '>> Configuring DNS to use Cloudflare WARP'
+            sudo resolvectl dns wg1 2606:4700:4700::1111 2606:4700:4700::1001
+            sudo resolvectl domain wg1 "~."
             sudo ip -6 route flush cache
           elif [ -n "''${1:-}" ]; then
             dig +short "$1" |\
@@ -88,7 +94,7 @@ delib.module {
 
       cfwarp-rm = pkgs.writeShellApplication {
         name = "cfwarp-rm";
-        runtimeInputs = with pkgs; [ iproute2 dnsutils ];
+        runtimeInputs = with pkgs; [ iproute2 dnsutils systemd ];
         text = ''
           #!/usr/bin/env bash
           set -euo pipefail
@@ -107,12 +113,16 @@ delib.module {
             echo '>> Removing default IPv4 route via WARP'
             sudo ip route del default via 100.96.0.1 dev wg1 || true
             sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1 || true
+            echo '>> Reverting WARP DNS'
+            sudo resolvectl revert wg1 || true
             echo '>> Restarting NetworkManager to restore default route'
             sudo systemctl restart NetworkManager
             sudo ip -4 route flush cache
           elif [ "''${1:-}" == "-6" ]; then
             echo '>> Removing default IPv6 route via WARP'
             sudo ip -6 route del default dev wg1 || true
+            echo '>> Reverting WARP DNS'
+            sudo resolvectl revert wg1 || true
             echo '>> Restarting NetworkManager to restore default route'
             sudo systemctl restart NetworkManager
             sudo ip -6 route flush cache
