@@ -123,7 +123,7 @@ delib.module {
             sudo resolvectl domain wg1 "~."
             sudo ip -6 route flush cache
           elif [ -n "''${1:-}" ]; then
-            dig +short "$1" |\
+            dig +short +tls @1.1.1.1 "$1" |\
               xargs -tI % \
                 sudo ip route replace % dev wg1
           fi
@@ -167,7 +167,7 @@ delib.module {
             sudo systemctl restart NetworkManager
             sudo ip -6 route flush cache
           else
-            dig +short "$1" |\
+            dig +short +tls @1.1.1.1 "$1" |\
               xargs -tI % \
                 sudo ip route del % dev wg1 || true
           fi
