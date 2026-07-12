@@ -1,0 +1,11 @@
+keys:
+  # To get this key, run:
+  # nix-shell -p ssh-to-age --run 'ssh-keyscan localhost | ssh-to-age'
+  # Then replace the placeholder below with the actual key.
+  - &host_ntsv age1eq7s93zkjnrj4lv85cs59cardeyg60sze0twyyrwcmuxwwctg3zsnye7ee
+
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+    - age:
+      - *host_ntsv

@@ -86,6 +86,10 @@
     antigravity = {
       url = "github:jacopone/antigravity-nix";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
