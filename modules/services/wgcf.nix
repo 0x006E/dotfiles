@@ -69,6 +69,25 @@ delib.module {
               sudo ip route del 8.8.8.8 via 100.96.0.1 dev wg1
               exit 2
             fi
+            
+            echo '>> Configuring Split DNS for local network and Tailscale'
+            _wan_domains=$(resolvectl domain "$_wan" 2>/dev/null | cut -d':' -f2 | xargs || true)
+            if [ -n "$_wan_domains" ]; then
+              _wan_routing=""
+              for d in $_wan_domains; do
+                if [[ "$d" != ~* ]]; then
+                  _wan_routing="$_wan_routing ~$d"
+                else
+                  _wan_routing="$_wan_routing $d"
+                fi
+              done
+              sudo resolvectl domain "$_wan" $_wan_routing || true
+            fi
+            if ip link show tailscale0 >/dev/null 2>&1; then
+              sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
+              sudo resolvectl dns tailscale0 100.100.100.100 || true
+            fi
+
             echo '>> Configuring DNS to use Cloudflare WARP'
             sudo resolvectl dns wg1 1.1.1.1 1.0.0.1
             sudo resolvectl domain wg1 "~."
@@ -78,6 +97,25 @@ delib.module {
             sudo ip -6 route replace default dev wg1
             sleep 1
             curl -6 'https://google.com'
+
+            echo '>> Configuring Split DNS for local network and Tailscale'
+            _wan_domains=$(resolvectl domain "$_wan" 2>/dev/null | cut -d':' -f2 | xargs || true)
+            if [ -n "$_wan_domains" ]; then
+              _wan_routing=""
+              for d in $_wan_domains; do
+                if [[ "$d" != ~* ]]; then
+                  _wan_routing="$_wan_routing ~$d"
+                else
+                  _wan_routing="$_wan_routing $d"
+                fi
+              done
+              sudo resolvectl domain "$_wan" $_wan_routing || true
+            fi
+            if ip link show tailscale0 >/dev/null 2>&1; then
+              sudo resolvectl domain tailscale0 "~ts.net" "~100.100.in-addr.arpa" || true
+              sudo resolvectl dns tailscale0 100.100.100.100 || true
+            fi
+
             echo '>> Configuring DNS to use Cloudflare WARP'
             sudo resolvectl dns wg1 2606:4700:4700::1111 2606:4700:4700::1001
             sudo resolvectl domain wg1 "~."
