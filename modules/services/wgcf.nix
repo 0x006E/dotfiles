@@ -88,8 +88,9 @@ delib.module {
               sudo resolvectl dns tailscale0 100.100.100.100 || true
             fi
 
-            echo '>> Configuring DNS to use Cloudflare WARP'
-            sudo resolvectl dns wg1 1.1.1.1 1.0.0.1
+            echo '>> Configuring DNS to use NextDNS over WARP'
+            sudo resolvectl dnsovertls wg1 yes || true
+            sudo resolvectl dns wg1 45.90.28.0#8361b6.dns.nextdns.io 45.90.30.0#8361b6.dns.nextdns.io
             sudo resolvectl domain wg1 "~."
             sudo ip -4 route flush cache
           elif [ "''${1:-}" == "-6" ]; then
@@ -116,8 +117,9 @@ delib.module {
               sudo resolvectl dns tailscale0 100.100.100.100 || true
             fi
 
-            echo '>> Configuring DNS to use Cloudflare WARP'
-            sudo resolvectl dns wg1 2606:4700:4700::1111 2606:4700:4700::1001
+            echo '>> Configuring DNS to use NextDNS over WARP'
+            sudo resolvectl dnsovertls wg1 yes || true
+            sudo resolvectl dns wg1 2a07:a8c0::83:61b6#8361b6.dns.nextdns.io 2a07:a8c1::83:61b6#8361b6.dns.nextdns.io
             sudo resolvectl domain wg1 "~."
             sudo ip -6 route flush cache
           elif [ -n "''${1:-}" ]; then
