@@ -6,6 +6,7 @@ delib.module {
     { myconfig, ... }:
     {
       pkgs,
+      pkgs-stable,
       config,
       lib,
       ...
@@ -22,7 +23,7 @@ delib.module {
         foot
         overskride
         mpv
-        bottles
+        pkgs-stable.bottles
         winetricks
       ];
     };

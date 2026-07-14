@@ -8,7 +8,6 @@
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Denix
@@ -27,7 +26,6 @@
     # Desktop and UI
     stylix = {
       url = "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
       url = "github:sodiboo/niri-flake";
@@ -42,6 +40,7 @@
     # Development Tools
     nixvim = {
       url = "github:nix-community/nixvim";
+
     };
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
@@ -80,13 +79,8 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:noctalia-dev/noctalia/cachix";
     };
     antigravity = {
       url = "github:jacopone/antigravity-nix";
@@ -152,7 +146,7 @@
         };
     in
     {
-      packages.${system} = import ./pkgs {
+      packages.${system} = (import ./pkgs {
         inherit
           nixpkgs
           pkgs-stable
@@ -162,6 +156,11 @@
           ;
 
         pkgs = nixpkgs.legacyPackages.${system};
+      }) // {
+        papers = self.nixosConfigurations.ntsv.pkgs.papers;
+        inkscape = self.nixosConfigurations.ntsv.pkgs.inkscape;
+        catppuccin-cursors-mochaLight = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.mochaLight;
+        catppuccin-cursors-latteDark = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.latteDark;
       };
 
       githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
