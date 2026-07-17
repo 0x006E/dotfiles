@@ -123,7 +123,7 @@ delib.module {
             sudo resolvectl domain wg1 "~."
             sudo ip -6 route flush cache
           elif [ -n "''${1:-}" ]; then
-            dig +short +tls @1.1.1.1 "$1" |\
+            dig +short +tls @1.1.1.1 "$1" | grep -v '\.$' |\
               xargs -tI % \
                 sudo ip route replace % dev wg1
           fi
@@ -167,7 +167,7 @@ delib.module {
             sudo systemctl restart NetworkManager
             sudo ip -6 route flush cache
           else
-            dig +short +tls @1.1.1.1 "$1" |\
+            dig +short +tls @1.1.1.1 "$1" | grep -v '\.$' |\
               xargs -tI % \
                 sudo ip route del % dev wg1 || true
           fi
@@ -183,9 +183,9 @@ delib.module {
 
       sops.defaultSopsFile = ../../secrets/secrets.yaml;
       sops.defaultSopsFormat = "yaml";
-      sops.age.keyFile = "/home/nithin/.config/sops/age/keys.txt";
+      sops.age.keyFile = "/var/lib/sops-nix/key.txt";
       
-      sops.secrets."cloudflare_warp/private_key" = {};
+      sops.secrets."cloudflare_warp_private_key" = {};
 
       environment.systemPackages = [ cfwarp-add cfwarp-rm ];
 
@@ -193,7 +193,7 @@ delib.module {
         wireguard.interfaces.wg1 = {
           # CHANGE THESE TO MATCH YOUR WGCF PROFILE
           ips = [ "2606:4700:cf1:1000::1/128" "100.96.0.1/32" ];
-          privateKeyFile = config.sops.secrets."cloudflare_warp/private_key".path;
+          privateKeyFile = config.sops.secrets."cloudflare_warp_private_key".path;
           mtu = 1280;
           peers = [
             {
