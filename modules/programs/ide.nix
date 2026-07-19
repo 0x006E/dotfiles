@@ -21,6 +21,7 @@ delib.module {
           enable = true;
           mutableExtensionsDir = false;
           profiles.default.extensions = with pkgs.vscode-marketplace; [
+            saoudrizwan.claude-dev
             pkgs.vscode-extensions.vadimcn.vscode-lldb
             ms-vscode.mono-debug
             ms-python.debugpy
