@@ -146,22 +146,24 @@
         };
     in
     {
-      packages.${system} = (import ./pkgs {
-        inherit
-          nixpkgs
-          pkgs-stable
-          pkgs-unstable
-          inputs
-          system
-          ;
+      packages.${system} =
+        (import ./pkgs {
+          inherit
+            nixpkgs
+            pkgs-stable
+            pkgs-unstable
+            inputs
+            system
+            ;
 
-        pkgs = nixpkgs.legacyPackages.${system};
-      }) // {
-        papers = self.nixosConfigurations.ntsv.pkgs.papers;
-        inkscape = self.nixosConfigurations.ntsv.pkgs.inkscape;
-        catppuccin-cursors-mochaLight = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.mochaLight;
-        catppuccin-cursors-latteDark = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.latteDark;
-      };
+          pkgs = nixpkgs.legacyPackages.${system};
+        })
+        // {
+          papers = self.nixosConfigurations.ntsv.pkgs.papers;
+          inkscape = self.nixosConfigurations.ntsv.pkgs.inkscape;
+          catppuccin-cursors-mochaLight = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.mochaLight;
+          catppuccin-cursors-latteDark = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.latteDark;
+        };
 
       githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
 

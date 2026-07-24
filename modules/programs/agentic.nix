@@ -21,7 +21,10 @@ delib.module {
         exec = "antigravity-ide --password-store=gnome %U";
         icon = "antigravity-ide";
         terminal = false;
-        categories = [ "Development" "IDE" ];
+        categories = [
+          "Development"
+          "IDE"
+        ];
         mimeType = [ "x-scheme-handler/antigravity" ];
         settings = {
           StartupWMClass = "Antigravity IDE";
