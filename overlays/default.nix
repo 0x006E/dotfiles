@@ -12,7 +12,13 @@ in
   nixpkgs.overlays = [
     inputs.niri.overlays.niri
     inputs.nix-vscode-extensions.overlays.default
-    (final: prev: import ../pkgs { inherit inputs system; pkgs = prev; })
+    (
+      final: prev:
+      import ../pkgs {
+        inherit inputs system;
+        pkgs = prev;
+      }
+    )
     (final: prev: {
       vimPlugins = prev.vimPlugins // customVimPlugins;
       mpv = prev.mpv.override {
