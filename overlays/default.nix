@@ -1,5 +1,4 @@
 {
-  self,
   system,
   pkgs,
   inputs,
