@@ -6,3 +6,8 @@ repos:
         entry: nixfmt
         language: system
         types: [nix]
+      - id: deadnix
+        name: deadnix
+        entry: deadnix --no-lambda-pattern-names --no-lambda-arg
+        language: system
+        types: [nix]
