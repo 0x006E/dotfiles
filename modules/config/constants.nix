@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "constants";
 

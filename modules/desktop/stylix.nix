@@ -49,6 +49,6 @@ delib.module {
       ...
     }:
     {
-      stylix.targets.zen-browser.profileNames = [ "nithin" ];
+      stylix.targets.zen-browser.profileNames = [ myconfig.constants.username ];
     };
 }

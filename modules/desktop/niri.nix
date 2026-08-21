@@ -1,4 +1,7 @@
 { delib, inputs, ... }:
+let
+  xwaylandDisplay = ":12";
+in
 delib.module {
   name = "desktop.niri";
 
@@ -74,7 +77,7 @@ delib.module {
           environment = {
             VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
             QT_QPA_PLATFORM = "wayland";
-            DISPLAY = ":12";
+            DISPLAY = xwaylandDisplay;
             EDITOR = "nvim";
             WLR_NO_HARDWARE_CURSORS = "1";
             NIXOS_OZONE_WL = "1";
@@ -259,15 +262,13 @@ delib.module {
                     inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
                   ]
                 }/xwayland-satellite"
-                ":12"
+                xwaylandDisplay
               ];
             }
             # { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
             { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
-            # { command = [ "swww-daemon" ]; }
             { command = [ "dex" ]; }
             { command = [ "noctalia" ]; }
-            # { command = [ "sleep 1; swww img ${./wallpaper.jpg} -t wipe" ]; }
           ];
 
           layer-rules = [

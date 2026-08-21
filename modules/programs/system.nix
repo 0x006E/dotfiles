@@ -26,7 +26,7 @@ delib.module {
             enable = true;
             extraArgs = "--keep-since 3d --keep 3";
           };
-          flake = "/home/nithin/nix";
+          flake = "/home/${myconfig.constants.username}/nix";
         };
       };
     };
