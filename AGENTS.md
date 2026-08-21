@@ -39,6 +39,10 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 
 - sops-nix with age; `secrets/*.yaml` encrypted to the host key listed in `.sops.yaml`. Cannot decrypt or edit outside the `ntsv` host.
 
+## Docs lookup
+
+- Use the `context7` MCP server for library/framework/API documentation (Noctalia, niri, Stylix, NixVim, Home Manager options, etc.) before guessing option names or schemas from memory.
+
 ## Conventions
 
 - Commit style: conventional commits (`feat(scope):`, `fix(scope):`).
