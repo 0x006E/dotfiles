@@ -14,7 +14,8 @@ delib.module {
     {
       home.packages = with pkgs; [
         librum
-        winboat
+        # TODO: re-enable once winboat drops electron_40 (EOL/insecure in nixpkgs, nixpkgs#537847)
+        # winboat
         filen-cli
         filen-desktop
         libreoffice
