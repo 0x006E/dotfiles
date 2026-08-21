@@ -1,34 +1,35 @@
 { delib, ... }:
 delib.module {
   name = "desktop.noctalia";
-  home.always =
-    { ... }:
+
+  nixos.always =
+    { myconfig, ... }:
     {
-      pkgs,
       config,
-      lib,
       ...
     }:
+    {
+      environment.etc."wallpapers/current".source = config.stylix.image;
+    };
+
+  home.always =
+    { myconfig, ... }:
+    { lib, ... }:
     {
       programs.noctalia = {
         enable = true;
         settings = {
           shell = {
-            avatar_path = "/home/nithin/.face";
+            avatar_path = "/home/${myconfig.constants.username}/.face";
             corner_radius_scale = 0.2;
             clipboard_enabled = true;
           };
           wallpaper = {
             enabled = true;
-            default = {
-              path = config.stylix.image;
-            };
-            directory = toString (
-              pkgs.runCommand "wallpaper-dir" { } ''
-                mkdir $out
-                cp ${config.stylix.image} $out/wallpaper.jpg
-              ''
-            );
+            # Stable path that survives rebuilds/GC; overrides the HM module's
+            # volatile config.stylix.image default.
+            default.path = lib.mkForce "/etc/wallpapers/current";
+            directory = lib.mkForce "/etc/wallpapers";
           };
           theme = {
             mode = "dark";
@@ -62,10 +63,6 @@ delib.module {
               "clock"
             ];
           };
-
-          widget.control-center = {
-            # use_distro_logo has been removed in v5 in favor of theming/custom icons
-          };
           widget.workspaces = {
             display = "name";
             hide_when_empty = false;
@@ -74,11 +71,9 @@ delib.module {
             show_label = true;
             warning_threshold = 30;
           };
-
           widget.clock = {
             format = "{:%H:%M}";
             vertical_format = "{:%H %M}";
-            # use_monospaced_font and use_primary_color are handled by the v5 theme engine now
           };
         };
       };
