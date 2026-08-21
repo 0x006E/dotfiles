@@ -17,7 +17,7 @@ delib.module {
       };
 
       programs.dconf.enable = true;
-      programs.regreet.enable = false;
+      services.displayManager.regreet.enable = false;
       services.displayManager.gdm.enable = true;
       services.desktopManager.gnome.enable = true;
     };
