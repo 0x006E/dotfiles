@@ -14,7 +14,7 @@ delib.module {
       imports = [ inputs.niri.nixosModules.niri ];
       programs.niri = {
         enable = true;
-        package = pkgs.niri-unstable;
+        package = pkgs.niri;
       };
     };
 
