@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "services.wgcf";
 
@@ -187,14 +187,6 @@ delib.module {
       };
     in
     {
-      imports = [
-        inputs.sops-nix.nixosModules.sops
-      ];
-
-      sops.defaultSopsFile = ../../secrets/secrets.yaml;
-      sops.defaultSopsFormat = "yaml";
-      sops.age.keyFile = "/var/lib/sops-nix/key.txt";
-
       sops.secrets."cloudflare_warp_private_key" = { };
 
       environment.systemPackages = [
