@@ -27,16 +27,19 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
   ```
 - Shared values live in `modules/config/constants.nix`; access via `myconfig.constants.username` etc.
 - Hosts use `delib.host` (`hosts/ntsv/default.nix`) which picks the active `rice` (theme). Rices are `delib.rice` modules under `rices/{dark,light}/` (Stylix base16 scheme, GTK/cursor theming).
-- All modules receive extra args from `specialArgs`: `inputs`, `pkgs-stable`, `pkgs-unstable`, `self`, `system`. Use these instead of re-importing channels.
-- Home Manager user is hardcoded as `nithin` (`homeManagerUser` in `flake.nix`).
+- All modules receive extra args from `specialArgs`: `inputs`, `pkgs-stable`, `pkgs-small` (nixos-unstable-small), `self`, `system`. Use these instead of re-importing channels. Note: denix's outer `{ myconfig, ... }:` function only receives `myconfig`; access other args in the inner module function or via lexical closure.
+- Home Manager user is hardcoded as `nithin` (`homeManagerUser` in `flake.nix`, mirrors `constants.username`).
 
 ## Packages & overlays wiring
 
-- `pkgs/default.nix` is consumed twice: as flake `packages` output **and** injected as a nixpkgs overlay (`overlays/default.nix`). Custom vim plugins (`pkgs/vimPlugins/`) become available as `pkgs.vimPlugins.<name>` everywhere.
+- `overlays/default.nix` is a **pure data file** returning the overlay list; consumed twice: by `modules/desktop/extra.nix` (`nixpkgs.overlays`) and by `flake.nix` (standalone `pkgs-ci` for exporting `papers`/`inkscape`/`catppuccin-cursors` to the CI matrix without evaluating the host). Don't turn it back into a module.
+- `pkgs/default.nix` is consumed twice: as flake `packages` output **and** injected as one of those overlays. Custom vim plugins (`pkgs/vimPlugins/`) become available as `pkgs.vimPlugins.<name>` everywhere.
 - Flake `githubActions` matrix is generated from `self.packages` — anything added to `pkgs/default.nix` is automatically CI-built and pushed to Cachix (`0x006e-nix`).
+- Modules needing sibling data files use directory modules (`wgcf/default.nix` + `wgcf/add.sh`, like `gpg/`, `wayprompt/`). A bare `foo.nix` beside a new `foo/` dir breaks flake lazy-tree path resolution.
 
 ## Secrets
 
+- Global sops defaults (module import, `defaultSopsFile`, age key) live in `modules/services/sops.nix`; feature modules only declare their own `sops.secrets.*`.
 - sops-nix with age; `secrets/*.yaml` encrypted to the host key listed in `.sops.yaml`. Cannot decrypt or edit outside the `ntsv` host.
 
 ## Docs lookup
