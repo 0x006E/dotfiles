@@ -23,21 +23,7 @@ delib.module {
         targets.qt.enable = false;
       };
 
-      boot = {
-        kernelParams = [
-          "quiet"
-          "splash"
-          "bgrt_disable"
-          "rd.systemd.show_status=false"
-          "rd.udev.log_level=3"
-          "udev.log_priority=3"
-          "boot.shell_on_fail"
-        ];
-        initrd.verbose = false;
-        consoleLogLevel = 0;
-        plymouth.enable = true;
-      };
-      environment.systemPackages = [ pkgs.plymouth ];
+      # Silent boot / Plymouth lives in core.plymouth.
     };
 
   home.always =

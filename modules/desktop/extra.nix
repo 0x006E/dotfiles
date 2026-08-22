@@ -17,9 +17,6 @@ delib.module {
       ];
       programs.noctalia.enable = true;
       services.upower.enable = true;
-      nixpkgs.overlays = [
-        inputs.nix-vscode-extensions.overlays.default
-      ];
     };
 
   home.always =

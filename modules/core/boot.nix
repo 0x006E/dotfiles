@@ -14,10 +14,10 @@ delib.module {
       imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
       boot = {
         loader = {
-          systemd-boot = {
-            enable = true;
-            configurationLimit = 3;
-          };
+          # Secure Boot is handled by lanzaboote (core.secureboot), which
+          # disables systemd-boot; keep configurationLimit since lanzaboote
+          # still reads it for its installer.
+          systemd-boot.configurationLimit = 3;
           efi.canTouchEfiVariables = true;
           timeout = 0;
         };
