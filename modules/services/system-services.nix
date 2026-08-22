@@ -3,7 +3,7 @@ delib.module {
   name = "services.system-services";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     services = {
       fwupd.enable = true;
       bpftune.enable = true;

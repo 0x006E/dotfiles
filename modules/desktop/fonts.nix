@@ -3,7 +3,7 @@ delib.module {
   name = "desktop.fonts";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     fonts = {
       fontconfig = {
         defaultFonts = {

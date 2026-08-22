@@ -3,7 +3,7 @@ delib.module {
   name = "programs.agentic";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     home.packages =
       with pkgs;
       [

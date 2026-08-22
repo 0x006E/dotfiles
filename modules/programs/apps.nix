@@ -3,7 +3,7 @@ delib.module {
   name = "programs.apps";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     home.packages = with pkgs; [
       librum
       # TODO: re-enable once winboat drops electron_40 (EOL/insecure in nixpkgs, nixpkgs#537847)

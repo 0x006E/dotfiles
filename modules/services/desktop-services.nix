@@ -3,7 +3,7 @@ delib.module {
   name = "services.desktop-services";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     services = {
       gnome.gcr-ssh-agent.enable = false;
       libinput.enable = true;

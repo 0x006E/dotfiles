@@ -3,7 +3,7 @@ delib.module {
   name = "hardware.audio";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     security.rtkit.enable = true;
     services.pulseaudio.enable = false;
     services.pipewire = {

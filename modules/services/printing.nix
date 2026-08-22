@@ -4,7 +4,7 @@ delib.module {
   options = delib.singleEnableOption true;
 
   nixos.ifEnabled =
-    { myconfig, cfg, ... }:
+    { myconfig, ... }:
     let
       inherit (myconfig.constants) username;
     in

@@ -11,14 +11,14 @@ delib.module {
     imports = [ inputs.noctalia.homeModules.default ];
   };
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     environment.etc."wallpapers/current".source = config.stylix.image;
     services.upower.enable = true;
     programs.noctalia.enable = true;
   };
 
   home.ifEnabled =
-    { myconfig, cfg, ... }:
+    { myconfig, ... }:
     {
       programs.noctalia = {
         enable = true;

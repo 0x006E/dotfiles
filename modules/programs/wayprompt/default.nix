@@ -3,7 +3,7 @@ delib.module {
   name = "programs.wayprompt";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     services.gpg-agent = {
       enable = true;
       # TODO: return to pkgs.wayprompt once nixpkgs unstable fixes the

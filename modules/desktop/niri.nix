@@ -1,4 +1,4 @@
-{ delib, inputs, pkgs, config, lib, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "desktop.niri";
   options = delib.singleEnableOption true;
@@ -7,7 +7,7 @@ delib.module {
     imports = [ inputs.niri.nixosModules.niri ];
   };
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     programs.niri = {
       enable = true;
       package = pkgs.niri;
@@ -15,7 +15,7 @@ delib.module {
   };
 
   home.ifEnabled =
-    { myconfig, cfg, ... }:
+    { myconfig, ... }:
     {
       imports = [
         (

@@ -7,7 +7,7 @@ delib.module {
     imports = [ inputs.stylix.nixosModules.stylix ];
   };
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     stylix = {
       enable = true;
       fonts = {
@@ -22,7 +22,7 @@ delib.module {
     # Silent boot / Plymouth lives in core.plymouth.
   };
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { myconfig, ... }: {
     stylix.targets.zen-browser.profileNames = [ myconfig.constants.username ];
   };
 }

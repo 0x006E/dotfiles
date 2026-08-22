@@ -4,7 +4,7 @@ delib.module {
   options = delib.singleEnableOption true;
 
   nixos.ifEnabled =
-    { myconfig, cfg, ... }:
+    { ... }:
     let
       fixedRoutes = [
         "100.96.0.1/32"

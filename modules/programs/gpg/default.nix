@@ -3,7 +3,7 @@ delib.module {
   name = "programs.gpg";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     programs.gpg = {
       enable = true;
       publicKeys = [

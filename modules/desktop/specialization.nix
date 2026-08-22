@@ -3,7 +3,7 @@ delib.module {
   name = "desktop.specialization";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     specialisation = {
       mini.configuration = {
         services.desktopManager.gnome.enable = lib.mkForce true;

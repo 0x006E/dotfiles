@@ -7,7 +7,7 @@ delib.module {
     imports = [ inputs.battery-notifier.nixosModules.default ];
   };
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     powerManagement = {
       enable = true;
       powertop.enable = false;

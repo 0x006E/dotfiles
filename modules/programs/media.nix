@@ -7,7 +7,7 @@ delib.module {
     imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
   };
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     services.flatpak = {
       enable = true;
       remotes = [

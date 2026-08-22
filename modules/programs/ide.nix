@@ -10,7 +10,7 @@ delib.module {
     ];
   };
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     programs = {
       vscode = {
         enable = true;

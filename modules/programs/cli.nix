@@ -4,7 +4,7 @@ delib.module {
   options = delib.singleEnableOption true;
 
   home.ifEnabled =
-    { myconfig, cfg, ... }:
+    { myconfig, ... }:
     {
       programs = {
         rclone.enable = true;

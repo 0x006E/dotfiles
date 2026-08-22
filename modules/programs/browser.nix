@@ -8,7 +8,7 @@ delib.module {
   };
 
   home.ifEnabled =
-    { myconfig, cfg, ... }:
+    { myconfig, ... }:
     {
       programs.zen-browser = {
         enable = true;

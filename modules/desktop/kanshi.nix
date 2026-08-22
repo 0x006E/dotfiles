@@ -3,7 +3,7 @@ delib.module {
   name = "desktop.kanshi";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     services.kanshi = {
       enable = true;
       settings = [

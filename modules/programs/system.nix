@@ -3,7 +3,7 @@ delib.module {
   name = "programs.system";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { myconfig, ... }: {
     programs = {
       corectrl.enable = true;
       nix-index-database.comma.enable = true;

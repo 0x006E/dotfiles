@@ -3,7 +3,7 @@ delib.module {
   name = "hardware.nvidia";
   options = delib.singleEnableOption true;
 
-  nixos.ifEnabled = { myconfig, cfg, ... }: {
+  nixos.ifEnabled = { ... }: {
     hardware.graphics = {
       enable = true;
       enable32Bit = true;

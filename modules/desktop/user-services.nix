@@ -3,7 +3,7 @@ delib.module {
   name = "desktop.user-services";
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { myconfig, cfg, ... }: {
+  home.ifEnabled = { ... }: {
     services = {
       udiskie.enable = true;
 
