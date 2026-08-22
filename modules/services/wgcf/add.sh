@@ -1,37 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Policy-routing constants; must match modules/services/wgcf/default.nix.
+TABLE=51820
+
 _default_route=$(ip route show default | head -n1)
-_gateway=$(echo "$_default_route" | awk '/via/ {print $3}')
 _wan=$(echo "$_default_route" | awk '/dev/ {print $5}')
 
-if [ -z "$_gateway" ] || [ -z "$_wan" ]; then
-  echo "Could not auto-detect default gateway or interface! Falling back..."
-  _gateway=${GATEWAY_IP:-192.168.1.1}
+if [ -z "$_wan" ]; then
+  echo "Could not auto-detect WAN interface, falling back..."
   _wan=${WAN_INTERFACE:-eth0}
 fi
-
-_cf=$(dig +short engage.cloudflareclient.com | tail -1)
-
-echo "CF: $_cf"
-
-# make current wireguard connections permanent
-echo '>> Ensuring connection to the VPNs'
-sudo ip route replace "$_cf" via "$_gateway" dev "$_wan" || true
 
 if [ -n "${2:-}" ]; then
   echo 'Too many arguments'
   exit 3
-fi
-
-# attempt
-echo '>> Test connection to WARP'
-sudo ip route replace 8.8.8.8 dev wg1
-sleep 1
-if ! ping -c 8 8.8.8.8; then
-  echo '>> Failed to ping google, reverting...'
-  sudo ip route del 8.8.8.8 dev wg1
-  exit 1
 fi
 
 # Route LAN search domains natively and keep Tailscale resolving through its
@@ -57,41 +40,45 @@ configure_split_dns() {
   fi
 }
 
+# $@: NextDNS resolvers for the activated family.
+apply_warp_dns() {
+  configure_split_dns
+  echo '>> Configuring DNS to use NextDNS over WARP'
+  sudo resolvectl dnsovertls wg1 yes || true
+  sudo resolvectl dns wg1 "$@"
+  sudo resolvectl domain wg1 "~."
+}
+
+# Full-tunnel mode only adds a default route to the dedicated policy table;
+# the main-table default stays owned by NetworkManager, so network switches
+# cannot strand the endpoint host-route anymore.
 if [ "${1:-}" == "-4" ]; then
-  # make default through zero-trust
   echo '>> Introduce and test default IPv4 route via WARP'
-  sudo ip route replace default dev wg1
+  sudo ip route add default dev wg1 table "$TABLE" 2>/dev/null || true
   sleep 1
-  if ! ping -c 8 1.1.1.1; then
+  if ! ping -c3 -W2 1.1.1.1; then
     echo '>> Failed to ping cloudflare, reverting...'
-    sudo ip route del default dev wg1
-    sudo ip route del 8.8.8.8 dev wg1
+    sudo ip route del default dev wg1 table "$TABLE" || true
     exit 2
   fi
 
-  configure_split_dns
-
-  echo '>> Configuring DNS to use NextDNS over WARP'
-  sudo resolvectl dnsovertls wg1 yes || true
-  sudo resolvectl dns wg1 45.90.28.0#8361b6.dns.nextdns.io 45.90.30.0#8361b6.dns.nextdns.io
-  sudo resolvectl domain wg1 "~."
-  sudo ip -4 route flush cache
+  apply_warp_dns 45.90.28.0#8361b6.dns.nextdns.io 45.90.30.0#8361b6.dns.nextdns.io
 elif [ "${1:-}" == "-6" ]; then
   echo '>> Introduce and test default IPv6 route via WARP'
-  sudo ip -6 route replace default dev wg1
+  sudo ip -6 route add default dev wg1 table "$TABLE" 2>/dev/null || true
   sleep 1
-  curl -6 'https://google.com'
+  if ! ping -c3 -W2 2606:4700:4700::1111; then
+    echo '>> Failed to ping cloudflare, reverting...'
+    sudo ip -6 route del default dev wg1 table "$TABLE" || true
+    exit 2
+  fi
 
-  configure_split_dns
-
-  echo '>> Configuring DNS to use NextDNS over WARP'
-  sudo resolvectl dnsovertls wg1 yes || true
-  sudo resolvectl dns wg1 2a07:a8c0::83:61b6#8361b6.dns.nextdns.io 2a07:a8c1::83:61b6#8361b6.dns.nextdns.io
-  sudo resolvectl domain wg1 "~."
-  sudo ip -6 route flush cache
+  apply_warp_dns 2a07:a8c0::83:61b6#8361b6.dns.nextdns.io 2a07:a8c1::83:61b6#8361b6.dns.nextdns.io
 elif [ -n "${1:-}" ]; then
+  # Per-site mode: device routes on wg1 are gateway-independent and survive
+  # network switches; NetworkManager leaves wg1 (unmanaged) alone.
   dig +short +tls @1.1.1.1 "$1" | grep -v '\.$' |
-    xargs -tI % \
+    xargs -r -tI % \
       sudo ip route replace % dev wg1
 fi
 

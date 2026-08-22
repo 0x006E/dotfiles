@@ -17,6 +17,26 @@ delib.module {
         ${builtins.concatStringsSep "\n" (builtins.map mapper fixedRoutes)}
       '';
 
+      # Improved Rule-based Routing (https://www.wireguard.com/netns/):
+      # encapsulated packets carry fwmark 0x20000 and escape the tunnel via
+      # the main table; everything else consults table 51820, where cfwarp-add
+      # installs the default route for full-tunnel mode. The main-table
+      # default is never touched, so network switches cannot strand a
+      # gateway-pinned endpoint route anymore.
+      warpTable = 51820;
+      ensureRule =
+        prio: args: ''
+          if ! ip rule show | grep -q '^${toString prio}:'; then
+            ip rule add priority ${toString prio} ${args}
+          fi
+        '';
+      ensureRule6 =
+        prio: args: ''
+          if ! ip -6 rule show | grep -q '^${toString prio}:'; then
+            ip -6 rule add priority ${toString prio} ${args}
+          fi
+        '';
+
       cfwarp-add = pkgs.writeShellApplication {
         name = "cfwarp-add";
         runtimeInputs = with pkgs; [
@@ -38,6 +58,15 @@ delib.module {
         ];
         text = builtins.readFile ./rm.sh;
       };
+
+      warpDispatcher = pkgs.writeShellApplication {
+        name = "warp-dispatcher";
+        runtimeInputs = with pkgs; [
+          iproute2
+          systemd
+        ];
+        text = builtins.readFile ./dispatcher.sh;
+      };
     in
     {
       sops.secrets."cloudflare_warp_private_key" = { };
@@ -45,6 +74,13 @@ delib.module {
       environment.systemPackages = [
         cfwarp-add
         cfwarp-rm
+      ];
+
+      networking.networkmanager.dispatcherScripts = [
+        {
+          source = "${warpDispatcher}/bin/warp-dispatcher";
+          type = "basic";
+        }
       ];
 
       networking = {
@@ -72,8 +108,24 @@ delib.module {
           # I have access to all the network through allowedIPs
           # But I prefer to specify which routes to access
           allowedIPsAsRoutes = false;
-          postSetup = routesLines (t: "ip route replace ${t} dev wg1 table main");
-          postShutdown = routesLines (t: "ip route del ${t} dev wg1");
+          postSetup = ''
+            wg set wg1 fwmark 0x20000
+
+            ${routesLines (t: "ip route replace ${t} dev wg1 table main")}
+
+            ${ensureRule 32764 "table main suppress_prefixlength 0"}
+            ${ensureRule 32765 "not fwmark 0x20000 table ${toString warpTable}"}
+            ${ensureRule6 32764 "table main suppress_prefixlength 0"}
+            ${ensureRule6 32765 "not fwmark 0x20000 table ${toString warpTable}"}
+          '';
+          postShutdown = ''
+            ip rule del priority 32764 table main suppress_prefixlength 0 2>/dev/null || true
+            ip rule del priority 32765 not fwmark 0x20000 table ${toString warpTable} 2>/dev/null || true
+            ip -6 rule del priority 32764 table main suppress_prefixlength 0 2>/dev/null || true
+            ip -6 rule del priority 32765 not fwmark 0x20000 table ${toString warpTable} 2>/dev/null || true
+            ip route flush table ${toString warpTable}
+            ip -6 route flush table ${toString warpTable}
+          '';
         };
         hosts."162.159.193.6" = [ "engage.cloudflareclient.com" ];
       };
