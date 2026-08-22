@@ -6,5 +6,6 @@ delib.module {
     username = readOnly (strOption "nithin");
     userfullname = readOnly (strOption "Nithin S Varrier");
     useremail = readOnly (strOption "me@ntsv.dev");
+    xwaylandDisplay = readOnly (strOption ":12");
   };
 }

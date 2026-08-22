@@ -123,6 +123,8 @@
         moduleSystem:
         denix.lib.configurations {
           inherit moduleSystem;
+          # Mirrors modules/config/constants.nix options.constants.username;
+          # not readable here because denix builds configurations from paths.
           homeManagerUser = "nithin";
 
           paths = [

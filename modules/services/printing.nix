@@ -44,14 +44,14 @@ delib.module {
         ];
       };
 
-      users.users.nithin.extraGroups = [
+      users.users.${myconfig.constants.username}.extraGroups = [
         "scanner"
         "lp"
       ];
 
       systemd.tmpfiles.rules = [
         "d /var/cache/boomaga 0775 root lp - -"
-        "d /var/cache/boomaga/nithin 0770 nithin lp - -"
+        "d /var/cache/boomaga/${myconfig.constants.username} 0770 ${myconfig.constants.username} lp - -"
       ];
 
       environment.systemPackages = with pkgs; [

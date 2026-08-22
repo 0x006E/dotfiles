@@ -69,7 +69,7 @@ delib.module {
           enableCompletion = true;
           bashrcExtra = ''
             eval "$(direnv hook bash)"
-            export DISPLAY=:12
+            export DISPLAY=${myconfig.constants.xwaylandDisplay}
             export PATH="$PATH:$HOME/bin=$HOME/.local/bin:$HOME/go/bin"
           '';
           shellAliases = {

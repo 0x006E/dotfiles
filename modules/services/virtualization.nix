@@ -30,7 +30,7 @@ delib.module {
         firewall.trustedInterfaces = [ "virbr0" ];
       };
 
-      users.users.nithin.extraGroups = [
+      users.users.${myconfig.constants.username}.extraGroups = [
         "libvirtd"
         "docker"
       ];

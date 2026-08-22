@@ -1,7 +1,4 @@
 { delib, inputs, ... }:
-let
-  xwaylandDisplay = ":12";
-in
 delib.module {
   name = "desktop.niri";
 
@@ -77,7 +74,7 @@ delib.module {
           environment = {
             VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
             QT_QPA_PLATFORM = "wayland";
-            DISPLAY = xwaylandDisplay;
+            DISPLAY = myconfig.constants.xwaylandDisplay;
             EDITOR = "nvim";
             WLR_NO_HARDWARE_CURSORS = "1";
             NIXOS_OZONE_WL = "1";
@@ -262,7 +259,7 @@ delib.module {
                     inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
                   ]
                 }/xwayland-satellite"
-                xwaylandDisplay
+                myconfig.constants.xwaylandDisplay
               ];
             }
             # { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
