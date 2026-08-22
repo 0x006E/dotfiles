@@ -11,12 +11,10 @@ delib.module {
       ...
     }:
     {
-      imports = [
-        inputs.noctalia.nixosModules.default
-        ../../overlays/default.nix
-      ];
+      imports = [ inputs.noctalia.nixosModules.default ];
       programs.noctalia.enable = true;
       services.upower.enable = true;
+      nixpkgs.overlays = import ../../overlays { inherit inputs; };
     };
 
   home.always =

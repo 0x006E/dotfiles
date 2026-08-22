@@ -150,6 +150,13 @@
               ;
           };
         };
+      # Standalone pkgs set with the repo overlays applied, used to export
+      # packages for CI without evaluating the full host configuration.
+      pkgs-ci = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = import ./overlays { inherit inputs; };
+      };
     in
     {
       packages.${system} =
@@ -165,10 +172,10 @@
           pkgs = nixpkgs.legacyPackages.${system};
         })
         // {
-          papers = self.nixosConfigurations.ntsv.pkgs.papers;
-          inkscape = self.nixosConfigurations.ntsv.pkgs.inkscape;
-          catppuccin-cursors-mochaLight = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.mochaLight;
-          catppuccin-cursors-latteDark = self.nixosConfigurations.ntsv.pkgs.catppuccin-cursors.latteDark;
+          papers = pkgs-ci.papers;
+          inkscape = pkgs-ci.inkscape;
+          catppuccin-cursors-mochaLight = pkgs-ci.catppuccin-cursors.mochaLight;
+          catppuccin-cursors-latteDark = pkgs-ci.catppuccin-cursors.latteDark;
         };
 
       githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
