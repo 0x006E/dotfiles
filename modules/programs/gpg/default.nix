@@ -1,25 +1,22 @@
 { delib, ... }:
 delib.module {
   name = "programs.gpg";
-  home.always =
-    { ... }:
-    {
-      ...
-    }:
-    {
-      programs.gpg = {
-        enable = true;
-        publicKeys = [
-          {
-            source = ./public.asc;
-            trust = 5;
-          }
-        ];
-      };
-      services.gpg-agent = {
-        enable = true;
-        enableExtraSocket = true;
-        enableSshSupport = true;
-      };
+  options = delib.singleEnableOption true;
+
+  home.ifEnabled = { myconfig, cfg, ... }: {
+    programs.gpg = {
+      enable = true;
+      publicKeys = [
+        {
+          source = ./public.asc;
+          trust = 5;
+        }
+      ];
     };
+    services.gpg-agent = {
+      enable = true;
+      enableExtraSocket = true;
+      enableSshSupport = true;
+    };
+  };
 }

@@ -1,13 +1,10 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "programs.cli";
+  options = delib.singleEnableOption true;
 
-  home.always =
-    { myconfig, ... }:
-    {
-      pkgs,
-      ...
-    }:
+  home.ifEnabled =
+    { myconfig, cfg, ... }:
     {
       programs = {
         rclone.enable = true;

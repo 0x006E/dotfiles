@@ -1,15 +1,15 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "programs.browser";
+  options = delib.singleEnableOption true;
 
-  home.always =
-    { myconfig, ... }:
+  home.always = {
+    imports = [ inputs.zen-browser.homeModules.beta ];
+  };
+
+  home.ifEnabled =
+    { myconfig, cfg, ... }:
     {
-      pkgs,
-      ...
-    }:
-    {
-      imports = [ inputs.zen-browser.homeModules.beta ];
       programs.zen-browser = {
         enable = true;
         profiles = {

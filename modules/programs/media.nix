@@ -1,37 +1,27 @@
 { delib, inputs, ... }:
 delib.module {
   name = "programs.media";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { ... }:
-    {
-      ...
-    }:
-    {
-      imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
-      services.flatpak = {
-        enable = true;
-        remotes = [
-          {
-            name = "flathub-beta";
-            location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
-          }
-        ];
-        packages = [
-          {
-            appId = "com.stremio.Stremio";
-            origin = "flathub-beta";
-          }
-        ];
-      };
-    };
+  nixos.always = {
+    imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
+  };
 
-  home.always =
-    { ... }:
-    {
-      ...
-    }:
-    {
-      # home packages are defined centrally in apps.nix to avoid duplication
+  nixos.ifEnabled = { myconfig, cfg, ... }: {
+    services.flatpak = {
+      enable = true;
+      remotes = [
+        {
+          name = "flathub-beta";
+          location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
+        }
+      ];
+      packages = [
+        {
+          appId = "com.stremio.Stremio";
+          origin = "flathub-beta";
+        }
+      ];
     };
+  };
 }
