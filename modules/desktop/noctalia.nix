@@ -31,9 +31,8 @@ delib.module {
             default.path = lib.mkForce "/etc/wallpapers/current";
             directory = lib.mkForce "/etc/wallpapers";
           };
-          theme = {
-            mode = "dark";
-          };
+          # theme.mode is intentionally unset: Stylix's noctalia target drives
+          # it from the active rice polarity (dark/light).
           nightlight = {
             enabled = true;
           };
