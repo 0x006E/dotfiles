@@ -1,20 +1,24 @@
-{ delib, ... }:
+{ delib, inputs, config, lib, ... }:
 delib.module {
   name = "desktop.noctalia";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { ... }:
-    {
-      config,
-      ...
-    }:
-    {
-      environment.etc."wallpapers/current".source = config.stylix.image;
-    };
+  nixos.always = {
+    imports = [ inputs.noctalia.nixosModules.default ];
+  };
 
-  home.always =
-    { myconfig, ... }:
-    { lib, ... }:
+  home.always = {
+    imports = [ inputs.noctalia.homeModules.default ];
+  };
+
+  nixos.ifEnabled = { myconfig, cfg, ... }: {
+    environment.etc."wallpapers/current".source = config.stylix.image;
+    services.upower.enable = true;
+    programs.noctalia.enable = true;
+  };
+
+  home.ifEnabled =
+    { myconfig, cfg, ... }:
     {
       programs.noctalia = {
         enable = true;

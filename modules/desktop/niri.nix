@@ -1,31 +1,27 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, config, lib, ... }:
 delib.module {
   name = "desktop.niri";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { ... }:
-    {
-      pkgs,
-      ...
-    }:
-    {
-      imports = [ inputs.niri.nixosModules.niri ];
-      programs.niri = {
-        enable = true;
-        package = pkgs.niri;
-      };
+  nixos.always = {
+    imports = [ inputs.niri.nixosModules.niri ];
+  };
+
+  nixos.ifEnabled = { myconfig, cfg, ... }: {
+    programs.niri = {
+      enable = true;
+      package = pkgs.niri;
     };
+  };
 
-  home.always =
-    { myconfig, ... }:
+  home.ifEnabled =
+    { myconfig, cfg, ... }:
     {
-      pkgs,
-      config,
-      lib,
-      ...
-    }:
-    with lib;
-    let
+      imports = [
+        (
+          { pkgs, config, lib, ... }:
+          with lib;
+          let
       binds =
         {
           suffixes,
@@ -348,6 +344,9 @@ delib.module {
         grim
         slurp
         inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
+      ];
+          }
+        )
       ];
     };
 }
