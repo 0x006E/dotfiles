@@ -3,11 +3,8 @@ delib.module {
   name = "hardware.power";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

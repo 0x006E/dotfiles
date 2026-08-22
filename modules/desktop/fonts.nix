@@ -1,13 +1,11 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "desktop.fonts";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

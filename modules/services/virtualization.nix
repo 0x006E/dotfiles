@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "services.virtualization";
 
@@ -6,8 +6,6 @@ delib.module {
     { myconfig, ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

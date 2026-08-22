@@ -3,11 +3,8 @@ delib.module {
   name = "core.networking";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

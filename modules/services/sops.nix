@@ -3,7 +3,7 @@ delib.module {
   name = "services.sops";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
 

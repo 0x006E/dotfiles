@@ -7,13 +7,13 @@
   inputs.nix-vscode-extensions.overlays.default
 
   # Custom packages from pkgs/ (boomaga, vim plugins).
-  (final: prev: import ../pkgs { pkgs = prev; })
+  (_final: prev: import ../pkgs { pkgs = prev; })
 
   # Targeted fixes and additions on top of nixpkgs.
   (
     final: prev: {
       python3 = prev.python3.override {
-        packageOverrides = pfinal: pprev: {
+        packageOverrides = _pfinal: pprev: {
           curl-cffi = pprev.curl-cffi.overridePythonAttrs (_: {
             doCheck = false;
           });

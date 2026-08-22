@@ -3,13 +3,10 @@ delib.module {
   name = "core.nix";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       pkgs-stable,
-      pkgs-unstable,
+      pkgs-small,
       ...
     }:
     {
@@ -21,7 +18,7 @@ delib.module {
         useGlobalPkgs = true;
         useUserPackages = true;
         extraSpecialArgs = {
-          inherit inputs pkgs-stable pkgs-unstable;
+          inherit inputs pkgs-stable pkgs-small;
         };
       };
       nix = {

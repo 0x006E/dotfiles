@@ -1,13 +1,11 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "services.system-services";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

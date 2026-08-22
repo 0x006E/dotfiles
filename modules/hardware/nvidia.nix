@@ -1,13 +1,11 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "hardware.nvidia";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
       config,
-      lib,
       ...
     }:
     {

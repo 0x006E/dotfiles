@@ -4,7 +4,7 @@
   inputs = {
     # Core Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
+    nixpkgs-small.url = "github:nixos/nixpkgs/nixos-unstable-small";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
@@ -102,7 +102,7 @@
       denix,
       nixpkgs,
       nixpkgs-stable,
-      nixpkgs-unstable,
+      nixpkgs-small,
       nix-github-actions,
       ...
     }@inputs:
@@ -114,7 +114,7 @@
         config.allowUnfree = true;
       };
 
-      pkgs-unstable = import nixpkgs-unstable {
+      pkgs-small = import nixpkgs-small {
         inherit system;
         config.allowUnfree = true;
       };
@@ -144,7 +144,7 @@
             inherit
               inputs
               pkgs-stable
-              pkgs-unstable
+              pkgs-small
               self
               system
               ;
@@ -164,7 +164,7 @@
           inherit
             nixpkgs
             pkgs-stable
-            pkgs-unstable
+            pkgs-small
             inputs
             system
             ;

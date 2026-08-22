@@ -3,11 +3,8 @@ delib.module {
   name = "desktop.extra";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {
@@ -18,11 +15,8 @@ delib.module {
     };
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

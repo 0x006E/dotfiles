@@ -3,11 +3,10 @@ delib.module {
   name = "services.wgcf";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
       config,
-      lib,
       ...
     }:
     let

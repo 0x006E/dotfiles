@@ -3,11 +3,9 @@ delib.module {
   name = "core.environment";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

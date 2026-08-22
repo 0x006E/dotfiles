@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, pkgs-small, ... }:
 let
   icons = import ./icons.nix;
 in
@@ -430,7 +430,7 @@ in
         pyright.enable = true;
         nixd = {
           enable = true;
-          package = pkgs-unstable.nixd;
+          package = pkgs-small.nixd;
           settings = {
             nixpkgs = {
               expr = "import <nixpkgs> { }";

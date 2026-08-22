@@ -4,9 +4,6 @@ delib.module {
   home.always =
     { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

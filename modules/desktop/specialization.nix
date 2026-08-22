@@ -2,10 +2,9 @@
 delib.module {
   name = "desktop.specialization";
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
       lib,
       ...
     }:

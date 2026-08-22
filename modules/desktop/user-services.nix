@@ -3,11 +3,9 @@ delib.module {
   name = "desktop.user-services";
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

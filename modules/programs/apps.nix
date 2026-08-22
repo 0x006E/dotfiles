@@ -3,12 +3,10 @@ delib.module {
   name = "programs.apps";
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
       pkgs-stable,
-      config,
-      lib,
       ...
     }:
     {

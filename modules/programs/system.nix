@@ -5,9 +5,6 @@ delib.module {
   nixos.always =
     { myconfig, ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

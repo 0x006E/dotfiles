@@ -3,11 +3,9 @@ delib.module {
   name = "desktop.niri";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {
@@ -262,7 +260,6 @@ delib.module {
                 myconfig.constants.xwaylandDisplay
               ];
             }
-            # { command = [ "sleep 5; systemctl --user reset-failed waybar.service" ]; }
             { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
             { command = [ "dex" ]; }
             { command = [ "noctalia" ]; }
@@ -327,7 +324,6 @@ delib.module {
         enable = true;
         settings = {
           general = {
-            # after_sleep_cmd = "hyprctl dispatch dpms on";
             ignore_dbus_inhibit = false;
             lock_cmd = "noctalia msg session lock";
             before_sleep_cmd = "noctalia msg session lock";

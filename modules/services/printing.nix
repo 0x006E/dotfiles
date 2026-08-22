@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "services.printing";
 
@@ -6,9 +6,7 @@ delib.module {
     { myconfig, ... }:
     {
       pkgs,
-      config,
-      lib,
-      pkgs-unstable,
+      pkgs-small,
       ...
     }:
     {
@@ -33,13 +31,13 @@ delib.module {
           ];
         };
         sane.enable = true;
-        sane.extraBackends = [ pkgs-unstable.hplipWithPlugin ];
+        sane.extraBackends = [ pkgs-small.hplipWithPlugin ];
       };
 
       services = {
         dbus.packages = [ pkgs.boomaga ];
         printing.drivers = with pkgs; [
-          pkgs-unstable.hplipWithPlugin
+          pkgs-small.hplipWithPlugin
           boomaga
         ];
       };

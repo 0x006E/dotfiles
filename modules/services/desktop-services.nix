@@ -3,11 +3,8 @@ delib.module {
   name = "services.desktop-services";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

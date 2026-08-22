@@ -3,11 +3,8 @@ delib.module {
   name = "programs.media";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {
@@ -30,11 +27,8 @@ delib.module {
     };
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

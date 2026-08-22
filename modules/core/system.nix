@@ -3,11 +3,8 @@ delib.module {
   name = "core.system";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {

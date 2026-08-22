@@ -3,11 +3,9 @@ delib.module {
   name = "programs.agentic";
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

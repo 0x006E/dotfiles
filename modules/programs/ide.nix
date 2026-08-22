@@ -3,11 +3,9 @@ delib.module {
   name = "programs.ide";
 
   home.always =
-    { myconfig, ... }:
+    { ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

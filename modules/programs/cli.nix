@@ -6,8 +6,6 @@ delib.module {
     { myconfig, ... }:
     {
       pkgs,
-      config,
-      lib,
       ...
     }:
     {

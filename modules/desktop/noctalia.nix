@@ -3,7 +3,7 @@ delib.module {
   name = "desktop.noctalia";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
       config,
       ...

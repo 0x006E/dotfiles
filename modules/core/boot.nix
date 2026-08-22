@@ -3,11 +3,8 @@ delib.module {
   name = "core.boot";
 
   nixos.always =
-    { myconfig, ... }:
+    { ... }:
     {
-      pkgs,
-      config,
-      lib,
       ...
     }:
     {
