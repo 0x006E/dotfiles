@@ -16,18 +16,25 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 ## Denix architecture
 
 - `flake.nix` passes `paths = [ ./hosts ./modules ./rices ]` to denix — files in those dirs are **auto-discovered**; never maintain import lists.
-- Modules follow the pattern:
+- Feature modules follow the enable-option pattern:
   ```nix
-  { delib, inputs, ... }:
+  { delib, inputs, pkgs, lib, config, ... }:   # header args are used by ifEnabled bodies
   delib.module {
-    name = "category.name";            # e.g. "desktop.niri", "hardware.nvidia"
-    nixos.always = { myconfig, ... }: { ... };  # NixOS-level config
-    home.always   = { myconfig, ... }: { ... }; # Home Manager-level config
+    name = "category.name";                    # must match the enable-option path
+    options = delib.singleEnableOption true;   # toggled per host in hosts/ntsv/default.nix
+    nixos.always = { imports = [ inputs.X.nixosModules.X ]; };  # unconditional imports only
+    nixos.ifEnabled = { myconfig, cfg, ... }: { ... };          # pure option definitions
+    home.ifEnabled  = { myconfig, cfg, ... }: { ... };
   }
   ```
+- Rules learned the hard way:
+  - `ifEnabled`/`ifDisabled` values are wrapped in `lib.mkIf` → they must be plain option definitions. No `imports` key and no bare lambda-modules inside them (denix routes mkIf-wrapped values as option definitions).
+  - Need HM-scoped args (e.g. `config.lib.niri.actions`) or a lambda-module? Wrap it: `ifEnabled = {...}: { imports = [ ({ pkgs, ... }: ...) ]; }`.
+  - Pure infrastructure (`config/*`, `core/*`, `services/sops`, overlays wiring in `core.overlays`) stays unconditional `.always`.
+  - File-header args (`pkgs`, `lib`, `inputs`, …) come from top-level NixOS moduleArgs — for HM-only values (like per-user `config.lib.*`) use an inner lambda instead.
 - Shared values live in `modules/config/constants.nix`; access via `myconfig.constants.username` etc.
-- Hosts use `delib.host` (`hosts/ntsv/default.nix`) which picks the active `rice` (theme). Rices are `delib.rice` modules under `rices/{dark,light}/` (Stylix base16 scheme, GTK/cursor theming).
-- All modules receive extra args from `specialArgs`: `inputs`, `pkgs-stable`, `pkgs-small` (nixos-unstable-small), `self`, `system`. Use these instead of re-importing channels. Note: denix's outer `{ myconfig, ... }:` function only receives `myconfig`; access other args in the inner module function or via lexical closure.
+- Hosts use `delib.host` (`hosts/ntsv/default.nix`) which picks the active `rice` (theme) and carries the explicit feature-enable manifest. Rices are `delib.rice` modules under `rices/{dark,light}/` (Stylix base16 scheme, GTK/cursor theming).
+- All modules receive extra args from `specialArgs`: `inputs`, `pkgs-stable`, `pkgs-small` (nixos-unstable-small), `self`, `system`. Use these instead of re-importing channels.
 - Home Manager user is hardcoded as `nithin` (`homeManagerUser` in `flake.nix`, mirrors `constants.username`).
 
 ## Packages & overlays wiring
