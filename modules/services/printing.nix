@@ -1,14 +1,13 @@
-{ delib, ... }:
+{ delib, pkgs, pkgs-small, ... }:
 delib.module {
   name = "services.printing";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { myconfig, ... }:
-    {
-      pkgs,
-      pkgs-small,
-      ...
-    }:
+  nixos.ifEnabled =
+    { myconfig, cfg, ... }:
+    let
+      inherit (myconfig.constants) username;
+    in
     {
       services.printing.enable = true;
       services.avahi = {
@@ -42,14 +41,14 @@ delib.module {
         ];
       };
 
-      users.users.${myconfig.constants.username}.extraGroups = [
+      users.users.${username}.extraGroups = [
         "scanner"
         "lp"
       ];
 
       systemd.tmpfiles.rules = [
         "d /var/cache/boomaga 0775 root lp - -"
-        "d /var/cache/boomaga/${myconfig.constants.username} 0770 ${myconfig.constants.username} lp - -"
+        "d /var/cache/boomaga/${username} 0770 ${username} lp - -"
       ];
 
       environment.systemPackages = with pkgs; [

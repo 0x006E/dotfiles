@@ -1,14 +1,10 @@
-{ delib, ... }:
+{ delib, pkgs, config, ... }:
 delib.module {
   name = "services.wgcf";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { ... }:
-    {
-      pkgs,
-      config,
-      ...
-    }:
+  nixos.ifEnabled =
+    { myconfig, cfg, ... }:
     let
       fixedRoutes = [
         "100.96.0.1/32"

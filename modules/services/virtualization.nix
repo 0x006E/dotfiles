@@ -1,13 +1,13 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "services.virtualization";
+  options = delib.singleEnableOption true;
 
-  nixos.always =
-    { myconfig, ... }:
-    {
-      pkgs,
-      ...
-    }:
+  nixos.ifEnabled =
+    { myconfig, cfg, ... }:
+    let
+      inherit (myconfig.constants) username;
+    in
     {
       virtualisation = {
         libvirtd.enable = true;
@@ -28,7 +28,7 @@ delib.module {
         firewall.trustedInterfaces = [ "virbr0" ];
       };
 
-      users.users.${myconfig.constants.username}.extraGroups = [
+      users.users.${username}.extraGroups = [
         "libvirtd"
         "docker"
       ];
