@@ -134,9 +134,8 @@
           ];
 
           extensions = with denix.lib.extensions; [
-            args
             (base.withConfig {
-              args.enable = true;
+              args.enable = false;
             })
           ];
 
