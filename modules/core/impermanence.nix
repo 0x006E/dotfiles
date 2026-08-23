@@ -78,6 +78,16 @@ delib.module {
             mode = if dir == home then "0700" else "0755";
           };
         }) parents
+        ++ [
+          {
+            name = "/home/guest";
+            value.d = {
+              user = "guest";
+              group = "users";
+              mode = "0700";
+            };
+          }
+        ]
       );
 
       # Wipe mechanism: recreate the @ root subvolume on every boot.
@@ -178,9 +188,13 @@ delib.module {
           "/var/lib/NetworkManager-fortisslvpn"
           "/var/lib/tailscale"
 
-          # GDM reads AccountsService for the greeter user list; without this
-          # the list is empty on every fresh boot.
+          # GDM is gone, but the noctalia greeter's accounts-daemon still
+          # reads AccountsService for the user list and avatars.
           "/var/lib/AccountsService"
+
+          # Greeter appearance sync (wallpaper/palette from Noctalia shell)
+          # and mutable UI state; declarative greeter.toml lives here too.
+          "/var/lib/noctalia-greeter"
 
           # Services
           "/var/lib/docker"

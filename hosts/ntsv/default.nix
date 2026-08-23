@@ -46,7 +46,6 @@ delib.host {
       kanshi.enable = true;
       niri.enable = true;
       noctalia.enable = true;
-      specialization.enable = true;
       stylix.enable = true;
       user-services.enable = true;
     };
