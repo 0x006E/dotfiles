@@ -1,4 +1,9 @@
-{ delib, inputs, pkgs, ... }:
+{
+  delib,
+  inputs,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "desktop.stylix";
   options = delib.singleEnableOption true;

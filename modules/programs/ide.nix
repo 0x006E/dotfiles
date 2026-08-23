@@ -1,4 +1,9 @@
-{ delib, inputs, pkgs, ... }:
+{
+  delib,
+  inputs,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "programs.ide";
   options = delib.singleEnableOption true;

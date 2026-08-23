@@ -1,4 +1,9 @@
-{ delib, pkgs, lib, ... }:
+{
+  delib,
+  pkgs,
+  lib,
+  ...
+}:
 delib.module {
   name = "desktop.specialization";
   options = delib.singleEnableOption true;

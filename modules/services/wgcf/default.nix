@@ -1,4 +1,9 @@
-{ delib, pkgs, config, ... }:
+{
+  delib,
+  pkgs,
+  config,
+  ...
+}:
 delib.module {
   name = "services.wgcf";
   options = delib.singleEnableOption true;
@@ -20,18 +25,16 @@ delib.module {
       # default is never touched, so network switches cannot strand a
       # gateway-pinned endpoint route anymore.
       warpTable = 51820;
-      ensureRule =
-        prio: args: ''
-          if ! ip rule show | grep -q '^${toString prio}:'; then
-            ip rule add priority ${toString prio} ${args}
-          fi
-        '';
-      ensureRule6 =
-        prio: args: ''
-          if ! ip -6 rule show | grep -q '^${toString prio}:'; then
-            ip -6 rule add priority ${toString prio} ${args}
-          fi
-        '';
+      ensureRule = prio: args: ''
+        if ! ip rule show | grep -q '^${toString prio}:'; then
+          ip rule add priority ${toString prio} ${args}
+        fi
+      '';
+      ensureRule6 = prio: args: ''
+        if ! ip -6 rule show | grep -q '^${toString prio}:'; then
+          ip -6 rule add priority ${toString prio} ${args}
+        fi
+      '';
 
       cfwarp-add = pkgs.writeShellApplication {
         name = "cfwarp-add";

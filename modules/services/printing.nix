@@ -1,4 +1,9 @@
-{ delib, pkgs, pkgs-small, ... }:
+{
+  delib,
+  pkgs,
+  pkgs-small,
+  ...
+}:
 delib.module {
   name = "services.printing";
   options = delib.singleEnableOption true;

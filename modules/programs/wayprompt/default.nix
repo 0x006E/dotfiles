@@ -1,4 +1,9 @@
-{ delib, pkgs-stable, config, ... }:
+{
+  delib,
+  pkgs-stable,
+  config,
+  ...
+}:
 delib.module {
   name = "programs.wayprompt";
   options = delib.singleEnableOption true;

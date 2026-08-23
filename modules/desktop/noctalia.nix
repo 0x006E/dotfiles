@@ -1,4 +1,10 @@
-{ delib, inputs, config, lib, ... }:
+{
+  delib,
+  inputs,
+  config,
+  lib,
+  ...
+}:
 delib.module {
   name = "desktop.noctalia";
   options = delib.singleEnableOption true;

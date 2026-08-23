@@ -1,4 +1,9 @@
-{ delib, pkgs, pkgs-stable, ... }:
+{
+  delib,
+  pkgs,
+  pkgs-stable,
+  ...
+}:
 delib.module {
   name = "programs.apps";
   options = delib.singleEnableOption true;
