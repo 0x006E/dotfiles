@@ -35,6 +35,7 @@ delib.module {
         kernelParams = [
           "nowatchdog"
           "resume_offset=1058048"
+          "pcie_aspm=off" # AX200/iwlwifi stability
           "nvidia_drm.fbdev=1"
           "nvidia.NVreg_PreserveVideoMemoryAllocations=0"
         ];
