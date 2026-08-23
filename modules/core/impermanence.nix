@@ -146,4 +146,53 @@ delib.module {
       ];
     };
   };
+
+  # Home-manager side: persist selected user state under /persist and
+  # surface it as bind mounts inside the ephemeral /home. Entries are
+  # relative to $HOME; the NixOS module auto-imports this HM module.
+  home.ifEnabled = {
+    home.persistence."/persist" = {
+      directories = [
+        # User data
+        "Desktop"
+        "Documents"
+        "Downloads"
+        "Music"
+        "Pictures"
+        "Videos"
+        "Games"
+        "Public"
+        "Templates"
+        "projects"
+        # Identity & credentials
+        ".ssh"
+        ".gnupg"
+        # Live config repo (/etc/nixos symlink target)
+        "nix"
+        # App state
+        ".local/state"
+        ".local/share/atuin"
+        ".local/share/opencode"
+        ".local/share/direnv"
+        ".local/share/keybase"
+        ".local/share/nvim"
+        ".local/share/fonts"
+        ".local/share/icons"
+        ".local/share/bottles"
+        ".local/share/waydroid"
+        ".local/share/stremio"
+        ".local/share/DBeaverData"
+        # Flatpak user data
+        ".var"
+        # Curated .config
+        ".config/dconf"
+        ".config/zen"
+        ".stremio-server"
+      ];
+      files = [
+        ".face"
+        ".bash_history"
+      ];
+    };
+  };
 }
