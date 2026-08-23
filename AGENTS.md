@@ -51,7 +51,8 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 
 ## Docs lookup
 
-- Use the `context7` MCP server for library/framework/API documentation (Noctalia, niri, Stylix, NixVim, Home Manager options, etc.) before guessing option names or schemas from memory.
+- When you need to search docs (libraries, frameworks, APIs — Noctalia, niri, Stylix, NixVim, Home Manager, etc.), use the `context7` tools before guessing option names or schemas from memory.
+- For Nix questions — nix options (NixOS / home-manager / nix-darwin / nixvim), packages, flakes, channels — use the `nix` tools.
 
 ## Conventions
 
