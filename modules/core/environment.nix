@@ -9,7 +9,14 @@ delib.module {
       ...
     }:
     {
+      documentation = {
+        enable = true;
+        doc.enable = false;
+        info.enable = false;
+      };
+      i18n.supportedLocales = [ "en_US.UTF-8/UTF-8" ];
       environment = {
+        defaultPackages = [ ];
         systemPackages = with pkgs; [
           distrobox
           wireguard-tools
@@ -21,8 +28,9 @@ delib.module {
           commit-mono
           vim
           kvmtool
-          xwayland
           wget
+          rsync
+          strace
           libnotify
           git-crypt
           devenv

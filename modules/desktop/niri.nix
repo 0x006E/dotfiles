@@ -76,12 +76,10 @@ delib.module {
             programs.niri = {
               settings = {
                 environment = {
-                  VK_DRIVER_FILES = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
-                  QT_QPA_PLATFORM = "wayland";
+                  # Remaining vars (VK_DRIVER_FILES, QT_QPA_PLATFORM, EDITOR,
+                  # NIXOS_OZONE_WL, …) come from core.environment
+                  # sessionVariables.
                   DISPLAY = myconfig.constants.xwaylandDisplay;
-                  EDITOR = "nvim";
-                  WLR_NO_HARDWARE_CURSORS = "1";
-                  NIXOS_OZONE_WL = "1";
                 };
                 # Input Configuration
                 input = {

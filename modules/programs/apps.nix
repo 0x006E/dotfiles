@@ -17,7 +17,6 @@ delib.module {
       filen-desktop
       libreoffice
       gimp
-      pre-commit
       foot
       overskride
       mpv
