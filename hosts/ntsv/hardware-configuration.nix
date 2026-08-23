@@ -35,11 +35,28 @@
   };
 
   # Filesystem Configuration
+  # NOTE: @ is wiped on every boot (impermanence); persistent state lives in
+  # @persist, the nix store in @nix. Both must exist as btrfs subvolumes.
   fileSystems = {
     "/" = {
       device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
       fsType = "btrfs";
       options = [ "subvol=@" ];
+      neededForBoot = true;
+    };
+
+    "/nix" = {
+      device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" ];
+      neededForBoot = true;
+    };
+
+    "/persist" = {
+      device = "/dev/disk/by-uuid/1703ff9d-bde4-44b2-9f99-5cd211642af1";
+      fsType = "btrfs";
+      options = [ "subvol=@persist" ];
+      neededForBoot = true;
     };
 
     "/home" = {

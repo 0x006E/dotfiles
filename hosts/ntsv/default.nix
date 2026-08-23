@@ -9,6 +9,10 @@ delib.host {
   # is toggled here explicitly. Modules without entries below are pure
   # infrastructure and stay unconditional (config/*, core/*, services.sops).
   myconfig = {
+    core = {
+      impermanence.enable = true;
+    };
+
     hardware = {
       audio.enable = true;
       base.enable = true;
