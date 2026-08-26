@@ -16,6 +16,7 @@ delib.host {
     hardware = {
       audio.enable = true;
       base.enable = true;
+      bluetooth.enable = true;
       kanata.enable = true;
       nvidia.enable = true;
       power.enable = true;
