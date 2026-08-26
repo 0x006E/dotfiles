@@ -72,19 +72,33 @@ delib.module {
       systemd.tmpfiles.settings."10-impermanence-home" = builtins.listToAttrs (
         map (dir: {
           name = dir;
-          value.d = {
-            user = username;
-            group = "users";
-            mode = if dir == home then "0700" else "0755";
+          value = {
+            d = {
+              user = username;
+              group = "users";
+              mode = if dir == home then "0700" else "0755";
+            };
+            z = {
+              user = username;
+              group = "users";
+              mode = if dir == home then "0700" else "0755";
+            };
           };
         }) parents
         ++ [
           {
             name = "/home/guest";
-            value.d = {
-              user = "guest";
-              group = "users";
-              mode = "0700";
+            value = {
+              d = {
+                user = "guest";
+                group = "users";
+                mode = "0700";
+              };
+              z = {
+                user = "guest";
+                group = "users";
+                mode = "0700";
+              };
             };
           }
         ]
