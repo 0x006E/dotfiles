@@ -17,6 +17,15 @@ delib.module {
       enable = true;
       package = pkgs.niri;
     };
+
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-gnome
+      ];
+      config.common.default = "*";
+    };
   };
 
   home.ifEnabled =
