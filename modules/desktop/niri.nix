@@ -360,6 +360,7 @@ delib.module {
               cliphist
               grim
               slurp
+              nautilus
               inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
             ];
           }
