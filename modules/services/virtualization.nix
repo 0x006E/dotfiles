@@ -25,7 +25,10 @@ delib.module {
 
       networking = {
         nftables.enable = true;
-        firewall.trustedInterfaces = [ "virbr0" ];
+        firewall.trustedInterfaces = [
+          "virbr0"
+          "br0"
+        ];
       };
 
       users.users.${username}.extraGroups = [
