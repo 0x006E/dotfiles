@@ -18,7 +18,7 @@ delib.module {
       beesd.filesystems = {
         "-" = {
           spec = "/dev/mapper/crypted";
-          hashTableSizeMB = 2048;
+          hashTableSizeMB = 256;
           extraOptions = [
             "--loadavg-target"
             "5.0"

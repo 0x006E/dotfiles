@@ -34,5 +34,12 @@ delib.module {
       };
     };
     services.speechd.enable = pkgs.lib.mkForce false;
+    # Guardrail for WirePlumber's recurring memory leak (3.3G RSS + 15G swap
+    # observed; regrew 32M -> 685M in 36min after restart). The base unit
+    # already has Restart=on-failure, so hitting the cap restarts audio
+    # instead of sinking the machine.
+    systemd.user.services.wireplumber.serviceConfig = {
+      MemoryMax = "1G";
+    };
   };
 }

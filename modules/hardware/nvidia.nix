@@ -1,4 +1,9 @@
-{ delib, config, ... }:
+{
+  delib,
+  config,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "hardware.nvidia";
   options = delib.singleEnableOption true;
@@ -7,10 +12,15 @@ delib.module {
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        intel-vaapi-driver
+        libvdpau-va-gl
+      ];
     };
     services.xserver.videoDrivers = [ "nvidia" ];
     hardware.nvidia = {
-      modesetting.enable = false;
+      modesetting.enable = true;
       powerManagement.enable = true;
       powerManagement.finegrained = true;
       open = false;
@@ -25,5 +35,8 @@ delib.module {
       };
     };
     boot.kernelParams = [ "nvidia.NVreg_EnableS0ixPowerManagement=1" ];
+    environment.sessionVariables = {
+      LIBVA_DRIVER_NAME = "iHD";
+    };
   };
 }

@@ -40,6 +40,9 @@ delib.module {
               "media.cache_readahead_limit" = 7200;
               "media.cache_resume_threshold" = 3600;
               "media.memory_cache_max_size" = 65536;
+              "media.ffmpeg.vaapi.enabled" = true;
+              "media.hardware-video-decoding.force-enabled" = true;
+              "widget.dmabuf.force-enabled" = true;
               "network.dnsCacheExpiration" = 3600;
               "network.dns.disablePrefetch" = true;
               "network.dns.disablePrefetchFromHTTPS" = true;
