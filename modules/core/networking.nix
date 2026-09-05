@@ -17,6 +17,9 @@ delib.module {
           connectionConfig = {
             "ipv4.ignore-auto-dns" = "yes";
             "ipv6.ignore-auto-dns" = "yes";
+            # Companion fix for the AX211 CNVi crash: NM must not put the
+            # radio to sleep either (2 = disable wifi powersave).
+            "wifi.powersave" = "2";
           };
         };
         nameservers = [

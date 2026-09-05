@@ -27,7 +27,11 @@ delib.module {
           "coretemp"
         ];
         extraModprobeConfig = ''
-          options iwlmvm power_scheme=2
+          # AX211 CNVi (00:14.3) crashes with SYSASSERT then needs a cold boot
+          # (PCH keeps the wedged state across reboot + module reload).
+          # power_scheme=1 keeps the radio awake; balanced/low-power lets it
+          # wedge, usually right after assoc.
+          options iwlmvm power_scheme=1
           options iwlwifi 11n_disable=8
           options acer_wmi_battery enable_health_mode=1
         '';
