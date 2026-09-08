@@ -5,10 +5,15 @@ delib.module {
   nixos.always =
     { ... }:
     {
+      pkgs,
       ...
     }:
     {
       imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
+      # Track the newest kernel for the latest iwlwifi + firmware API
+      # (attempt at fixing the AX211 CNVi crashes; watch the nvidia
+      # module build — stable lags behind brand-new kernels).
+      boot.kernelPackages = pkgs.linuxPackages_latest;
       boot = {
         loader = {
           # Secure Boot is handled by lanzaboote (core.secureboot), which
