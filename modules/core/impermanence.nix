@@ -104,6 +104,36 @@ delib.module {
         ]
       );
 
+      # impermanence's createPersistentStorageDirs activation snippet runs on
+      # every switch (as root, before services restart) and syncs each
+      # persistent dir's ownership/mode from the /persist side onto the live
+      # side via chown/chmod --reference. The /persist-side parents were
+      # created root:root on the first impermanence boot (systemd
+      # auto-creates bind-mount parents as root) and nothing ever repaired
+      # the source side, so every switch copied root:root onto /home/nithin
+      # (+ .config/.local/.local/share) and home-manager failed with
+      # "Permission denied". tmpfiles cannot cover this: it only runs at
+      # boot, and the activation script has no tmpfiles phase. Re-assert
+      # both sides here instead: this runs inside the activation script
+      # before home-manager-nithin.service restarts, and is order-independent
+      # with the helper (both sides end at the same declared values either
+      # way). Single-level only: never traverse into bind mounts.
+      system.activationScripts.assertHomeOwnership = {
+        supportsDryActivation = true;
+        text = lib.concatMapStringsSep "\n" (
+          dir:
+          let
+            mode = if dir == home then "0700" else "0755";
+          in
+          ''
+            chown ${username}:users '${dir}'
+            chmod ${mode} '${dir}'
+            chown ${username}:users '/persist${dir}'
+            chmod ${mode} '/persist${dir}'
+          ''
+        ) parents;
+      };
+
       # Wipe mechanism: recreate the @ root subvolume on every boot.
       # Old roots are kept in @old_roots for 30 days as a safety net.
       # initrdBin already provides coreutils + mount; add what's missing.
