@@ -10,9 +10,10 @@ delib.module {
 
   home.ifEnabled = { ... }: {
     home.packages = with pkgs; [
+      codegraph
+
       inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
 
-      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2
     ];
 
