@@ -11,5 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: DeterminateSystems/nix-installer-action@main
+      # Pull-only: reuse paths the cachix workflow built (e.g. the kernel)
+      # instead of compiling them a second time on this runner.
+      - uses: cachix/cachix-action@v14
+        with:
+          name: 0x006e-nix
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - run: nix flake check
