@@ -71,10 +71,6 @@
       url = "github:luisnquin/battery-notifier";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-github-actions = {
-      url = "github:nix-community/nix-github-actions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -112,7 +108,6 @@
       nixpkgs,
       nixpkgs-stable,
       nixpkgs-small,
-      nix-github-actions,
       ...
     }@inputs:
     let
@@ -185,8 +180,6 @@
           catppuccin-cursors-mochaLight = pkgs-ci.catppuccin-cursors.mochaLight;
           catppuccin-cursors-latteDark = pkgs-ci.catppuccin-cursors.latteDark;
         };
-
-      githubActions = nix-github-actions.lib.mkGithubMatrix { checks = self.packages; };
 
       nixosConfigurations = mkConfigurations "nixos";
 

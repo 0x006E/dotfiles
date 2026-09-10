@@ -41,7 +41,7 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 
 - `overlays/default.nix` is a **pure data file** returning the overlay list; consumed twice: by `modules/desktop/extra.nix` (`nixpkgs.overlays`) and by `flake.nix` (standalone `pkgs-ci` for exporting `papers`/`inkscape`/`catppuccin-cursors` to the CI matrix without evaluating the host). Don't turn it back into a module.
 - `pkgs/default.nix` is consumed twice: as flake `packages` output **and** injected as one of those overlays. Custom vim plugins (`pkgs/vimPlugins/`) become available as `pkgs.vimPlugins.<name>` everywhere.
-- Flake `githubActions` matrix is generated from `self.packages` — anything added to `pkgs/default.nix` is automatically CI-built and pushed to Cachix (`0x006e-nix`).
+- Flake `packages` output is built by CI (`cachix-no-matrix.yml`, pushed to Cachix `0x006e-nix`) — anything added to `pkgs/default.nix` is automatically CI-built.
 - Modules needing sibling data files use directory modules (`wgcf/default.nix` + `wgcf/add.sh`, like `gpg/`, `wayprompt/`). A bare `foo.nix` beside a new `foo/` dir breaks flake lazy-tree path resolution.
 
 ## Secrets
