@@ -22,28 +22,10 @@ delib.module {
       # at 100% CPU and kills all audio incl. Bluetooth. Force the
       # Acer-specific quirk (headset mic via headset-mode detection,
       # like the Swift SF314-54) instead.
-      # NOTE: the diff below is flush-left on purpose — patch files are
-      # whitespace-sensitive, so the string content must not be indented.
       boot.kernelPatches = [
         {
           name = "acer-a515-57g-alc256-headset-mic";
-          # Inline (writeText) instead of a separate file: flake lazy-trees
-          # only see git-committed files, so a new loose .patch would break
-          # evaluation until committed.
-          patch = pkgs.writeText "acer-a515-57g-alc256-quirk.patch" ''
-diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
---- a/sound/hda/codecs/realtek/alc269.c
-+++ b/sound/hda/codecs/realtek/alc269.c
-@@ -6950,7 +6950,8 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1025, 0x159c, "Acer Nitro 5 AN515-58", ALC287_FIXUP_ACER_MICMUTE_LED),
- 	SND_PCI_QUIRK(0x1025, 0x1597, "Acer Nitro 5 AN517-55", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x159e, "Acer Nitro 5 AN515-46", ALC2XX_FIXUP_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x160e, "Acer PT316-51S", ALC2XX_FIXUP_HEADSET_MIC),
-+	SND_PCI_QUIRK(0x1025, 0x1616, "Acer Aspire A515-57G", ALC256_FIXUP_ACER_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x161f, "Acer S40-54", ALC256_FIXUP_ACER_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1025, 0x1640, "Acer Aspire A315-44P", ALC256_FIXUP_ACER_SFG16_MICMUTE_LED),
- 	SND_PCI_QUIRK(0x1025, 0x1679, "Acer Nitro 16 AN16-41", ALC2XX_FIXUP_HEADSET_MIC),
-          '';
+          patch = ../hardware/acer-a515-57g-alc256-quirk.patch;
         }
       ];
       boot = {
