@@ -10,12 +10,16 @@ on:
 jobs:
   automerge:
     # Updater actions run as github-actions[bot]; branch prefixes cover
-    # update-flake-lock and nix-update-action PRs. Tighten if a bot PR
-    # ever falls outside these prefixes (it just won't auto-merge).
+    # update-flake-lock, nix-update-action (chore/nix_update_actions) and
+    # similar. Tighten if a bot PR ever falls outside these (it just
+    # won't auto-merge).
     if: >
       github.actor == 'github-actions[bot]' &&
       (startsWith(github.head_ref, 'update-') ||
-       contains(github.head_ref, 'flake-lock'))
+       startsWith(github.head_ref, 'update_') ||
+       startsWith(github.head_ref, 'chore/') ||
+       contains(github.head_ref, 'flake-lock') ||
+       contains(github.head_ref, 'flake_lock'))
     runs-on: ubuntu-latest
     permissions:
       contents: write
