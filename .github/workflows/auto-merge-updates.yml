@@ -1,0 +1,27 @@
+name: auto-merge-updates
+
+# Auto-merge bot PRs (flake.lock / package updates) once required checks
+# (incl. the Cachix toplevel build) go green. Human PRs are unaffected.
+# Requires "Allow auto-merge" + branch protection on main (repo settings).
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  automerge:
+    # Updater actions run as github-actions[bot]; branch prefixes cover
+    # update-flake-lock and nix-update-action PRs. Tighten if a bot PR
+    # ever falls outside these prefixes (it just won't auto-merge).
+    if: >
+      github.actor == 'github-actions[bot]' &&
+      (startsWith(github.head_ref, 'update-') ||
+       contains(github.head_ref, 'flake-lock'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: merge
