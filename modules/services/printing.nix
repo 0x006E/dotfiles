@@ -38,13 +38,11 @@ delib.module {
         sane.extraBackends = [ pkgs-small.hplipWithPlugin ];
       };
 
-      services = {
-        dbus.packages = [ pkgs.boomaga ];
-        printing.drivers = with pkgs; [
-          pkgs-small.hplipWithPlugin
-          boomaga
-        ];
-      };
+      services.dbus.packages = [ pkgs.boomaga ];
+      services.printing.drivers = with pkgs; [
+        pkgs-small.hplipWithPlugin
+        boomaga
+      ];
 
       users.users.${username}.extraGroups = [
         "scanner"
