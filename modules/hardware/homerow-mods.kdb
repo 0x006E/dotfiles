@@ -1,11 +1,10 @@
 ;; defsrc is still necessary
 (defcfg
   process-unmapped-keys yes
-  ;; NOTE: the NixOS module cannot inject linux-dev when configFile is set,
-  ;; so device scoping lives here. Internal AT keyboard only; USB dongle
-  ;; kbd interfaces and any external boards stay untouched (add their
-  ;; by-path entries here if you want homerow mods on them too).
-  linux-dev (/dev/input/by-path/platform-i8042-serio-0-event-kbd)
+  ;; NOTE: no linux-dev line on purpose: kanata auto-detects keyboards, so
+  ;; boards that are absent now (or plugged in later, any port) are covered
+  ;; with no config change. Unmapped keys pass through untouched, so the
+  ;; mouse-dongle kbd interfaces are harmless.
 )
 (defsrc
   caps a s d f j k l ;

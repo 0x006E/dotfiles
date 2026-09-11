@@ -255,6 +255,8 @@ delib.module {
                     {
                       "Mod+Shift+T".action = focus-workspace "terminal";
                       "Mod+Shift+Z".action = focus-workspace "browser";
+                      "Mod+Shift+K".action =
+                        sh "if systemctl is-active --quiet kanata-default; then systemctl stop kanata-default && notify-send 'Kanata off' --icon=input-keyboard; else systemctl start kanata-default && notify-send 'Kanata on (homerow mods)' --icon=input-keyboard; fi";
                       "Mod+Comma".action = consume-window-into-column;
                       "Mod+Period".action = expel-window-from-column;
                       "Mod+R".action = switch-preset-column-width;
