@@ -1,15 +1,11 @@
-{ delib, inputs, ... }:
+{ delib, ... }:
 delib.module {
   name = "programs.media";
   options = delib.singleEnableOption true;
 
-  nixos.always = {
-    imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
-  };
-
   nixos.ifEnabled = { ... }: {
-    # Flatpak itself stays: manually installed apps (e.g. NAPS2) live
-    # outside nix-flatpak. No declarative apps or remotes right now.
+    # Flatpak itself stays for manually installed apps (e.g. NAPS2).
+    # Uses the stock nixpkgs service module — no declarative apps.
     services.flatpak.enable = true;
   };
 }
