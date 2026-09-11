@@ -1,4 +1,4 @@
-{ delib, pkgs, ... }:
+{ delib, config, pkgs, ... }:
 delib.module {
   name = "hardware.audio";
   options = delib.singleEnableOption true;
@@ -40,6 +40,11 @@ delib.module {
       };
     };
     services.speechd.enable = pkgs.lib.mkForce false;
+    # Out-of-tree snd-hda-codec-alc269 carrying the Acer quirk, built like
+    # pkgs/uvcvideo-kernel-module (same-name override via updates/).
+    boot.extraModulePackages = [
+      (config.boot.kernelPackages.callPackage ../../pkgs/alc269-kernel-module { })
+    ];
     # Guardrail for WirePlumber's recurring memory leak (3.3G RSS + 15G swap
     # observed; regrew 32M -> 685M in 36min after restart). The base unit
     # already has Restart=on-failure, so hitting the cap restarts audio

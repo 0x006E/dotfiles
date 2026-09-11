@@ -14,20 +14,10 @@ delib.module {
       # (attempt at fixing the AX211 CNVi crashes; watch the nvidia
       # module build — stable lags behind brand-new kernels).
       boot.kernelPackages = pkgs.linuxPackages_latest;
-      # Acer Aspire A515-57G (1025:1616, ALC256): BIOS leaves pin 0x19
-      # (Headset Mic) as N/A + NO_PRESENCE, so the kernel only matches
-      # the generic Acer fallback quirk, which enables per-pin
-      # unsolicited jack detection on an unwired presence input. The
-      # resulting plug/unplug storm (~300 events/s) wedges WirePlumber
-      # at 100% CPU and kills all audio incl. Bluetooth. Force the
-      # Acer-specific quirk (headset mic via headset-mode detection,
-      # like the Swift SF314-54) instead.
-      boot.kernelPatches = [
-        {
-          name = "acer-a515-57g-alc256-headset-mic";
-          patch = ../hardware/acer-a515-57g-alc256-quirk.patch;
-        }
-      ];
+      # NOTE: the Acer ALC256 headset-mic quirk ships as an out-of-tree
+      # module (pkgs/alc269-kernel-module, wired up in hardware.audio)
+      # of boot.kernelPatches: same fix, but minutes/KBs per kernel bump
+      # instead of a full kernel rebuild (hour + ~1GB cache).
       boot = {
         loader = {
           # Secure Boot is handled by lanzaboote (core.secureboot), which
