@@ -1,4 +1,4 @@
-{ lib, appimageTools, fetchurl, symlinkJoin, makeWrapper, mpv }:
+{ lib, appimageTools, fetchurl, symlinkJoin, makeWrapper, stdenv, mpv, cairo, glib, gtk3, webkitgtk_4_1, xorg }:
 let
   version = "0.1.23-alpha";
   src = fetchurl {
@@ -25,11 +25,21 @@ symlinkJoin {
   paths = [ unwrapped ];
   nativeBuildInputs = [ makeWrapper ];
   # The app extracts libplayer_bridge.so to ~/.cache at runtime and dlopens
-  # it; that bridge links against the HOST libmpv (not bundled), so expose
-  # it or every playback ends in UnsatisfiedLinkError: libmpv.so.2.
+  # it; that bridge links against HOST libraries (not bundled), so expose
+  # them or every playback dies in UnsatisfiedLinkError (seen so far:
+  # libmpv.so.2, libwebkit2gtk). Full missing set enumerated via ldd.
   postBuild = ''
     wrapProgram $out/bin/nuvio \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ mpv ]}"
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
+        mpv
+        webkitgtk_4_1
+        gtk3
+        glib
+        cairo
+        xorg.libX11
+        xorg.libXcomposite
+        stdenv.cc.cc.lib
+      ]}"
   '';
 
   meta = with lib; {
