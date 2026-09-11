@@ -23,6 +23,10 @@ jobs:
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v29
         with:
+          # PAT (not GITHUB_TOKEN): PRs opened with it trigger workflows,
+          # so CI validates bot PRs and auto-merge can fire. GITHUB_TOKEN
+          # PRs are silently skipped by GitHub.
+          token: ${{ secrets.UPDATE_FLAKE_PAT }}
           inputs: ${{ inputs.bumpWhat }}
   updateFlakePackages:
     runs-on: ubuntu-latest
@@ -35,4 +39,4 @@ jobs:
         uses: 0x006e/nix-update-action@1.1.1
         with:
           blacklist: "zoho-mail,windsurf,zen-browser-unwrapped"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.UPDATE_FLAKE_PAT }}
