@@ -159,6 +159,7 @@ delib.module {
                     # Screenshot Controls
                     {
                       "Print".action = sh "flameshot full --clipboard";
+                      "Shift+Print".action = sh "flameshot gui";
                     }
 
                     # Screen Recording Controls (toggle: press again to stop)
@@ -184,6 +185,8 @@ delib.module {
                     {
                       "Mod+Tab".action = focus-window-down-or-column-right;
                       "Mod+Shift+Tab".action = focus-window-up-or-column-left;
+                      "Mod+O".action = toggle-overview;
+                      "Mod+Shift+Slash".action = show-hotkey-overlay;
                     }
 
                     # Directional Controls
@@ -261,7 +264,7 @@ delib.module {
                       "Mod+C".action = center-column;
                       "Mod+Minus".action = set-column-width "-10%";
                       "Mod+Plus".action = set-column-width "+10%";
-                      "Mod+Shift+Minus".action = set-window-height "-11%";
+                      "Mod+Shift+Minus".action = set-window-height "-10%";
                       "Mod+Shift+Plus".action = set-window-height "+10%";
                       "Mod+Shift+E".action = quit;
                       "Mod+Shift+P".action = power-off-monitors;
