@@ -153,11 +153,18 @@ delib.module {
                         sh ''notify-send "Suspending Device" "System will suspend now." --icon=system-suspend && systemctl suspend'';
                       "Mod+Q".action = close-window;
                       "Mod+V".action = sh "noctalia msg panel-toggle clipboard";
+                      "Mod+Semicolon".action = spawn "emote";
                     }
 
                     # Screenshot Controls
                     {
                       "Print".action = sh "flameshot full --clipboard";
+                    }
+
+                    # Screen Recording Controls (toggle: press again to stop)
+                    {
+                      "Mod+Shift+R".action =
+                        sh "if pkill -INT wf-recorder; then notify-send 'Recording stopped' --icon=media-record; else mkdir -p ~/Videos && notify-send 'Recording started (Mod+Shift+R to stop)' --icon=media-record && wf-recorder -g \"$(slurp)\" -f ~/Videos/rec-$(date +%Y%m%d-%H%M%S).mp4; fi";
                     }
 
                     # Media Controls
@@ -168,8 +175,9 @@ delib.module {
 
                       "XF86MonBrightnessUp".action = sh "noctalia msg brightness-up";
                       "XF86MonBrightnessDown".action = sh "noctalia msg brightness-down";
-                      "XF86AudioNext".action = focus-column-right;
-                      "XF86AudioPrev".action = focus-column-left;
+                      "XF86AudioPlay".action = sh "noctalia msg media toggle";
+                      "XF86AudioNext".action = sh "noctalia msg media next";
+                      "XF86AudioPrev".action = sh "noctalia msg media previous";
                     }
 
                     # Window Navigation
@@ -243,7 +251,7 @@ delib.module {
                     # Window Management
                     {
                       "Mod+Shift+T".action = focus-workspace "terminal";
-                      "Mod+Shift+Z".action = focus-workspace "zen";
+                      "Mod+Shift+Z".action = focus-workspace "browser";
                       "Mod+Comma".action = consume-window-into-column;
                       "Mod+Period".action = expel-window-from-column;
                       "Mod+R".action = switch-preset-column-width;
@@ -257,7 +265,6 @@ delib.module {
                       "Mod+Shift+Plus".action = set-window-height "+10%";
                       "Mod+Shift+E".action = quit;
                       "Mod+Shift+P".action = power-off-monitors;
-                      "Mod+Shift+Ctrl+T".action = toggle-debug-tint;
                     }
                   ];
 
@@ -316,14 +323,6 @@ delib.module {
                     open-maximized = true;
                     open-on-workspace = "browser";
                   }
-                  {
-                    matches = [
-                      {
-                        app-id = "^firefox$";
-                        title = "Private Browsing";
-                      }
-                    ];
-                  }
                 ];
               };
             };
@@ -357,9 +356,10 @@ delib.module {
             home.packages = with pkgs; [
               dex
               brightnessctl
-              cliphist
-              grim
+              # slurp feeds the wf-recorder region picker below.
               slurp
+              wf-recorder
+              emote
               nautilus
               inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable
             ];
