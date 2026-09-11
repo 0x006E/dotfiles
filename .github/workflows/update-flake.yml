@@ -49,6 +49,9 @@ jobs:
       - name: Update flake packages
         uses: 0x006e/nix-update-action@main
         with:
-          blacklist: "zoho-mail,windsurf,zen-browser-unwrapped"
+          # Re-exports carry no repo-owned version: their versions live in
+          # nixpkgs and flow through lockfile PRs. Attempting nix-update on
+          # them only produces eval errors, so skip them outright.
+          blacklist: "zoho-mail,windsurf,zen-browser-unwrapped,catppuccin-cursors-latteDark,catppuccin-cursors-mochaLight,inkscape,papers"
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
           pr-labels: automated
