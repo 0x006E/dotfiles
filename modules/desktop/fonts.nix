@@ -8,6 +8,9 @@ delib.module {
       fontconfig = {
         defaultFonts = {
           monospace = [ "CommitMono Nerd Font" ];
+          sansSerif = [ "Noto Sans" ];
+          serif = [ "Noto Serif" ];
+          emoji = [ "Noto Color Emoji" ];
         };
       };
       fontDir.enable = true;
