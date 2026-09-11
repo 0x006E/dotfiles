@@ -26,6 +26,7 @@
     # Desktop and UI
     stylix = {
       url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
       url = "github:sodiboo/niri-flake";
@@ -40,7 +41,7 @@
     # Development Tools
     nixvim = {
       url = "github:nix-community/nixvim";
-
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
@@ -74,6 +75,7 @@
     };
     noctalia = {
       url = "github:noctalia-dev/noctalia/cachix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     antigravity = {
       url = "github:jacopone/antigravity-nix";
