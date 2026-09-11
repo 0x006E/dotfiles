@@ -18,11 +18,40 @@
   libXext,
   libXcomposite,
   glib,
+  glib-networking,
   cairo,
+  wrapGAppsHook3,
   autoPatchelfHook,
   nix-update,
   writeShellScript,
 }:
+let
+  # Listed once, used three times: buildInputs, LD_LIBRARY_PATH, GST plugin
+  # path. (Last two reach the player bridge, which materializes from jars at
+  # runtime where autoPatchelf can't see it.)
+  runtimeLibs = [
+    mpv
+    webkitgtk_4_1
+    gtk3
+    glib
+    glib-networking
+    fontconfig
+    libX11
+    libXcomposite
+    libXext
+    alsa-lib
+    cairo
+    stdenv.cc.cc.lib
+  ];
+  gstPlugins = with gst_all_1; [
+    gstreamer
+    gst-plugins-base
+    gst-plugins-good
+    gst-plugins-bad
+    gst-plugins-ugly
+    gst-libav
+  ];
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "nuvio";
   version = "0.1.23-alpha";
@@ -46,6 +75,17 @@ stdenv.mkDerivation (finalAttrs: {
 
   postPatch = ''
     echo "kotlin.native.ignoreDisabledTargets=true" >> local.properties
+    # Upstream's public backend identifiers: the anon key is public by design
+    # and ships in every official release (values below recovered byte-exact
+    # from the official 0.1.23-alpha AppImage; same set as the nixpkgs
+    # submission, pending upstream blessing in NuvioMedia/NuvioDesktop#623).
+    # Without these the client points at https://localhost and sign-in fails.
+    # Trakt secret + Sentry DSNs are deliberately never baked in.
+    cat >> local.properties <<EOF
+    NUVIO_SUPABASE_URL=https://api.nuvio.tv
+    NUVIO_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzgxNTIxMzQ2LCJleHAiOjE5MzkyMDEzNDZ9.tmQaj682pwzehpqlgCDMnySOqiUvpgRbrE43T4VJpDI
+    NUVIO_SUPABASE_FALLBACK_URL=https://api-two.nuvioapp.space
+    EOF
   '';
 
   gradleBuildTask = ":composeApp:createReleaseDistributable";
@@ -79,24 +119,16 @@ stdenv.mkDerivation (finalAttrs: {
     cmake
     pkg-config
     autoPatchelfHook
+    wrapGAppsHook3
   ];
 
   buildInputs = [
-    # Bridge (player_bridge.cpp) links these at compile time via pkg-config;
-    # vendor NativeVideoPlayer links GStreamer + JNI. autoPatchelf wires the
-    # runtime RUNPATHs from the same set.
-    mpv
-    webkitgtk_4_1
-    gtk3
-    gst_all_1.gstreamer
-    gst_all_1.gst-plugins-base
-    fontconfig
-    alsa-lib
+    # libGL stays explicit: the Compose renderer needs it in RUNPATH, but
+    # it must not precede /run/opengl-driver/lib in LD_LIBRARY_PATH.
     libGL
-    libX11
-    libXext
-    libXcomposite
-  ];
+  ]
+  ++ runtimeLibs
+  ++ gstPlugins;
 
   doCheck = false;
 
@@ -116,31 +148,15 @@ stdenv.mkDerivation (finalAttrs: {
     }
     mkdir -p $out
     cp -r "$dist"/. $out/
-    # Plain launcher script (NOT makeWrapper): the native binary derives its
-    # config filename from argv[0]'s basename (lib/app/Nuvio.cfg), and
-    # makeWrapper's .Nuvio-wrapped rename breaks that lookup. exec keeps
-    # argv[0] ending in Nuvio however the user invoked us.
-    cat > $out/bin/nuvio <<EOF
-    #!${stdenv.shell}
-    export LD_LIBRARY_PATH="${
-      lib.makeLibraryPath [
-        mpv
-        webkitgtk_4_1
-        gtk3
-        glib
-        cairo
-        libX11
-        libXcomposite
-        stdenv.cc.cc.lib
-      ]
-    }:\$LD_LIBRARY_PATH"
-    exec "$out/bin/Nuvio" "\$@"
-    EOF
-    chmod +x $out/bin/nuvio
+    ln -s $out/bin/Nuvio $out/bin/nuvio
+    # The GApps wrapper renames the launcher to .Nuvio-wrapped, and the
+    # jpackage launcher derives its .cfg name from its own file name —
+    # link it back (same trick as the nixpkgs nuvio submission).
+    ln -s $out/lib/app/Nuvio.cfg $out/lib/app/.Nuvio-wrapped.cfg
 
     mkdir -p $out/share/applications
-    install -Dm444 composeApp/src/desktopMain/resources/icons/nuvio-app-icon-transparent.png \
-      $out/share/icons/hicolor/256x256/apps/Nuvio.png
+    install -Dm444 $out/lib/Nuvio.png \
+      $out/share/icons/hicolor/512x512/apps/Nuvio.png
     cat > $out/share/applications/Nuvio.desktop <<EOF
     [Desktop Entry]
     Type=Application
@@ -155,6 +171,15 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  # Player libraries unpack from jars at runtime, so only the wrapper env
+  # reaches them. Host NVIDIA libs for NVDEC come via /run/opengl-driver/lib.
+  preFixup = ''
+    gappsWrapperArgs+=(
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath runtimeLibs}:/run/opengl-driver/lib"
+      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "${lib.makeSearchPath "lib/gstreamer-1.0" gstPlugins}"
+    )
+  '';
+
   passthru.updateScript = writeShellScript "update-nuvio" ''
     ${lib.getExe nix-update} nuvio
     echo "Now refresh the Gradle lockfile (networked, slow):"
@@ -164,9 +189,14 @@ stdenv.mkDerivation (finalAttrs: {
   meta = with lib; {
     description = "Desktop media client for browsing and playing media (alpha, built from source)";
     homepage = "https://nuvio.tv";
-    license = licenses.gpl3Plus;
+    changelog = "https://github.com/NuvioMedia/NuvioDesktop/releases/tag/${finalAttrs.version}";
+    license = licenses.gpl3Only;
     maintainers = with maintainers; [ ];
     platforms = platforms.linux;
     mainProgram = "nuvio";
+    sourceProvenance = with sourceTypes; [
+      fromSource
+      binaryNativeCode
+    ];
   };
 })
