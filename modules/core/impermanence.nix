@@ -32,12 +32,11 @@ let
     ".local/share/icons"
     ".local/share/bottles"
     ".local/share/waydroid"
-    ".local/share/stremio"
     ".local/share/DBeaverData"
     ".var"
     ".config/dconf"
+    ".config/nuvio"
     ".config/zen"
-    ".stremio-server"
   ];
 in
 delib.module {

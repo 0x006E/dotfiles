@@ -8,20 +8,8 @@ delib.module {
   };
 
   nixos.ifEnabled = { ... }: {
-    services.flatpak = {
-      enable = true;
-      remotes = [
-        {
-          name = "flathub-beta";
-          location = "https://flathub.org/beta-repo/flathub-beta.flatpakrepo";
-        }
-      ];
-      packages = [
-        {
-          appId = "com.stremio.Stremio";
-          origin = "flathub-beta";
-        }
-      ];
-    };
+    # Flatpak itself stays: manually installed apps (e.g. NAPS2) live
+    # outside nix-flatpak. No declarative apps or remotes right now.
+    services.flatpak.enable = true;
   };
 }
