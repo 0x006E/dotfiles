@@ -10,6 +10,10 @@ on:
   schedule:
     - cron: '0 0 * * *' # runs daily at 00:00
   push:
+      # Scoped to main like ci.yml: bot force-pushes to long-lived stale
+      # branches otherwise re-trigger this workflow spuriously (rewritten
+      # refs evaluate broadly against paths filters).
+      branches: [main]
       paths:
         - 'flake.nix'
 jobs:
