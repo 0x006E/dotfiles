@@ -1,0 +1,13 @@
+diff --git a/composeApp/src/desktopMain/kotlin/com/nuvio/app/core/build/AppFeaturePolicy.desktop.kt b/composeApp/src/desktopMain/kotlin/com/nuvio/app/core/build/AppFeaturePolicy.desktop.kt
+index 9928f2e..8655a75 100644
+--- a/composeApp/src/desktopMain/kotlin/com/nuvio/app/core/build/AppFeaturePolicy.desktop.kt
++++ b/composeApp/src/desktopMain/kotlin/com/nuvio/app/core/build/AppFeaturePolicy.desktop.kt
+@@ -18,7 +18,7 @@ actual object AppFeaturePolicy {
+     actual val trailerPlaybackMode: TrailerPlaybackMode =
+         if (isWindowsDesktop) TrailerPlaybackMode.EXTERNAL else TrailerPlaybackMode.IN_APP
+     actual val heroTrailerPlaybackSupported: Boolean = !isWindowsDesktop
+-    actual val inAppUpdaterEnabled: Boolean = true
++    actual val inAppUpdaterEnabled: Boolean = false
+     actual val imdbRatingLogoEnabled: Boolean = true
+     actual val mediaPlaybackForegroundServiceEnabled: Boolean = false
+     actual val downloadForegroundServiceEnabled: Boolean = false

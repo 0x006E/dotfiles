@@ -1,0 +1,13 @@
+diff --git a/composeApp/src/commonMain/kotlin/com/nuvio/app/core/ui/Theme.kt b/composeApp/src/commonMain/kotlin/com/nuvio/app/core/ui/Theme.kt
+index 72416e5..2b729ce 100644
+--- a/composeApp/src/commonMain/kotlin/com/nuvio/app/core/ui/Theme.kt
++++ b/composeApp/src/commonMain/kotlin/com/nuvio/app/core/ui/Theme.kt
+@@ -197,7 +197,7 @@ private val NuvioRippleConfiguration = RippleConfiguration(
+     color = Color.Black,
+ )
+ 
+-private const val NuvioDesktopFontScale = 1.08f
++private const val NuvioDesktopFontScale = 0.9f
+ private const val NuvioDesktopBaseWidthDp = 1280f
+ private const val NuvioDesktopBaseHeightDp = 820f
+ private const val NuvioDesktopMinUiScale = 1f
