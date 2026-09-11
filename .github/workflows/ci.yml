@@ -1,11 +1,10 @@
 name: ci
 
-# CI pipeline: check validates the whole flake (eval + builds, kept fast
-# by the cachix pull); toplevel builds+pushes the host closure. The jobs
-# run independently on purpose: check can't be --no-build (stylix's nixvim
-# target needs a derivation realized at eval time), so gating toplevel
-# behind it would only serialize two slow jobs. Job IDs are stable on
-# purpose: branch protection refers to them by name.
+# CI pipeline: fast check gates the slow toplevel build, so a broken tree
+# fails in ~3 min instead of burning the ~10 min host build. check must
+# stay full (not --no-build): stylix's nixvim target realizes a derivation
+# at eval time (IFD), which --no-build forbids on cold stores. Job IDs are
+# stable on purpose: branch protection refers to them by name.
 on:
   pull_request:
   push:
@@ -39,6 +38,7 @@ jobs:
     # skips paths already on cache.nixos.org server-side and LRU-evicts
     # stale closures automatically, so the 5GB free tier only ever holds
     # the delta (out-of-tree modules, nvidia, initrd, toplevel refs).
+    needs: [check]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
