@@ -8,6 +8,12 @@ name: ci
 on:
   pull_request:
   push:
+    # Scoped to main: without this, every PR branch push fires both the
+    # push and pull_request events -> duplicate check runs (and double
+    # kernel compiles). PRs report via pull_request; main pushes (merge
+    # commits, direct pushes) report via push, which is also what the
+    # pin step requires.
+    branches: [main]
   workflow_dispatch:
 
 jobs:
