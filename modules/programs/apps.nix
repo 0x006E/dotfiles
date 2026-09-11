@@ -20,6 +20,7 @@ delib.module {
       foot
       overskride
       mpv
+      nuvio
       pkgs-stable.bottles
       winetricks
     ];
