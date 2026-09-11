@@ -63,3 +63,12 @@ jobs:
         installCommand: nix profile install --accept-flake-config nixpkgs#cachix
     - uses: DeterminateSystems/magic-nix-cache-action@main
     - run: nix-fast-build --skip-cached --flake '.#nixosConfigurations.ntsv.config.system.build.toplevel' --no-nom --cachix-cache 0x006e-nix
+    # Pin the merged-main closure (current + previous) so GC can never
+    # evict the generations you actually run. PR runs skip this step.
+    - name: Pin main closure
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      env:
+        CACHIX_AUTH_TOKEN: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      run: |
+        TOP=$(nix build '.#nixosConfigurations.ntsv.config.system.build.toplevel' --print-out-paths --no-link)
+        cachix pin 0x006e-nix main "$TOP" --keep-revisions 2
