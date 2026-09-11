@@ -1,4 +1,9 @@
-{ delib, config, pkgs, ... }:
+{
+  delib,
+  config,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "hardware.audio";
   options = delib.singleEnableOption true;

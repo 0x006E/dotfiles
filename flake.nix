@@ -183,8 +183,19 @@
 
       nixosConfigurations = mkConfigurations "nixos";
 
-      # Formatter Configuration
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt;
+      # Formatter Configuration: `nix fmt` runs this with no args from the
+      # repo root, so it must discover files itself — the raw nixfmt binary
+      # just reads (empty) stdin and errors out (nixfmt >= 1.4).
+      formatter.x86_64-linux =
+        let
+          pkgsFmt = nixpkgs.legacyPackages.x86_64-linux;
+        in
+        pkgsFmt.writeShellScriptBin "fmt-nix-tree" ''
+          ${pkgsFmt.lib.getExe pkgsFmt.findutils} . \
+            -path ./.git -prune -o \
+            -name '*.nix' -print0 \
+            | xargs -0 -r ${pkgsFmt.lib.getExe pkgsFmt.nixfmt}
+        '';
 
       devShells.${system}.default = nixpkgs.legacyPackages.${system}.mkShell {
         packages = with nixpkgs.legacyPackages.${system}; [
