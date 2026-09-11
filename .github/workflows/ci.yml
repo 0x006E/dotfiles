@@ -1,9 +1,8 @@
 name: ci
 
-# Ordered pipeline: check gates the two expensive build jobs, so a broken
-# tree fails fast instead of burning an hour of kernel compiles. build and
-# toplevel fan out in parallel after check. Job IDs are stable on purpose:
-# branch protection refers to them by name.
+# Ordered pipeline: check (eval-only) gates toplevel, so a broken tree
+# fails fast instead of burning an hour of kernel compiles. Job IDs are
+# stable on purpose: branch protection refers to them by name.
 on:
   pull_request:
   push:
@@ -18,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/nix-installer-action@main
-      # Pull-only: reuse paths the build jobs pushed (e.g. the kernel)
+      # Pull-only: reuse paths previous runs pushed (e.g. the kernel)
       # instead of compiling them a second time on this runner.
       - uses: cachix/cachix-action@v17
         with:
@@ -26,43 +25,17 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix flake check
-
-  build:
-    needs: [check]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v7
-    - name: Free Disk Space Before Build
-      run: |
-        echo "Disk space before cleanup:"
-        df -h
-        sudo rm -rf /usr/local/.ghcup
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo rm -rf /usr/local/lib/android/sdk/ndk
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /usr/local/share/boost
-        sudo apt-get clean
-        echo "Disk space after cleanup:"
-        df -h
-    - uses: DeterminateSystems/nix-installer-action@main
-    - name: Install nix-fast-build
-      run: nix --accept-flake-config profile install "github:Mic92/nix-fast-build"
-    - uses: cachix/cachix-action@v17
-      with:
-        name: 0x006e-nix
-        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-        installCommand: nix profile install --accept-flake-config nixpkgs#cachix
-    - uses: DeterminateSystems/magic-nix-cache-action@main
-    - run: nix-fast-build --skip-cached --flake .#packages --no-nom --cachix-cache 0x006e-nix
+      # Eval-only gate: everything this skips building (packages, system)
+      # is built+pushed by toplevel below. Keeps the gate fast instead of
+      # compiling the kernel twice per run.
+      - run: nix flake check --no-build
 
   toplevel:
     # Build the full host closure so flake-update PRs are binary-cached
     # before merge (branch protection should require this job). Cachix
     # skips paths already on cache.nixos.org server-side and LRU-evicts
     # stale closures automatically, so the 5GB free tier only ever holds
-    # the delta (patched kernel, nvidia modules, initrd, toplevel refs).
+    # the delta (out-of-tree modules, nvidia, initrd, toplevel refs).
     needs: [check]
     runs-on: ubuntu-latest
     steps:
