@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          # No stored credentials: the updater actions push with
+          # UPDATE_FLAKE_PAT themselves. Leaving this enabled stacks two
+          # different Authorization headers and GitHub 400s the push.
+          persist-credentials: false
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - name: Update flake.lock
@@ -34,6 +39,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          # No stored credentials: the updater actions push with
+          # UPDATE_FLAKE_PAT themselves. Leaving this enabled stacks two
+          # different Authorization headers and GitHub 400s the push.
+          persist-credentials: false
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - name: Update flake packages
