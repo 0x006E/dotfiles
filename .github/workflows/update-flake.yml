@@ -28,6 +28,7 @@ jobs:
           # PRs are silently skipped by GitHub.
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
           inputs: ${{ inputs.bumpWhat }}
+          pr-labels: automated
   updateFlakePackages:
     runs-on: ubuntu-latest
     steps:
@@ -40,3 +41,4 @@ jobs:
         with:
           blacklist: "zoho-mail,windsurf,zen-browser-unwrapped"
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
+          pr-labels: automated
