@@ -37,7 +37,7 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - name: Update flake packages
-        uses: 0x006e/nix-update-action@1.1.1
+        uses: 0x006e/nix-update-action@main
         with:
           blacklist: "zoho-mail,windsurf,zen-browser-unwrapped"
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
