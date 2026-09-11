@@ -8,5 +8,6 @@ let
 in
 {
   boomaga = libsForQt5.callPackage ./boomaga.nix { };
+  nuvio = pkgs.callPackage ./nuvio.nix { };
 }
 // customVimPlugins
