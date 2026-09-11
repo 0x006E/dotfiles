@@ -155,8 +155,11 @@ stdenv.mkDerivation (finalAttrs: {
     ln -s $out/lib/app/Nuvio.cfg $out/lib/app/.Nuvio-wrapped.cfg
 
     mkdir -p $out/share/applications
+    # NOTE: $out/lib/Nuvio.png is a 256px file despite jpackage's layout —
+    # install it under 256x256. A 256px file in 512x512/ breaks size matching
+    # and loaders fall back to the placeholder gear.
     install -Dm444 $out/lib/Nuvio.png \
-      $out/share/icons/hicolor/512x512/apps/Nuvio.png
+      $out/share/icons/hicolor/256x256/apps/Nuvio.png
     cat > $out/share/applications/Nuvio.desktop <<EOF
     [Desktop Entry]
     Type=Application
