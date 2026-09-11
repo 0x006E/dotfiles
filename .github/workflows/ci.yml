@@ -1,8 +1,11 @@
 name: ci
 
-# Ordered pipeline: check (eval-only) gates toplevel, so a broken tree
-# fails fast instead of burning an hour of kernel compiles. Job IDs are
-# stable on purpose: branch protection refers to them by name.
+# CI pipeline: check validates the whole flake (eval + builds, kept fast
+# by the cachix pull); toplevel builds+pushes the host closure. The jobs
+# run independently on purpose: check can't be --no-build (stylix's nixvim
+# target needs a derivation realized at eval time), so gating toplevel
+# behind it would only serialize two slow jobs. Job IDs are stable on
+# purpose: branch protection refers to them by name.
 on:
   pull_request:
   push:
@@ -25,10 +28,10 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
-      # Eval-only gate: everything this skips building (packages, system)
-      # is built+pushed by toplevel below. Keeps the gate fast instead of
-      # compiling the kernel twice per run.
-      - run: nix flake check --no-build
+      # Full check (NOT --no-build): stylix's nixvim target realizes a
+      # derivation at eval time (IFD), which --no-build forbids on cold
+      # stores. The cachix pull above keeps this download-fast.
+      - run: nix flake check
 
   toplevel:
     # Build the full host closure so flake-update PRs are binary-cached
@@ -36,7 +39,6 @@ jobs:
     # skips paths already on cache.nixos.org server-side and LRU-evicts
     # stale closures automatically, so the 5GB free tier only ever holds
     # the delta (out-of-tree modules, nvidia, initrd, toplevel refs).
-    needs: [check]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
