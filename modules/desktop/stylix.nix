@@ -21,7 +21,12 @@ delib.module {
           name = "CommitMono Nerd Font";
         };
       };
-      targets.qt.enable = false;
+      targets = {
+        # Qt theming on: flameshot's annotation UI and the kdeconnect
+        # indicator otherwise render stock-light on a dark desktop.
+        # (Noctalia is QML self-themed and unaffected either way.)
+        qt.enable = true;
+      };
     };
 
     # Silent boot / Plymouth lives in core.plymouth.
