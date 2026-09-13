@@ -1923,86 +1923,6 @@
    "module": "sha256-6zgB4EFxJ6xNkqkygzpPdc/Wezt5xEjLl0BewQ9cIHo=",
    "pom": "sha256-XSNvSTcylUZdWexz+DgmRXbeVkI34BitJ2B6vm9A9fI="
   },
-  "io/github/alexzhirkevich#compottie-android/2.3.1": {
-   "module": "sha256-f5mHYJDPRaMVCQaMsqipG/H61nQ/gD0UxR+MQjwBVpk=",
-   "pom": "sha256-0rqSUOhOJC7Jifgi0aYHE/HheSpXNch7RiYNnaXwKD8="
-  },
-  "io/github/alexzhirkevich#compottie-core-android/2.3.1": {
-   "module": "sha256-JTRhjVAz1L1GYw1ucl0L4yQw1tjPT4r5Tp/2GnPb804=",
-   "pom": "sha256-Q+I17OwHDTJjBW8FGw5J+d0WfKdpcKnrxYRg/8nvhik="
-  },
-  "io/github/alexzhirkevich#compottie-core-desktop/2.3.1": {
-   "jar": "sha256-mYwSu3ym/7RiBT3j+ZJ9yWNkGxjtqIIJtt/ZEbP2kls=",
-   "module": "sha256-ofOHnSBFfEi89AbXrchW2M5CFKynACUvzchMGwIyiPo=",
-   "pom": "sha256-LkTfPLOE/aVx0fT7o14A8XPwQiCZjPla2kF5wQHgk3M="
-  },
-  "io/github/alexzhirkevich#compottie-core-iosarm64/2.3.1": {
-   "module": "sha256-ZU3NuEOcck3Hjg+ZZpQ8A1Ja5vzHpuEYdmq94faWIOo=",
-   "pom": "sha256-teEd5sGssC8m/xE9TwFuA3LxkL0xNH/IX2vm8ft8jz4="
-  },
-  "io/github/alexzhirkevich#compottie-core-iossimulatorarm64/2.3.1": {
-   "module": "sha256-yz2n05uJebDRXtyig4wTCH4y7woRHokdYwRgmwe8nuc=",
-   "pom": "sha256-H0AhvSsm9x8GsQixCz2gJpoPXq8wmLaNuSZwD3aVvO0="
-  },
-  "io/github/alexzhirkevich#compottie-core/2.3.1": {
-   "module": "sha256-e4bc73czBvXSx6JBEXrJOzdLevM2JAwd2FVWmbTVh6A=",
-   "pom": "sha256-08j0hM6g6xVrIU/yXkRg/UdyfrOUBsQ0ZGqAV6+gLHk="
-  },
-  "io/github/alexzhirkevich#compottie-desktop/2.3.1": {
-   "jar": "sha256-M9fwAbHVamOoo6GuiREwrpG+AqXA835qK+xb0sekFUM=",
-   "module": "sha256-sRLA5qi+FsBqPBVMPQm7u3GL4BPuwYJp8zVqKOBVBHY=",
-   "pom": "sha256-JM3jl1DhVpRJjBKhoc9S0LbzQ1hJ/bcJTcC0lsr7ajY="
-  },
-  "io/github/alexzhirkevich#compottie-iosarm64/2.3.1": {
-   "module": "sha256-qIDw+/ki5ChASDHbUc+tZzs0IqnHDfEu55TlWDVHHP0=",
-   "pom": "sha256-tmK/2gdVSiwSpDMMk6kJWKjoUTEKP4euZdM+y/kTn4k="
-  },
-  "io/github/alexzhirkevich#compottie-iossimulatorarm64/2.3.1": {
-   "module": "sha256-HgnTY/dTCkUMaIoY2Io4aspa8dAn8A0MI5HmjKj3YTY=",
-   "pom": "sha256-CQNrZ2mIJAUO/nnOCEDWeSjVLIh9bNytO8KuxNDo43w="
-  },
-  "io/github/alexzhirkevich#compottie/2.3.1": {
-   "module": "sha256-mCBMaf3LqlW5lZzJdKI80SDxNKo3Zy+qLPtOJeoqIsw=",
-   "pom": "sha256-qhOHzjzVTnX1MnL87kRW8hcLvPWhny1E1U4uYoPHJzQ="
-  },
-  "io/github/alexzhirkevich#keight-core-android/0.0.07": {
-   "module": "sha256-NnGIdkrc48xNL/iwLNNHpRufmkSf6wa7fAYDQptP7Rg=",
-   "pom": "sha256-4uOmRl97labpwBCh2swECVDyZ8Eb6wlJYoa/1qDYwqI="
-  },
-  "io/github/alexzhirkevich#keight-core-iosarm64/0.0.07": {
-   "module": "sha256-ukePXDgVQm3jYbLbhnR/W17Q+5KjhCC5L91CJzFCv2E=",
-   "pom": "sha256-MtrO/K+MM/XDgROflAVOh59nDd5JOU7CfApLPferSjc="
-  },
-  "io/github/alexzhirkevich#keight-core-iossimulatorarm64/0.0.07": {
-   "module": "sha256-xIpWeeaC6UAj1OQxBD62ojS2VrkMOpaKYOLWwaM+8Ic=",
-   "pom": "sha256-ymhtc7n2Sq6Qgs1/XQLZE7HI630wUcZ8245ElG3DzCk="
-  },
-  "io/github/alexzhirkevich#keight-core-jvm/0.0.07": {
-   "jar": "sha256-ioV3hpYVXzTQmCugLJ3lTQ6DqsQduEhSJkVeO/Bsalc=",
-   "module": "sha256-jfzPrQb2JsoJgwS+C3VZq2eJRaCb/r+ZB32caUkRxYs=",
-   "pom": "sha256-LAAZmRGthCzuwbXk4uhazFBCsr1JXuZRpdLEvNS73ls="
-  },
-  "io/github/alexzhirkevich#keight-core/0.0.07": {
-   "module": "sha256-wbodFpTiW4P91Ar7BrqaGo8Y2YaJo+t5SYOGZqiwGEk=",
-   "pom": "sha256-B0XWcAe2/nUH3TFJKFNAtlH8/UFmX+NlMfRFeAhtF5k="
-  },
-  "io/github/alexzhirkevich#keight-iosarm64/0.0.07": {
-   "module": "sha256-8oToyuPkuIX89c3z8jjnbIjlJkb5G+oVRXLnlS+aNJA=",
-   "pom": "sha256-Hh2qfCmP3NFAjM2RJEk3wlkmbFlVCQygx+lR3y97UP0="
-  },
-  "io/github/alexzhirkevich#keight-iossimulatorarm64/0.0.07": {
-   "module": "sha256-XIOz06lGy4UJg+Mv3uIlh8WCePhNW5ZVMMVjXEn6EaU=",
-   "pom": "sha256-zXSI74zdlIZHi59Wow+CUG6dG0RIeNjdL3tAZQxltiI="
-  },
-  "io/github/alexzhirkevich#keight-jvm/0.0.07": {
-   "jar": "sha256-CtmHhvHdVnbThbGUjEepxGRLhknAKqjQTHh461EMYvU=",
-   "module": "sha256-E77xfNztC//4oguUkyuSPJtSi6mhWOYNnu0Bap9svdo=",
-   "pom": "sha256-2RLrRbp6zQKFgxMrmoTwQKWBeISRlDuGjz6OBbQrqWM="
-  },
-  "io/github/alexzhirkevich#keight/0.0.07": {
-   "module": "sha256-N7PjddeczLVsHVUkXQVxWHYkR0kbPqwxEWojI7219V0=",
-   "pom": "sha256-1ows5pIVnkyQXKDgMoQgHpH16SAUJJ/0/QhbmQ5piCc="
-  },
   "io/github/dokar3#quickjs-kt-jvm/1.0.5": {
    "jar": "sha256-ydCCuZ6cjQCV8SHKlhEu6U1gB/q68pHb83A94AWlewM=",
    "module": "sha256-ikpw9nxcBpeZvygq/nXu+o2KXZbtC7nLu1xu3n/OL4I=",
@@ -2652,14 +2572,6 @@
    "jar": "sha256-E0XxG6YG0VYD1nQFUajCGUfAIVZAdw7GcnH+eL6pfPU=",
    "pom": "sha256-R7I6ef4za3QbgkNMbgSdaBZSVuQF51wQkh/XL6imXY0="
   },
-  "org/jetbrains#annotations-iosArm64/26.1.0": {
-   "module": "sha256-pUOFquxNC5JnVONSzaweWFs2xOE6vzM/aK7KGq6ulD4=",
-   "pom": "sha256-KEQ12S3Ej9l70zVBnvMx8l1znG1ZK0VJ6mRMfPiG4WU="
-  },
-  "org/jetbrains#annotations-iosSimulatorArm64/26.1.0": {
-   "module": "sha256-OTIBGwjMQ/Av/XTl6BxJHPI8Mz+LGordexKeVf3Aq0U=",
-   "pom": "sha256-byE65LJhmuFGAp8qhmMvI0+jRdsn3A7eSOWmFyigiuA="
-  },
   "org/jetbrains#annotations/13.0": {
    "jar": "sha256-rOKhDcji1f00kl7KwD5JiLLA+FFlDJS4zvSbob0RFHg=",
    "pom": "sha256-llrrK+3/NpgZvd4b96CzuJuCR91pyIuGN112Fju4w5c="
@@ -2667,11 +2579,6 @@
   "org/jetbrains#annotations/23.0.0": {
    "jar": "sha256-ew8ZckCCy/y8ZuWr6iubySzwih6hHhkZM+1DgB6zzQU=",
    "pom": "sha256-yUkPZVEyMo3yz7z990P1P8ORbWwdEENxdabKbjpndxw="
-  },
-  "org/jetbrains#annotations/26.1.0": {
-   "jar": "sha256-68euwlLtDH0tBMA51/AOafe4ax9JPHQdZ7PvMbmGsFQ=",
-   "module": "sha256-W07rjbph51OBYVPgxz9WKyDgF+OTk5UtTeTdMbdyYLs=",
-   "pom": "sha256-+NxQzzqsS87HQKkJVfKADkElHpxANjC3W3UtO271vuI="
   },
   "org/jetbrains/androidx/lifecycle#lifecycle-common-iosarm64/2.11.0": {
    "module": "sha256-/kxO1mPdr/QpvhILVlf3BiWzSI3CsA+eSjQ0/vDvq58=",
