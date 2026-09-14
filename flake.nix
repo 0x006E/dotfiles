@@ -171,7 +171,10 @@
             system
             ;
 
-          pkgs = nixpkgs.legacyPackages.${system};
+          # Overlaid set (not bare legacyPackages): plain nixpkgs yields
+          # different derivations (e.g. nuvio's mpv lacks the mpris override),
+          # which miss the cachix cache CI fills from the system closure.
+          pkgs = pkgs-ci;
         })
         // {
           papers = pkgs-ci.papers;
