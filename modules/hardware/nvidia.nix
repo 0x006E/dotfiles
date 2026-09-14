@@ -23,7 +23,7 @@ delib.module {
       modesetting.enable = true;
       powerManagement.enable = true;
       powerManagement.finegrained = true;
-      open = false;
+      open = true;
       nvidiaPersistenced = false;
       nvidiaSettings = true;
       package = config.boot.kernelPackages.nvidiaPackages.stable;

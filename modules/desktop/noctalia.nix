@@ -65,6 +65,7 @@ delib.module {
             ];
             center = [ "workspaces" ];
             end = [
+              "nixos_updates"
               "battery"
               "notifications"
               "volume"

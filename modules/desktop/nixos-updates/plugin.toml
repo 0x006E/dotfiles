@@ -1,0 +1,37 @@
+id = "ntsv/nixos-updates"
+name = "NixOS Updates"
+version = "1.0.0"
+plugin_api = 26
+author = "ntsv"
+license = "MIT"
+icon = "package"
+description = "Tracks nixpkgs flake inputs vs upstream HEAD, dotfiles CI status and open PRs. GitHub REST, no auth. Polls every 30 min, click to check now."
+tags = [ "nix", "updates", "github" ]
+
+[[widget]]
+id = "updates"
+entry = "widget.luau"
+
+  [[widget.setting]]
+  key = "flake_path"
+  type = "string"
+  label = "Flake path"
+  default = "/home/nithin/nix"
+
+  [[widget.setting]]
+  key = "poll_minutes"
+  type = "int"
+  label = "Poll interval (minutes)"
+  default = 30
+  min = 5
+  max = 720
+
+  [[widget.setting]]
+  key = "dotfiles_repo"
+  type = "string"
+  label = "Dotfiles repo (owner/name)"
+  default = "0x006E/dotfiles"
+
+  # Right-click opens the repo PR list; left-click (onClick) forces a check.
+  [widget.actions]
+  right = "exec xdg-open https://github.com/0x006E/dotfiles/pulls"

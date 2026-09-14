@@ -67,10 +67,11 @@ delib.module {
             export DISPLAY=${myconfig.constants.xwaylandDisplay}
             export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
 
-            # Binary-cache verdict memo: tree state + timestamp, so repeated
-            # switches are instant and only re-evaluate when the tree changes
-            # or the verdict ages out (CI keeps pushing after a commit,
-            # flipping BUILD -> CACHED with no local change).
+            # Opt-in pre-switch binary-cache verdict (default off): answering
+            # "will this switch build locally?" costs a full extra flake
+            # eval (nixvim IFD included), roughly doubling switch time.
+            # Set NIXOS_CACHE_CHECK=1 when you want the warning before
+            # local builds; otherwise rs/rb go straight to nh.
             nixos_cache_max_age=600
             nixos_cache_state_file="/tmp/nixos-toplevel-cache-$USER.state"
 
@@ -97,7 +98,11 @@ delib.module {
                 return 2
               fi
               built=$(echo "$plan" | grep -oP 'these \K[0-9]+(?= derivations? will be built)' | head -n 1)
-              built=${built:-0}
+              # NOTE: no brace-style bash default here — that syntax is
+              # Nix interpolation inside indented strings; spell it out.
+              if [ -z "$built" ]; then
+                built=0
+              fi
               if [ "$built" -eq 0 ]; then
                 verdict=CACHED
                 rc=0
@@ -131,40 +136,33 @@ delib.module {
               _esp-ok || return 1
               command nh "$@"
             }
-            rs() {
+            # Shared gate for rs/rb: ESP fullness check (fast) plus the
+            # opt-in cache verdict above. Returns non-zero to abort.
+            _switch-guard() {
               _esp-ok || return 1
-              local verdict rc
-              verdict=$(nixos-cache-verdict); rc=$?
-              if [ $rc -eq 0 ]; then
-                echo "toplevel fully cached — fast switch, no local build."
-              elif [ $rc -eq 1 ]; then
-                echo "WARNING: $verdict"
-                read -r -p "Switch anyway (builds locally)? [y/N] " ans
-                case "$ans" in
-                  [Yy]*) ;;
-                  *) echo "aborted."; return 1;;
-                esac
-              else
-                echo "cache state unknown — proceeding blind."
+              if [ "$NIXOS_CACHE_CHECK" = "1" ]; then
+                local verdict rc
+                verdict=$(nixos-cache-verdict); rc=$?
+                if [ $rc -eq 0 ]; then
+                  echo "toplevel fully cached — fast switch, no local build."
+                elif [ $rc -eq 1 ]; then
+                  echo "WARNING: $verdict"
+                  read -r -p "Proceed anyway (builds locally)? [y/N] " ans
+                  case "$ans" in
+                    [Yy]*) ;;
+                    *) echo "aborted."; return 1;;
+                  esac
+                else
+                  echo "cache state unknown — proceeding blind."
+                fi
               fi
+            }
+            rs() {
+              _switch-guard || return 1
               command nh os switch ~/nix "$@"
             }
             rb() {
-              _esp-ok || return 1
-              local verdict rc
-              verdict=$(nixos-cache-verdict); rc=$?
-              if [ $rc -eq 0 ]; then
-                echo "toplevel fully cached — fast switch, no local build."
-              elif [ $rc -eq 1 ]; then
-                echo "WARNING: $verdict"
-                read -r -p "Switch anyway (builds locally)? [y/N] " ans
-                case "$ans" in
-                  [Yy]*) ;;
-                  *) echo "aborted."; return 1;;
-                esac
-              else
-                echo "cache state unknown — proceeding blind."
-              fi
+              _switch-guard || return 1
               command nh os boot ~/nix "$@"
             }
           '';

@@ -255,6 +255,9 @@ delib.module {
                     {
                       "Mod+Shift+T".action = focus-workspace "terminal";
                       "Mod+Shift+Z".action = focus-workspace "browser";
+                      # Manual refresh for the nixos-updates bar widget
+                      # (left-click on the widget does the same).
+                      "Mod+Shift+U".action = sh "noctalia msg plugin ntsv/nixos-updates:updates all check";
                       "Mod+Shift+K".action =
                         sh "if systemctl is-active --quiet kanata-default; then systemctl stop kanata-default && notify-send 'Kanata off' --icon=input-keyboard; else systemctl start kanata-default && notify-send 'Kanata on (homerow mods)' --icon=input-keyboard; fi";
                       "Mod+Comma".action = consume-window-into-column;
