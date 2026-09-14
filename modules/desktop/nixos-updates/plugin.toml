@@ -33,6 +33,29 @@ label_key = "settings.dotfiles_repo.label"
 description_key = "settings.dotfiles_repo.description"
 default = "0x006E/dotfiles"
 
+[[setting]]
+key = "max_inputs"
+type = "int"
+label_key = "settings.max_inputs.label"
+description_key = "settings.max_inputs.description"
+default = 12
+min = 1
+max = 25
+
+# Headless poller: owns GitHub polling, notifications and the shared
+# snapshot. The widget and panel below are thin renderers.
+[[service]]
+id = "fetcher"
+entry = "service.luau"
+
+[[panel]]
+id = "main"
+entry = "panel.luau"
+width = 400
+height = 560
+placement = "attached"
+open_near_click = true
+
 [[widget]]
 id = "updates"
 entry = "widget.luau"

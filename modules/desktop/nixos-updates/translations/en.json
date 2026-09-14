@@ -11,6 +11,10 @@
     "dotfiles_repo": {
       "label": "Dotfiles repo (owner/name)",
       "description": "Repo whose CI runs and open PRs are shown"
+    },
+    "max_inputs": {
+      "label": "Max tracked inputs",
+      "description": "How many flake inputs to compare against upstream (nixpkgs first)"
     }
   }
 }
