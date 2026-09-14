@@ -8,30 +8,35 @@ icon = "package"
 description = "Tracks nixpkgs flake inputs vs upstream HEAD, dotfiles CI status and open PRs. GitHub REST, no auth. Polls every 30 min, click to check now."
 tags = [ "nix", "updates", "github" ]
 
+# Plugin-level settings: one set shared by every entry, edited from
+# Settings → Plugins, readable via noctalia.getConfig in widget.luau.
+[[setting]]
+key = "flake_path"
+type = "string"
+label_key = "settings.flake_path.label"
+description_key = "settings.flake_path.description"
+default = "/home/nithin/nix"
+
+[[setting]]
+key = "poll_minutes"
+type = "int"
+label_key = "settings.poll_minutes.label"
+description_key = "settings.poll_minutes.description"
+default = 30
+min = 5
+max = 720
+
+[[setting]]
+key = "dotfiles_repo"
+type = "string"
+label_key = "settings.dotfiles_repo.label"
+description_key = "settings.dotfiles_repo.description"
+default = "0x006E/dotfiles"
+
 [[widget]]
 id = "updates"
 entry = "widget.luau"
 
-  [[widget.setting]]
-  key = "flake_path"
-  type = "string"
-  label = "Flake path"
-  default = "/home/nithin/nix"
-
-  [[widget.setting]]
-  key = "poll_minutes"
-  type = "int"
-  label = "Poll interval (minutes)"
-  default = 30
-  min = 5
-  max = 720
-
-  [[widget.setting]]
-  key = "dotfiles_repo"
-  type = "string"
-  label = "Dotfiles repo (owner/name)"
-  default = "0x006E/dotfiles"
-
   # Right-click opens the repo PR list; left-click (onClick) forces a check.
   [widget.actions]
-  right = "exec xdg-open https://github.com/0x006E/dotfiles/pulls"
+  right = "exec /run/current-system/sw/bin/xdg-open https://github.com/0x006E/dotfiles/pulls"

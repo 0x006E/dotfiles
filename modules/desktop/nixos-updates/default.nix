@@ -12,17 +12,20 @@ delib.module {
       xdg.dataFile = {
         "noctalia/plugins/nixos-updates/plugin.toml".source = ./plugin.toml;
         "noctalia/plugins/nixos-updates/widget.luau".source = ./widget.luau;
+        "noctalia/plugins/nixos-updates/translations/en.json".source = ./translations/en.json;
       };
 
       programs.noctalia.settings = {
         plugins.enabled = [ "ntsv/nixos-updates" ];
-        # Entry settings land on the widget instance table, which is what
-        # noctalia.getConfig reads (see widget.luau cfg()).
-        widget.nixos_updates = {
-          type = "ntsv/nixos-updates:updates";
+        # Plugin-level settings (see [[setting]] in plugin.toml), read
+        # via noctalia.getConfig in widget.luau.
+        plugin_settings."ntsv/nixos-updates" = {
           flake_path = "/home/${myconfig.constants.username}/nix";
           poll_minutes = 30;
           dotfiles_repo = "0x006E/dotfiles";
+        };
+        widget.nixos_updates = {
+          type = "ntsv/nixos-updates:updates";
         };
       };
     };

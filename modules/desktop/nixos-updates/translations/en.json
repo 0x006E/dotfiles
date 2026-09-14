@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "flake_path": {
+      "label": "Flake path",
+      "description": "Directory containing flake.nix and flake.lock to track"
+    },
+    "poll_minutes": {
+      "label": "Poll interval (minutes)",
+      "description": "How often to query the GitHub API (unauthenticated quota is 60 requests/hour)"
+    },
+    "dotfiles_repo": {
+      "label": "Dotfiles repo (owner/name)",
+      "description": "Repo whose CI runs and open PRs are shown"
+    }
+  }
+}

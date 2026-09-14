@@ -355,7 +355,10 @@ local function refreshLocal(done)
     end
   end
 
-  local cmd = "D="
+  -- Noctalia's launcher scrubs dev tools (git) from PATH, so restore
+  -- the usual user/system locations before invoking git.
+  local cmd = "export PATH=\"$HOME/.nix-profile/bin:/etc/profiles/per-user/$USER/bin:/run/current-system/sw/bin:/usr/bin:/bin:$PATH\""
+    .. "; D="
     .. shDir()
     .. '; H=$(git -C $D rev-parse HEAD 2>/dev/null || echo "?")'
     .. '; if [ -n "$(git -C $D status --porcelain 2>/dev/null | head -n 1)" ]; then F=dirty; else F=clean; fi'
@@ -620,6 +623,6 @@ function onIpc(event, _payload)
   if event == "check" then
     onClick()
   elseif event == "open" then
-    noctalia.runAsync("xdg-open 'https://github.com/" .. dotfilesRepo() .. "/pulls'")
+    noctalia.runAsync("/run/current-system/sw/bin/xdg-open 'https://github.com/" .. dotfilesRepo() .. "/pulls'")
   end
 end
