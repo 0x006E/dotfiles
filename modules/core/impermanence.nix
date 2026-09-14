@@ -21,6 +21,7 @@ let
     "projects"
     ".ssh"
     ".gnupg"
+    ".java/.userPrefs"
     "nix"
     ".local/state"
     ".local/share/atuin"
