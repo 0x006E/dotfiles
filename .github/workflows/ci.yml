@@ -24,6 +24,18 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v7
+      # Persist the flake evaluator (Git/fetcher) cache: without this,
+      # every job re-downloads + re-unpacks all inputs ("unpacking ...
+      # into the Git cache"). /nix/store is already shared via
+      # magic-nix-cache + cachix; this covers ~/.cache/nix instead.
+      # Safe across lock changes: nix verifies narHash on use, and the
+      # key misses on a new flake.lock.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/nix
+          key: nix-eval-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          restore-keys: |
+            nix-eval-${{ runner.os }}-
       - uses: DeterminateSystems/nix-installer-action@main
       # Pull-only: reuse paths previous runs pushed (e.g. the kernel)
       # instead of compiling them a second time on this runner.
@@ -48,6 +60,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
+    # Same evaluator-cache rationale as the check job above; also speeds
+    # up the nix-fast-build profile install below (fewer refetches).
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/nix
+        key: nix-eval-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+        restore-keys: |
+          nix-eval-${{ runner.os }}-
     - name: Free Disk Space Before Build
       run: |
         echo "Disk space before cleanup:"
