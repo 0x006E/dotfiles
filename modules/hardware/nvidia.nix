@@ -26,7 +26,7 @@ delib.module {
       open = true;
       nvidiaPersistenced = false;
       nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
       prime = {
         offload.enable = true;
         offload.enableOffloadCmd = true;
