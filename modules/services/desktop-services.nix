@@ -24,7 +24,7 @@ delib.module {
     # Greeter: matches the Noctalia shell. Lists niri (default) and sway
     # from wayland-sessions; accounts-daemon is enabled by the module for
     # user avatars.
-    programs.noctalia-greeter = {
+    services.displayManager.noctalia-greeter = {
       enable = true;
       settings = {
         keyboard.layout = "us";
