@@ -1,7 +1,6 @@
 {
   delib,
   inputs,
-  pkgs,
   ...
 }:
 delib.module {
@@ -12,7 +11,7 @@ delib.module {
     imports = [ inputs.noctalia-greeter.nixosModules.default ];
   };
 
-  nixos.ifEnabled = { ... }: {
+  nixos.ifEnabled = { myconfig, ... }: {
     services = {
       gnome.gcr-ssh-agent.enable = false;
       libinput.enable = true;
@@ -24,15 +23,15 @@ delib.module {
     # Greeter: matches the Noctalia shell. Lists niri (default) and sway
     # from wayland-sessions; accounts-daemon is enabled by the module for
     # user avatars.
+    # Rice-specific appearance (cursor, theme mode, wallpaper) lives in
+    # rices/*/default.nix; the day/night toggle keeps the greeter in sync
+    # at runtime via `noctalia msg greeter-sync`.
     services.displayManager.noctalia-greeter = {
       enable = true;
       settings = {
         keyboard.layout = "us";
-        cursor = {
-          theme = "catppuccin-mocha-light-cursors";
-          size = 24;
-          path = "${pkgs.catppuccin-cursors.mochaLight}/share/icons";
-        };
+        # Single-user machine: open directly on the password step.
+        user.default = myconfig.constants.username;
       };
     };
   };

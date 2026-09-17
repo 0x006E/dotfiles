@@ -39,7 +39,10 @@ delib.module {
             # Stable path that survives rebuilds/GC; overrides the HM module's
             # volatile config.stylix.image default.
             default.path = lib.mkForce "/etc/wallpapers/current";
-            directory = lib.mkForce "/etc/wallpapers";
+            # Fetched library (desktop.wallpapers); the day/night toggle and
+            # `wallpaper-next` rotate within it. /etc/wallpapers/current above
+            # stays as the fallback.
+            directory = lib.mkForce "/var/lib/wallpapers";
           };
           # theme.mode is intentionally unset: Stylix's noctalia target drives
           # it from the active rice polarity (dark/light).

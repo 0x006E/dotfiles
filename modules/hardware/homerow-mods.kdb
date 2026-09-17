@@ -1,13 +1,20 @@
 ;; defsrc is still necessary
 (defcfg
   process-unmapped-keys yes
+  ;; Required by defchordsv2; also makes tap-hold more responsive: holding
+  ;; a homerow mod while striking another key commits to hold immediately.
+  concurrent-tap-hold yes
+  ;; After any normal keypress, skip chord detection for 150ms. Fast typing
+  ;; can never trip the nav chord; a deliberate f+j still lands (pause,
+  ;; then press both within 80ms).
+  chords-v2-min-idle 150
   ;; NOTE: no linux-dev line on purpose: kanata auto-detects keyboards, so
   ;; boards that are absent now (or plugged in later, any port) are covered
   ;; with no config change. Unmapped keys pass through untouched, so the
   ;; mouse-dongle kbd interfaces are harmless.
 )
 (defsrc
-  caps a s d f j k l ;
+  caps a s d f j k l ; h u i o p
 )
 (defvar
   tap-time 200
@@ -25,6 +32,33 @@
   l (tap-hold $tap-time $hold-time l ralt)
   ; (tap-hold $tap-time $hold-time ; rmet)
 )
+
+;; Nav chord: press f+j together (either order, within 80ms) to hold the
+;; nav layer. Gated twice: the kanata service itself is behind the
+;; Mod+Shift+K toggle, and the chord needs a deliberate paused press, so
+;; base typing behaviour is byte-for-byte unchanged when you don't use it.
+(defchordsv2
+  (f j) (layer-while-held nav) 80 first-release ()
+)
+
 (deflayer base
-  @escctrl @a @s @d @f @j @k @l @;
+  @escctrl @a @s @d @f @j @k @l @; h u i o p
+)
+
+;; Nav layer: hjkl become arrows so niri's directional focus/move binds work
+;; untouched. The Fn-gated keys on this laptop (home/pgup/pgdn/end) live on
+;; u i o p instead: outer pair jumps to extremes, inner pair pages.
+;; Everything else is transparent, so homerow mods keep working under nav;
+;; caps is esc for quick vim escapes.
+(deflayermap (nav)
+  h left
+  j down
+  k up
+  l right
+  u home
+  i pgup
+  o pgdn
+  p end
+  caps esc
+  _ _
 )

@@ -43,6 +43,7 @@ delib.host {
     };
 
     desktop = {
+      auto-rice.enable = true;
       fonts.enable = true;
       kanshi.enable = true;
       niri.enable = true;
@@ -50,6 +51,7 @@ delib.host {
       noctalia.enable = true;
       stylix.enable = true;
       user-services.enable = true;
+      wallpapers.enable = true;
     };
   };
 }

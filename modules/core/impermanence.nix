@@ -240,6 +240,9 @@ delib.module {
           # and mutable UI state; declarative greeter.toml lives here too.
           "/var/lib/noctalia-greeter"
 
+          # Fetched wallpaper library (world-readable: session + greeter).
+          "/var/lib/wallpapers"
+
           # Services
           "/var/lib/docker"
           "/var/lib/libvirt"
