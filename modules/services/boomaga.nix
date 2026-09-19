@@ -1,4 +1,9 @@
-{ delib, pkgs, ... }:
+{
+  delib,
+  pkgs,
+  lib,
+  ...
+}:
 delib.module {
   name = "services.boomaga";
   options = delib.singleEnableOption true;
@@ -38,19 +43,24 @@ delib.module {
       environment.systemPackages = [ pkgs.boomaga ];
 
       # The backend chowns the spool file and setuids to the job owner,
-      # i.e. it must run as root, but cupsd spawns backends as cups:lp.
-      # Serve a setuid-root wrapper from cupsd's ServerBin tree instead
-      # of the plain store binary.
-      security.wrappers.boomaga-backend = {
-        owner = "root";
-        group = "root";
-        setuid = true;
-        source = "${pkgs.boomaga}/lib/cups/backend/boomaga";
-      };
+      # i.e. it needs root-like privilege, but cupsd spawns backends as
+      # cups:lp — and cupsd refuses backends with the setuid bit set
+      # ("insecure permissions"). So install a root-owned copy carrying
+      # only the capabilities the backend needs (chown/fowner for the
+      # spool files, setuid/setgid to become the job owner) and serve it
+      # from cupsd's ServerBin tree. File capabilities don't show up in
+      # st_mode, so cupsd's permission check accepts the binary.
+      system.activationScripts.boomagaBackend = lib.stringAfter [ "users" "groups" ] ''
+        mkdir -p /var/lib/boomaga
+        cp -f ${pkgs.boomaga}/lib/cups/backend/boomaga /var/lib/boomaga/backend
+        chown root:lp /var/lib/boomaga/backend
+        chmod 0750 /var/lib/boomaga/backend
+        ${pkgs.libcap}/bin/setcap cap_chown,cap_fowner,cap_setuid,cap_setgid+ep /var/lib/boomaga/backend
+      '';
 
       services.printing.bindirCmds = ''
         rm -f $out/lib/cups/backend/boomaga
-        ln -s /run/wrappers/bin/boomaga-backend $out/lib/cups/backend/boomaga
+        ln -s /var/lib/boomaga/backend $out/lib/cups/backend/boomaga
       '';
     };
 }

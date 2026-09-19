@@ -46,8 +46,8 @@ stdenv.mkDerivation rec {
   # The CUPS backend is written to run as root: it chowns the spool file
   # and setuids to the job owner before execing the GUI. cupsd on NixOS
   # spawns backends as cups:lp, so don't hard-fail on EPERM here; the
-  # services.boomaga module installs the backend setuid-root via
-  # security.wrappers so the chown/setuid succeed at runtime.
+  # services.boomaga module grants the backend the capabilities it needs
+  # (chown/fowner/setuid/setgid) via setcap so they succeed at runtime.
   postPatch = ''
     substituteInPlace src/backend/cups_backend/main.cpp \
       --replace-fail "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))" \
