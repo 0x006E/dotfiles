@@ -27,7 +27,10 @@ delib.module {
         users.${username} = {
           isNormalUser = true;
           hashedPasswordFile = config.sops.secrets."passwords/nithin".path;
-          extraGroups = [ "wheel" ];
+          extraGroups = [
+            "wheel"
+            "networkmanager"
+          ];
         };
 
         users.guest = {
