@@ -95,6 +95,10 @@ delib.module {
 
         for job in "''${jobs[@]}"; do
           [[ -e "$job" ]] || continue
+          if [[ ! -r "$job" ]]; then
+            echo "boomaga-spool-watch: skipping unreadable job file $job" >&2
+            continue
+          fi
           ${pkgs.boomaga}/bin/boomaga --started-from-cups "$job"
           # The GUI consumes the file on load (copies to a private tmp
           # and deletes the original); wait for that first.
