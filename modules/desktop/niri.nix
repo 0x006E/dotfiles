@@ -258,9 +258,6 @@ delib.module {
                       # Manual refresh for the nixos-updates bar widget
                       # (left-click on the widget does the same).
                       "Mod+Shift+U".action = sh "noctalia msg plugin ntsv/nixos-updates:updates all check";
-                      # Manual day/night rice toggle (auto-rice timer only acts on
-                      # sun edges, so this is never reverted behind your back).
-                      "Mod+Shift+Y".action = sh "rice-toggle toggle";
                       "Mod+Shift+K".action =
                         sh "if systemctl is-active --quiet kanata-default; then systemctl stop kanata-default && notify-send 'Kanata off' --icon=input-keyboard; else systemctl start kanata-default && notify-send 'Kanata on (homerow mods)' --icon=input-keyboard; fi";
                       "Mod+Comma".action = consume-window-into-column;
