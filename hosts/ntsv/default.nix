@@ -23,6 +23,7 @@ delib.host {
     };
 
     services = {
+      boomaga.enable = true;
       desktop-services.enable = true;
       printing.enable = true;
       system-services.enable = true;

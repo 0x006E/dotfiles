@@ -3,35 +3,37 @@
   stdenv,
   fetchFromGitHub,
   cmake,
+  pkg-config,
   cups,
+  poppler,
+  zlib,
   qtbase,
   qttools,
   wrapQtAppsHook,
-  pkg-config,
-  poppler,
 }:
 stdenv.mkDerivation rec {
   pname = "boomaga";
-  version = "3.5.0"; # Update this to the correct version
+  version = "3.5.0";
 
   src = fetchFromGitHub {
     owner = "Boomaga";
     repo = "boomaga";
-    rev = "7f7ad4754b20a1027c5095b660c5229353b64c8d";
-    sha256 = "1mbi66nym7s90x8zhb0dlx3wvrh7by54zs1xfafbmavg9934sdx4"; # Update with correct hash
+    rev = "v${version}";
+    hash = "sha256-d+Tx2npBiDx9qGM4gBcPump/10i7JQoPFylxnmcmWoU=";
   };
 
   nativeBuildInputs = [
     cmake
-    wrapQtAppsHook
     pkg-config
+    qttools
+    wrapQtAppsHook
   ];
 
   buildInputs = [
     cups.dev
-    qtbase
-    qttools
     poppler
+    zlib
+    qtbase
   ];
 
   cmakeFlags = [
@@ -41,18 +43,21 @@ stdenv.mkDerivation rec {
     "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
   ];
 
+  # The CUPS backend is written to run as root: it chowns the spool file
+  # and setuids to the job owner before execing the GUI. cupsd on NixOS
+  # spawns backends as cups:lp, so don't hard-fail on EPERM here; the
+  # services.boomaga module installs the backend setuid-root via
+  # security.wrappers so the chown/setuid succeed at runtime.
   postPatch = ''
     substituteInPlace src/backend/cups_backend/main.cpp \
-        --replace "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))"
-    substituteInPlace CMakeLists.txt \
-        --replace "cmake_minimum_required(VERSION 3.0.0)" "cmake_minimum_required(VERSION 3.5.0)"
+      --replace-fail "if (chown(dir.c_str(), pwd->pw_uid, -1) != 0)" "if ((chown(dir.c_str(), pwd->pw_uid, -1) != 0) && (errno != EPERM))" \
+      --replace-fail "if (chown(destFile.c_str(), args.pwd->pw_uid, -1) != 0)" "if ((chown(destFile.c_str(), args.pwd->pw_uid, -1) != 0) && (errno != EPERM))"
   '';
 
   meta = with lib; {
     description = "Virtual printer for viewing and editing before printing";
-    homepage = "https://www.boomaga.org/";
+    homepage = "https://github.com/Boomaga/boomaga";
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ ]; # Add your name if you're maintaining this package
     platforms = platforms.linux;
   };
 }

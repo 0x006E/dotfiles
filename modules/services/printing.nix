@@ -22,27 +22,13 @@ delib.module {
       };
 
       hardware = {
-        printers = {
-          ensurePrinters = [
-            {
-              name = "Boomaga";
-              deviceUri = "boomaga:/";
-              model = "boomaga/boomaga.ppd";
-              description = "Boomaga Virtual Printer";
-              location = "Local Virtual Printer";
-              ppdOptions = { };
-            }
-          ];
-        };
         sane.enable = true;
         sane.extraBackends = [ pkgs-small.hplipWithPlugin ];
       };
 
       services = {
-        dbus.packages = [ pkgs.boomaga ];
-        printing.drivers = with pkgs; [
+        printing.drivers = [
           pkgs-small.hplipWithPlugin
-          boomaga
         ];
       };
 
@@ -51,13 +37,7 @@ delib.module {
         "lp"
       ];
 
-      systemd.tmpfiles.rules = [
-        "d /var/cache/boomaga 0775 root lp - -"
-        "d /var/cache/boomaga/${username} 0770 ${username} lp - -"
-      ];
-
       environment.systemPackages = with pkgs; [
-        boomaga
         simple-scan
       ];
     };
