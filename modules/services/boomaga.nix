@@ -131,7 +131,7 @@ delib.module {
               pkgs.gnugrep
             ]
           }";
-          ExecStart = "${watch}/bin/boomaga-spool-watch";
+          ExecStart = "${watch}";
         };
       };
 
