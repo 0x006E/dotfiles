@@ -1923,14 +1923,14 @@
    "module": "sha256-6zgB4EFxJ6xNkqkygzpPdc/Wezt5xEjLl0BewQ9cIHo=",
    "pom": "sha256-XSNvSTcylUZdWexz+DgmRXbeVkI34BitJ2B6vm9A9fI="
   },
-  "io/github/dokar3#quickjs-kt-jvm/1.0.5": {
-   "jar": "sha256-ydCCuZ6cjQCV8SHKlhEu6U1gB/q68pHb83A94AWlewM=",
-   "module": "sha256-ikpw9nxcBpeZvygq/nXu+o2KXZbtC7nLu1xu3n/OL4I=",
-   "pom": "sha256-3PgMO2LHs7vLVayqE2p49XffJrRktecODENQNNgPx28="
+  "io/github/dokar3#quickjs-kt-jvm/1.0.15": {
+   "jar": "sha256-yKjQtH4sPNb7IephggS6CgQCfgnkHcA2wPYFGII/PW0=",
+   "module": "sha256-VJ9FHS754XY344Y/F4G3ttAEeqXelse5BxDjn5U2DK4=",
+   "pom": "sha256-spWHWbGzSkzGvXaJJsSinHaq7leMLfuA2OLhu90wCTY="
   },
-  "io/github/dokar3#quickjs-kt/1.0.5": {
-   "module": "sha256-YRls4EsknW2lTEma5eTKs9nnxDEY5w68DSWjFBQ2KTo=",
-   "pom": "sha256-XOE9xhJelh4b9GHJSbthWC9O9E3L99lLeFWO8po2ZVs="
+  "io/github/dokar3#quickjs-kt/1.0.15": {
+   "module": "sha256-coWZJpTxEW/co7G8iw9v+WnKR6Mw97vG7IY+tOYSfLk=",
+   "pom": "sha256-jJ6a7BWUal4MwlXXy2i/bmJYXLK1lfOF+hDaljoMQHQ="
   },
   "io/github/jan-tennert/supabase#auth-kt-android/3.4.1": {
    "module": "sha256-HyiPZ5qMT/j7KsIMPZvWdO0eK7GceElgevtKbK87TQc=",
