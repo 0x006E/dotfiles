@@ -58,3 +58,13 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 
 - Commit style: conventional commits (`feat(scope):`, `fix(scope):`).
 - `[create-pull-request] automated change` / `flake.lock: Update` commits come from CI auto-update workflows — don't recreate manually.
+
+## Agent skills
+
+### Issue tracker
+
+Self-hosted Vikunja at `http://127.0.0.1:3456` (localhost-only, sqlite). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: root `CONTEXT.md` + `docs/adr/`, created lazily by `/domain-modeling`. See `docs/agents/domain.md`.
