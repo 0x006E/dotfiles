@@ -71,24 +71,28 @@ delib.module {
               enabled = true;
             };
             # Structured step-by-step reasoning: better grilling, planning,
-            # and wayfinder ticket resolution.
+            # and wayfinder ticket resolution. (The old official
+            # @modelcontextprotocol/server-sequential-thinking is gone from
+            # npm; this is the maintained replacement.)
             sequential-thinking = {
               type = "local";
               command = [
                 "npx"
                 "-y"
-                "@modelcontextprotocol/server-sequential-thinking"
+                "mcp-sequentialthinking-tools"
               ];
               enabled = true;
             };
             # Web fetching for agents: primary-source reads for research
-            # tickets without leaving the session.
+            # tickets without leaving the session. (The old official
+            # @modelcontextprotocol/server-fetch is gone from npm; fetch-mcp
+            # is the maintained replacement.)
             fetch = {
               type = "local";
               command = [
                 "npx"
                 "-y"
-                "@modelcontextprotocol/server-fetch"
+                "fetch-mcp"
               ];
               enabled = true;
             };
