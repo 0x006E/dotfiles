@@ -16,9 +16,9 @@ delib.module {
       frontendHostname = "127.0.0.1:3456";
       database.type = "sqlite";
       settings.service = {
-        # First registered account becomes admin. Create yours, then flip
-        # this to false to close registration.
-        enableregistration = true;
+        # Registration is closed; the admin account already exists. Flip to
+        # true temporarily if a new local account is ever needed.
+        enableregistration = false;
       };
     };
 
