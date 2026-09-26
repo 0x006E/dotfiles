@@ -5,10 +5,6 @@
       "type": "local",
       "command": ["nix", "run", "nixpkgs#mcp-nixos", "--"]
     },
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp"]
-    },
     "codegraph": {
       "type": "local",
       "command": ["codegraph", "serve", "--mcp"],

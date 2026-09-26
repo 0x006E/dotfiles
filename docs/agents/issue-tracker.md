@@ -9,12 +9,24 @@ hosting involved, just the task UI plus a REST API agents can drive.
   Create one project per repo you plan (e.g. project `dotfiles` for `~/nix`),
   then set `service.enableregistration = false` in
   `modules/services/vikunja.nix` to close registration.
-- **Agent access**: personal API token via Avatar → Settings → API tokens,
-  then `Authorization: Bearer <token>` against
+- **Agent access (MCP, preferred)**: opencode talks to the tracker through
+  the `vikunja` MCP server declared in `opencode.json` (stdio bridge,
+  works against the current 2.6 API). It needs one env var in opencode's
+  environment — create the value once in the Vikunja UI under Avatar →
+  Settings → API tokens, then export it before starting opencode:
+  `export VIKUNJA_API_TOKEN='<token>'`. The token carries your full API
+  permissions (the bridge runs in safe mode: deletes stay off unless
+  `ENABLE_TASK_DELETE`/`ENABLE_LABEL_DELETE` are set).
+- **Agent access (raw REST)**: `Authorization: Bearer <same token>` against
   `http://127.0.0.1:3456/api/v1`. Exact request schemas:
   <https://vikunja.io/docs/api>. Key endpoints: `/projects`,
   `/projects/{id}/tasks`, `/tasks/{id}`, `/tasks/{id}/comments`,
   `/tasks/{id}/labels`, `/tasks/{id}/relations`, `/tasks/{id}/assignees`.
+- **Future (native MCP)**: once nixpkgs ships Vikunja ≥ 2.7, drop the bridge
+  for the built-in endpoint — `remote` type, URL
+  `http://127.0.0.1:3456/api/v2/mcp`, bearer token minted under
+  Avatar → Settings → MCP with a permission preset (read-only or typed
+  read+write instead of a full API token).
 
 ## Conventions
 
