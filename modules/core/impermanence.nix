@@ -37,6 +37,7 @@ let
     ".var"
     ".config/dconf"
     ".config/nuvio"
+    ".config/opencode"
     ".config/zen"
   ];
 in

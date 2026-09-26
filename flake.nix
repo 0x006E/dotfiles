@@ -98,6 +98,12 @@
       url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Pinned source for opencode agent skills (wayfinder + runtime deps).
+    # Non-flake upstream: raw skill files consumed via xdg.configFile.
+    mattpocock-skills = {
+      url = "github:mattpocock/skills";
+      flake = false;
+    };
   };
 
   outputs =
