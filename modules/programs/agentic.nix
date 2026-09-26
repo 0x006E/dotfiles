@@ -25,7 +25,6 @@ delib.module {
     # Global opencode config: available in every repo session, merged by
     # opencode with project-local opencode.json files. Tracker MCP lives
     # here (not per-project) because wayfinder runs across repos.
-    # VIKUNJA_API_TOKEN stays out of the store via {env:...} interpolation.
     xdg.configFile =
       let
         skills = inputs.mattpocock-skills;
@@ -52,18 +51,13 @@ delib.module {
                 "@upstash/context7-mcp"
               ];
             };
-            vikunja = {
-              type = "local";
-              command = [
-                "npx"
-                "-y"
-                "@democratize-technology/vikunja-mcp"
-              ];
+            # Notion tracker: official hosted MCP over Streamable HTTP.
+            # Auth is OAuth, completed interactively in opencode on first
+            # use — no tokens in config, no local services.
+            notion = {
+              type = "remote";
+              url = "https://mcp.notion.com/mcp";
               enabled = true;
-              environment = {
-                VIKUNJA_URL = "http://127.0.0.1:3456/api/v1";
-                VIKUNJA_API_TOKEN = "{env:VIKUNJA_API_TOKEN}";
-              };
             };
             # Cross-session memory: agents persist decisions, prefs, and
             # context pointers here instead of re-deriving them each session.

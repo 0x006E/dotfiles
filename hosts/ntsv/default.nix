@@ -27,7 +27,6 @@ delib.host {
       desktop-services.enable = true;
       printing.enable = true;
       system-services.enable = true;
-      vikunja.enable = true;
       virtualization.enable = true;
       wgcf.enable = true;
     };

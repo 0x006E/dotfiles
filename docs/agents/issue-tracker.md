@@ -1,62 +1,47 @@
-# Issue tracker: Vikunja (self-hosted)
+# Issue tracker: Notion
 
-Issues and specs for this repo live in the local Vikunja instance — no git
-hosting involved, just the task UI plus a REST API agents can drive.
+Issues and specs for this repo live in Notion, reached by agents through
+Notion's official hosted MCP (`https://mcp.notion.com/mcp`, Streamable
+HTTP). No local services, no tokens in config: auth is OAuth, completed
+interactively in opencode on first use, and respects your existing
+workspace permissions.
 
-- **UI**: `http://127.0.0.1:3456` (single binary serves frontend + API,
-  sqlite backend, localhost-only)
-- **First run**: register the first account — it automatically becomes admin.
-  Create one project per repo you plan (e.g. project `dotfiles` for `~/nix`),
-  then set `service.enableregistration = false` in
-  `modules/services/vikunja.nix` to close registration.
-- **Agent access (MCP, preferred)**: opencode talks to the tracker through
-  the `vikunja` MCP server declared in the global opencode config
-  (stdio bridge, works against the current 2.6 API). The token is
-  sops-managed: mint it once in the Vikunja UI under Avatar → Settings →
-  API tokens, then store it (one-time key setup first —
-  `sudo cat /persist/var/lib/sops-nix/key.txt` append the `AGE-SECRET-KEY`
-  line to `~/.config/sops/age/keys.txt` with mode 600 — then
-  `sops secrets/secrets.yaml` and add `vikunja_api_token: <token>`).
-  Every interactive shell exports it from `/run/secrets` automatically, so
-  opencode and `devenv shell` sessions inherit it. The token carries your
-  full API permissions (the bridge runs in safe mode: deletes stay off
-  unless `ENABLE_TASK_DELETE`/`ENABLE_LABEL_DELETE` are set).
-- **Agent access (raw REST)**: `Authorization: Bearer <same token>` against
-  `http://127.0.0.1:3456/api/v1`. Exact request schemas:
-  <https://vikunja.io/docs/api>. Key endpoints: `/projects`,
-  `/projects/{id}/tasks`, `/tasks/{id}`, `/tasks/{id}/comments`,
-  `/tasks/{id}/labels`, `/tasks/{id}/relations`, `/tasks/{id}/assignees`.
-- **Future (native MCP)**: once nixpkgs ships Vikunja ≥ 2.7, drop the bridge
-  for the built-in endpoint — `remote` type, URL
-  `http://127.0.0.1:3456/api/v2/mcp`, bearer token minted under
-  Avatar → Settings → MCP with a permission preset (read-only or typed
-  read+write instead of a full API token).
+## One-time setup
+
+1. In Notion, create one database per effort (e.g. `Wayfinder – <effort>`)
+   with these properties:
+   - `Title` (title), `Type` (select: `map`, `research`, `prototype`,
+     `grilling`, `task`), `Status` (select: `Not started`, `In progress`,
+     `Done`), `Assignee` (person), `Parent` (relation → same database),
+     `Blocked by` (relation → same database).
+2. In opencode, let the `notion` MCP entry trigger the OAuth flow once.
 
 ## Conventions
 
-- Labels categorize work and drive filters: `wayfinder:map`,
-  `wayfinder:research`, `wayfinder:prototype`, `wayfinder:grilling`,
-  `wayfinder:task`. Create them on the fly from the task's labels field.
-- Discussion goes in task comments, appended over time — never rewritten.
-- Task IDs are global numbers (shown as `#<id>`); in everything humans read,
-  refer to tasks by title with the link behind it, never by bare ID.
+- The `Type` select carries the `wayfinder:<type>` vocabulary; the map row
+  itself is `Type = map`.
+- Discussion accrues in page comments, appended over time — never rewritten.
+- Rows are identified by title in everything humans read, with the Notion
+  link behind the name, never a bare ID.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The **map** is a parent task with one **subtask** per
-ticket, all inside one Vikunja project per effort.
+Used by `/wayfinder`. The **map** is a row with one **child row** per
+ticket, all inside one database per effort.
 
-- **Map**: a task labeled `wayfinder:map` carrying the Notes /
-  Decisions-so-far / Fog body in its description.
-- **Child ticket**: a task linked to the map via the native `subtask`
-  relation (sidebar → Relations → Add a relation → `subtask`), labeled
-  `wayfinder:<type>`, with the question in its description.
-- **Blocking**: the native `blocked by` relation (same Relations sidebar).
-  It is enforced: a task cannot be marked done while its blockers are open.
-- **Frontier**: open, unblocked, unclaimed children. In the UI use the filter
-  `done = false && open_relations != blocked` scoped to the map's subtasks;
-  first by task ID wins.
-- **Claim**: assign the ticket to yourself **first**, before any work, so
+- **Map**: a row with `Type = map` carrying the Notes / Decisions-so-far /
+  Fog body in the page content.
+- **Child ticket**: a row linked to the map via the `Parent` relation, with
+  `Type = research|prototype|grilling|task` and the question in the page
+  content.
+- **Blocking**: the `Blocked by` relation. Notion does not enforce it, so
+  the agent must check: a ticket is unblocked only when every row it lists
+  has `Status = Done`.
+- **Frontier**: open, unblocked, unclaimed children — query the database for
+  `Status != Done` and `Assignee` empty, then drop any whose `Blocked by`
+  targets aren't all `Done`; first by creation order wins. Mirror it as a
+  saved database view for the visual check.
+- **Claim**: set `Assignee` to yourself **first**, before any work, so
   concurrent sessions skip it. An open, unassigned ticket is unclaimed.
-- **Resolve**: post the answer as a comment, mark the task done, then append
-  a one-line pointer (gist + link) to the map's Decisions-so-far.
+- **Resolve**: post the answer as a comment, set `Status = Done`, then
+  append a one-line pointer (gist + link) to the map's Decisions-so-far.

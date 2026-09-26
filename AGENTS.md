@@ -63,7 +63,7 @@ nix develop              # shell with nil, nixd, nixfmt, statix, deadnix, pre-co
 
 ### Issue tracker
 
-Self-hosted Vikunja at `http://127.0.0.1:3456` (localhost-only, sqlite). See `docs/agents/issue-tracker.md`.
+Notion via the official hosted MCP (`https://mcp.notion.com/mcp`, OAuth). See `docs/agents/issue-tracker.md`.
 
 ### Domain docs
 
