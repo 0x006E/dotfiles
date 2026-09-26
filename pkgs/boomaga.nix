@@ -13,13 +13,13 @@
 }:
 stdenv.mkDerivation rec {
   pname = "boomaga";
-  version = "3.7.0";
+  version = "3.9.0";
 
   src = fetchFromGitHub {
     owner = "Boomaga";
     repo = "boomaga";
     rev = "v${version}";
-    hash = "sha256-oooExzsuxgA11ypCPdwLk98FxfLfWwcViMhwQIlZ98E=";
+    hash = "sha256-z1iOy4P7ZYmvUxzP7/Br+BEVCkL85T/SYxAWcJDiDDA=";
   };
 
   nativeBuildInputs = [
