@@ -10,13 +10,17 @@ hosting involved, just the task UI plus a REST API agents can drive.
   then set `service.enableregistration = false` in
   `modules/services/vikunja.nix` to close registration.
 - **Agent access (MCP, preferred)**: opencode talks to the tracker through
-  the `vikunja` MCP server declared in `opencode.json` (stdio bridge,
-  works against the current 2.6 API). It needs one env var in opencode's
-  environment — create the value once in the Vikunja UI under Avatar →
-  Settings → API tokens, then export it before starting opencode:
-  `export VIKUNJA_API_TOKEN='<token>'`. The token carries your full API
-  permissions (the bridge runs in safe mode: deletes stay off unless
-  `ENABLE_TASK_DELETE`/`ENABLE_LABEL_DELETE` are set).
+  the `vikunja` MCP server declared in the global opencode config
+  (stdio bridge, works against the current 2.6 API). The token is
+  sops-managed: mint it once in the Vikunja UI under Avatar → Settings →
+  API tokens, then store it (one-time key setup first —
+  `sudo cat /persist/var/lib/sops-nix/key.txt` append the `AGE-SECRET-KEY`
+  line to `~/.config/sops/age/keys.txt` with mode 600 — then
+  `sops secrets/secrets.yaml` and add `vikunja_api_token: <token>`).
+  Every interactive shell exports it from `/run/secrets` automatically, so
+  opencode and `devenv shell` sessions inherit it. The token carries your
+  full API permissions (the bridge runs in safe mode: deletes stay off
+  unless `ENABLE_TASK_DELETE`/`ENABLE_LABEL_DELETE` are set).
 - **Agent access (raw REST)**: `Authorization: Bearer <same token>` against
   `http://127.0.0.1:3456/api/v1`. Exact request schemas:
   <https://vikunja.io/docs/api>. Key endpoints: `/projects`,

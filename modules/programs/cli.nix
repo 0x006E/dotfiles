@@ -67,6 +67,12 @@ delib.module {
             export DISPLAY=${myconfig.constants.xwaylandDisplay}
             export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
 
+            # Vikunja tracker token for opencode's MCP bridge (sops-managed).
+            # Guarded: absent until the key is added to secrets/secrets.yaml.
+            if [ -f /run/secrets/vikunja_api_token ]; then
+              export VIKUNJA_API_TOKEN="$(cat /run/secrets/vikunja_api_token)"
+            fi
+
             # Opt-in pre-switch binary-cache verdict (default off): answering
             # "will this switch build locally?" costs a full extra flake
             # eval (nixvim IFD included), roughly doubling switch time.
