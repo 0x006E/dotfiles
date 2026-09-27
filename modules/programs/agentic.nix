@@ -102,7 +102,11 @@ delib.module {
             # built-in `browser` tool only works with the desktop app attached,
             # so this is the terminal's path to a browser. No nixpkgs package
             # (hence npx) and Puppeteer doesn't search the nix store for Chrome
-            # (hence executablePath). Telemetry and CrUX lookups opted out.
+            # (hence executablePath). --isolated keeps the profile in a temp
+            # dir cleaned up on close: the btrfs root is wiped every boot, so a
+            # persisted profile under ~/.cache would not survive anyway, and a
+            # throwaway one is the better default for agent browsing. Telemetry
+            # and CrUX lookups opted out.
             chrome-devtools = {
               type = "local";
               command = [
@@ -110,6 +114,7 @@ delib.module {
                 "-y"
                 "chrome-devtools-mcp@latest"
                 "--executablePath=${lib.getExe pkgs.google-chrome}"
+                "--isolated"
                 "--no-usage-statistics"
                 "--no-performance-crux"
               ];
