@@ -17,6 +17,11 @@ delib.module {
     {
       programs.zen-browser = {
         enable = true;
+        # OS-level default handler (xdg-mime) + BROWSER=zen-beta in the
+        # session. Distinct from the per-profile isDefault below, which only
+        # picks Zen's internal profile. The beta module emits
+        # zen-beta.desktop, matching the packaged desktop entry.
+        setAsDefaultBrowser = true;
         profiles = {
           "${myconfig.constants.username}" = {
             id = 0;
