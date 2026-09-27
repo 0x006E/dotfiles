@@ -2,6 +2,7 @@
   delib,
   inputs,
   pkgs,
+  lib,
   ...
 }:
 delib.module {
@@ -93,6 +94,24 @@ delib.module {
                 "npx"
                 "-y"
                 "fetch-mcp"
+              ];
+              enabled = true;
+            };
+            # Real-browser control for CLI sessions: navigate, click, fill,
+            # screenshot, network/console inspection, performance traces. The
+            # built-in `browser` tool only works with the desktop app attached,
+            # so this is the terminal's path to a browser. No nixpkgs package
+            # (hence npx) and Puppeteer doesn't search the nix store for Chrome
+            # (hence executablePath). Telemetry and CrUX lookups opted out.
+            chrome-devtools = {
+              type = "local";
+              command = [
+                "npx"
+                "-y"
+                "chrome-devtools-mcp@latest"
+                "--executablePath=${lib.getExe pkgs.google-chrome}"
+                "--no-usage-statistics"
+                "--no-performance-crux"
               ];
               enabled = true;
             };
