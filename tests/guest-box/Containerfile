@@ -1,0 +1,44 @@
+# The guest desktop, baked into an image. TEMPLATE -- make-test-image.sh fills
+# in @BASE@ and @PACKAGES@ from the module, so this cannot drift from what
+# production installs.
+#
+# This is a *test* artefact only. The production configuration uses
+# docker.io/library/ubuntu:24.04 and installs the desktop on the box's first
+# login. That path is the one that ships, and it is verified by exactly one run
+# of it; every run after that would otherwise pay ten minutes of apt to test a
+# change to the session script.
+#
+# So the test VM runs this image instead: same base, same package list, same
+# browser, already installed. The box is then created in seconds, and
+# services.guest-box.image is the only thing that differs from production --
+# which the launcher notices and rebuilds the box over, logging the change.
+#
+# @PACKAGES@ comes from services.guest-box.packages, so adding a package to the
+# module adds it here. The browser is the one thing the init hook installs and
+# this image installs instead, since it is the slow part and it must be present
+# for the desktop icon to appear.
+
+FROM @BASE@
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# --no-install-recommends, unlike the module's list: recommends here are
+# documentation and translations, which is most of why the metapackage install
+# was 490 MB.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends @PACKAGES@ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Google Chrome from its own .deb, same reasoning as the init hook: a snap
+# cannot run in a container, and an apt repository would need a signing key
+# inside the image.
+RUN wget -q -O /tmp/chrome.deb \
+      https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+    && apt-get install -y --no-install-recommends /tmp/chrome.deb \
+    && rm -f /tmp/chrome.deb \
+    && rm -rf /var/lib/apt/lists/*
+
+# The session's own HOME is wiped on every login, but this is the *skeleton* the
+# first login copies from: a desktop-configured guest, not a bare one.
+RUN mkdir -p /etc/skel \
+    && printf '[Desktop Entry]\nType=Application\nName=Web browser\nExec=google-chrome-stable %%u\nIcon=google-chrome\nTerminal=false\n' >/etc/skel/web-browser.desktop

@@ -1,0 +1,28 @@
+# Guest kiosk session for sway.
+#
+# The greeter offers a "Sway" entry, and the guest account's login shell is
+# the box session, so this file exists only to stop a guest who picks that
+# entry from landing in a plain desktop. It is installed as
+# /etc/sway/config; sway reads that when the user has no
+# ~/.config/sway/config, and nithin has one from home-manager, so this only
+# ever applies to the guest.
+#
+# The box is started by the same guest-box session script the login shell
+# uses, in --attach mode: it picks a free X display, starts
+# xwayland-satellite and the container, and returns, leaving niri-independent
+# X11 windows for sway to display fullscreen.
+
+set $mod Mod4
+
+default_border none
+gaps 0
+fullscreen enable
+
+exec @sessionScript@/bin/guest-box-session --attach
+
+binds {
+    # End the session: sway exits, getty/greeter takes over.
+    $mod+q kill
+    $mod+Shift+q exit
+    $mod+Shift+e exit
+}

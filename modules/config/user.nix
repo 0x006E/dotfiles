@@ -7,7 +7,6 @@ delib.module {
     { myconfig, ... }:
     {
       config,
-      pkgs,
       ...
     }:
     let
@@ -33,18 +32,20 @@ delib.module {
           ];
         };
 
+        # Kiosk account. Its whole session is the Ubuntu MATE box --
+        # modules/services/guest-box sets `shell` to the box session, so getty
+        # logins and the greeter session entry both land there. No
+        # `networkmanager` group: that group gets a blanket polkit yes over
+        # every NetworkManager action, including reading the owner's stored
+        # Wi-Fi passwords; services.guest-box grants the guest the handful of
+        # actions the desktop actually needs instead. No host `packages`
+        # either: everything a guest runs lives in the box.
         users.guest = {
           isNormalUser = true;
           hashedPasswordFile = config.sops.secrets."passwords/guest".path;
           extraGroups = [
-            "networkmanager"
             "video"
             "audio"
-          ];
-          packages = with pkgs; [
-            firefox
-            libreoffice
-            vlc
           ];
         };
       };

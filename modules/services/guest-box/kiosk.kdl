@@ -1,0 +1,60 @@
+// Guest kiosk session. Used by modules/services/guest-box/default.nix, which
+// owns the whole process tree (niri, the box launcher) and starts niri with this
+// file via --config. The system-wide /etc/niri/config.kdl is this file plus one
+// spawn-at-startup line, so a guest who picks the greeter's plain "Niri" entry
+// still lands in the box.
+//
+// Everything the guest sees is the Ubuntu MATE desktop running on the X11
+// display niri serves; MATE's own Marco manages the X11 windows and niri just
+// displays them. Keep this config minimal: no bar, no launcher, no workspaces,
+// no host tools.
+
+// niri's X11 integration is left on on purpose: it binds the X11 socket at
+// startup and spawns xwayland-satellite when the first X client connects, so
+// the session can read the display number niri chose (out of the pid in
+// /tmp/.X<n>-lock) instead of guessing one and colliding with the owner's.
+
+input {
+    keyboard {
+        xkb {
+            layout "us"
+        }
+    }
+    mouse {
+        accel-speed 1.0
+    }
+    touchpad {
+        tap
+        dwt
+        natural-scroll
+    }
+}
+
+// One X11 desktop fills the screen; nothing to tile.
+layout {
+    gaps 0
+    focus-ring {
+        off
+    }
+    border {
+        off
+    }
+}
+
+prefer-no-csd true
+hotkey-overlay {
+    skip-at-startup
+}
+
+window-rule {
+    open-fullscreen true
+}
+
+// Escape hatch: if the box dies, the session must still be endable.
+// Mod+Q ends the session, which returns to the greeter (or, from a TTY
+// login, to the login prompt).
+binds {
+    Mod+Q { quit; }
+    Mod+Shift+Q { quit; }
+    Mod+Shift+E { quit; }
+}

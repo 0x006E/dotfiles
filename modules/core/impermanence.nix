@@ -55,6 +55,12 @@ delib.module {
     let
       inherit (myconfig.constants) username;
       home = "/home/${username}";
+      # The guest account (modules/services/guest-box) keeps its container
+      # storage here so the one-time download of the guest desktop is paid
+      # once instead of on every boot. Nothing a guest creates survives: the
+      # box's own HOME lives on the ephemeral root under /var/lib/guest-box
+      # and the launcher recreates it on every login.
+      guest = "/home/guest";
       # systemd auto-creates bind-mount parents as root:root on the wiped
       # root, breaking HM activation; re-assert ownership every boot
       # (impermanence#298).
@@ -88,7 +94,7 @@ delib.module {
         }) parents
         ++ [
           {
-            name = "/home/guest";
+            name = guest;
             value = {
               d = {
                 user = "guest";
@@ -119,20 +125,32 @@ delib.module {
       # before home-manager-nithin.service restarts, and is order-independent
       # with the helper (both sides end at the same declared values either
       # way). Single-level only: never traverse into bind mounts.
+      # The guest's home needs the same treatment for the same reason: its
+      # bind-mount parent under /persist is created root:root on the first
+      # impermanence boot, which would leave the guest unable to write to its
+      # own container storage.
       system.activationScripts.assertHomeOwnership = {
         supportsDryActivation = true;
-        text = lib.concatMapStringsSep "\n" (
-          dir:
-          let
-            mode = if dir == home then "0700" else "0755";
-          in
-          ''
-            chown ${username}:users '${dir}'
-            chmod ${mode} '${dir}'
-            chown ${username}:users '/persist${dir}'
-            chmod ${mode} '/persist${dir}'
-          ''
-        ) parents;
+        text =
+          lib.concatMapStringsSep "\n" (
+            dir:
+            let
+              mode = if dir == home then "0700" else "0755";
+            in
+            ''
+              chown ${username}:users '${dir}'
+              chmod ${mode} '${dir}'
+              chown ${username}:users '/persist${dir}'
+              chmod ${mode} '/persist${dir}'
+            ''
+          ) parents
+          + ''
+
+            chown guest:users '${guest}'
+            chmod 0700 '${guest}'
+            chown guest:users '/persist${guest}'
+            chmod 0700 '/persist${guest}'
+          '';
       };
 
       # Wipe mechanism: recreate the @ root subvolume on every boot.
@@ -223,6 +241,16 @@ delib.module {
           # Identity & secrets
           "/etc/ssh"
           "/etc/NetworkManager/system-connections"
+          # Guest account: the rootless container engine's storage, so the
+          # guest desktop is downloaded and installed once instead of on
+          # every boot. The guest's own data is not here (that is the box's
+          # HOME, on the wiped root).
+          {
+            directory = guest;
+            user = "guest";
+            group = "users";
+            mode = "0700";
+          }
           {
             directory = config.boot.lanzaboote.pkiBundle; # secure-boot keys (/etc/secureboot)
             mode = "0700";
