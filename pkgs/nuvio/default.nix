@@ -54,16 +54,16 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "nuvio";
-  version = "0.1.26-alpha-unstable-2026-09-27";
+  version = "0.1.26-alpha-unstable-2026-09-28";
 
   src = fetchFromGitHub {
     owner = "NuvioMedia";
     repo = "NuvioDesktop";
-    rev = "fe92d414024b775351d17912a19cbcf51b880241";
+    rev = "b1e00724c55e65f8f325d4d9d52eb6827872a7c2";
     # NOTE: no fetchSubmodules — MPVKit has a branch-pinned URL and
     # libass-android is a stale gitlink with no URL at all (fetch fails);
     # neither is referenced by any desktop build file.
-    hash = "sha256-adiQAUJeLIKKSd1apTnZBYdhAMiPN51SNdj50F4tVR4=";
+    hash = "sha256-D6qc+GDRU7TWSbDU9XrSbpYbPsEJqS7E8Jf361RfbYo=";
   };
 
   patches = [
@@ -77,7 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
     echo "kotlin.native.ignoreDisabledTargets=true" >> local.properties
     # Upstream's public backend identifiers: the anon key is public by design
     # and ships in every official release (values below recovered byte-exact
-    # from the official fe92d414024b775351d17912a19cbcf51b880241 AppImage; same set as the nixpkgs
+    # from the official b1e00724c55e65f8f325d4d9d52eb6827872a7c2 AppImage; same set as the nixpkgs
     # submission, pending upstream blessing in NuvioMedia/NuvioDesktop#623).
     # Without these the client points at https://localhost and sign-in fails.
     # Trakt secret + Sentry DSNs are deliberately never baked in.
