@@ -32,21 +32,19 @@ delib.module {
           ];
         };
 
-        # Kiosk account. Its whole session is the Ubuntu MATE box --
-        # modules/services/guest-box sets `shell` to the box session, so getty
-        # logins and the greeter session entry both land there. No
-        # `networkmanager` group: that group gets a blanket polkit yes over
+        # Second account. Its desktop lives in a rootless distrobox
+        # container (modules/desktop/guest-desktop), so nothing graphical is
+        # installed for it on the host. This block is only the account itself:
+        # the name and the sops-sourced password. The groups the guest needs
+        # live with the module that owns what this account may do, because
+        # listing a group in both places concatenates the two lists.
+        #
+        # No `networkmanager` group: that group gets a blanket polkit yes over
         # every NetworkManager action, including reading the owner's stored
-        # Wi-Fi passwords; services.guest-box grants the guest the handful of
-        # actions the desktop actually needs instead. No host `packages`
-        # either: everything a guest runs lives in the box.
+        # Wi-Fi passwords.
         users.guest = {
           isNormalUser = true;
           hashedPasswordFile = config.sops.secrets."passwords/guest".path;
-          extraGroups = [
-            "video"
-            "audio"
-          ];
         };
       };
     };

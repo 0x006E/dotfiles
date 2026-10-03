@@ -55,11 +55,11 @@ delib.module {
     let
       inherit (myconfig.constants) username;
       home = "/home/${username}";
-      # The guest account (modules/services/guest-box) keeps its container
-      # storage here so the one-time download of the guest desktop is paid
-      # once instead of on every boot. Nothing a guest creates survives: the
-      # box's own HOME lives on the ephemeral root under /var/lib/guest-box
-      # and the launcher recreates it on every login.
+      # The guest account (modules/desktop/guest-desktop) keeps its container
+      # storage here -- ~/.local/share/containers -- so the one-time download
+      # of the guest desktop is paid once instead of on every boot. Note this
+      # also persists anything the guest writes inside the container, which is
+      # the trade for not re-downloading 2 GB on every boot.
       guest = "/home/guest";
       # systemd auto-creates bind-mount parents as root:root on the wiped
       # root, breaking HM activation; re-assert ownership every boot
@@ -243,8 +243,7 @@ delib.module {
           "/etc/NetworkManager/system-connections"
           # Guest account: the rootless container engine's storage, so the
           # guest desktop is downloaded and installed once instead of on
-          # every boot. The guest's own data is not here (that is the box's
-          # HOME, on the wiped root).
+          # every boot.
           {
             directory = guest;
             user = "guest";
