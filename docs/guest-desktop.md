@@ -215,6 +215,54 @@ resolve. The box's own logind can never satisfy this: its sessions are all
 masks `systemd-udevd` and no second udevd can bind the control socket
 ("Address already in use") — so no `ID_SEAT` tags ever exist in the box.
 
+### greetd does not set `XDG_SESSION_ID`, so the dispatcher derives it
+
+This is the single fact that broke the first hardware login, and it is not
+obvious. greetd **never sets `XDG_SESSION_ID`**. `strings` on greetd 0.10.3
+yields exactly three XDG variables:
+
+    $ strings greetd | grep -oE 'XDG_[A-Z_]+' | sort -u
+    XDG_SEAT
+    XDG_SESSION_CLASS
+    XDG_VTNR
+
+greetd forwards the PAM environment verbatim and nothing in its stack adds the
+id, so the variable mutter needs is simply absent. The symptom is deceptive:
+every GNOME unit comes up normally and *then* the session dies, with
+
+    gnome-shell: Failed to setup: Failed to find any matching session
+    org.gnome.Shell@user.service: Failed with result 'protocol'
+    Dependency failed for gnome-session@gnome.target
+
+and, slightly earlier, the tell that it is an id problem rather than a
+permissions one:
+
+    gnome-session-service: Could not get session id for session. Check that
+     logind is properly installed and pam_systemd is getting used at login.
+
+The test VM missed this because the probes set `XDG_SESSION_ID` by hand.
+
+So the dispatcher resolves the id itself, from its own cgroup: logind names
+every session scope `session-<id>.scope`, and greetd runs the session command
+as a direct child of the session leader, so the dispatcher's cgroup *is* the
+session scope. Verified against a live login — greetd's leader for session 15
+sat in `/user.slice/user-1000.slice/session-15.scope`, matching
+`/run/systemd/sessions/15`.
+
+Two constraints on that derivation, both learned the hard way:
+
+- **It has to happen host-side.** Inside the box it cannot work: podman gives
+  containers a private cgroup namespace, so `/proc/self/cgroup` there reads
+  `/`, and the processes sit in a `libpod-*.scope` under no session at all.
+- **The extraction needs `|| true`.** `writeShellApplication` runs with
+  `errexit` and `pipefail`, so a no-match `grep` aborts the script at the
+  assignment and the diagnostic that explains why never gets printed.
+
+Also note the id is per *login*, never per user: it must never be cached in the
+box, and in particular never pushed into the box's user manager with
+`systemctl --user set-environment XDG_SESSION_ID=...`, because linger keeps that
+manager — and its environment — alive across logouts.
+
 Two mounts bridge the gap, and both are needed for different halves:
 
 - `-v /run/dbus/system_bus_socket:...` lets the box talk to host logind, so

@@ -37,6 +37,68 @@ let
   # makes a *rootless* container able to use this user's subuid range.
   podmanPkg = config.virtualisation.podman.package;
 
+  # Resolve the logind session id of the session we are running in, from our own
+  # cgroup. greetd never sets XDG_SESSION_ID -- `strings` on greetd 0.10.3 yields
+  # exactly XDG_SEAT, XDG_SESSION_CLASS and XDG_VTNR, and it forwards the PAM
+  # environment verbatim -- so the variable mutter needs is simply absent, and
+  # gnome-shell dies with "Failed to find any matching session".
+  #
+  # We cannot ask systemd properly without libsystemd, and we do not need to:
+  # logind names every session's scope `session-<id>.scope`, and greetd runs the
+  # session command as a direct child of the session leader, so our own cgroup
+  # *is* the session scope. Verified: greetd's leader for session 15 sat in
+  # /user.slice/user-1000.slice/session-15.scope, matching /run/systemd/sessions/15.
+  #
+  # Deliberately host-side. Inside the box this cannot work: podman gives
+  # containers a private cgroup namespace, so /proc/self/cgroup there reads "/"
+  # and the processes sit in a libpod-*.scope rather than any session scope.
+  sessionIdScript = pkgs.writeShellApplication {
+    name = "guest-desktop-session-id";
+    # Not lib.getBin alone: on a derivation with no `bin` output attribute that
+    # yields the whole output *directory*, and the caller would execute a
+    # directory and greetd would flash "Is a directory". Hence /bin/<name> at
+    # the call site, exactly as distrobox and niri are invoked below.
+    runtimeInputs = [ ];
+    text = ''
+      cgroup=""
+      if [ -r /proc/self/cgroup ]; then
+        cgroup="$(awk -F: '$1 == "0" { print $3; exit }' /proc/self/cgroup)"
+      fi
+
+      # grep -oE rather than a sed substitution or a bash regex. The obvious sed
+      # spelling uses backslash-pipe for alternation, which silently degrades to
+      # an escaped literal if you happened to pick pipe as the s delimiter and
+      # then matches nothing at all; and the obvious bash-regex follow-up needs
+      # an array subscript, which cannot be written here at all because Nix
+      # interpolates a dollar-brace inside an indented string as an attribute
+      # lookup and fails to evaluate. Requiring digits after the hyphen also
+      # keeps "session.slice" (a systemd slice, not a session) from matching.
+      #
+      # The "|| true" is load-bearing: writeShellApplication runs this with
+      # errexit and pipefail, so a no-match grep would abort the script right
+      # here and the diagnostic below -- the one that says what actually went
+      # wrong -- would never be printed. It would just exit 1 silently.
+      id="$(printf '%s' "$cgroup" | grep -oE 'session-[0-9]+' | head -n 1 | cut -d- -f2 || true)"
+
+      if [ -z "$id" ]; then
+        printf 'guest-desktop-session-id: no session scope in cgroup "%s".\n' "$cgroup" >&2
+        printf 'The guest desktop needs a real logind session; a TTY or SSH login\n' >&2
+        printf 'has no session scope, so this is not the greeter.\n' >&2
+        exit 1
+      fi
+
+      # Only accept an id logind still considers active. A stale scope from a
+      # finished session would hand mutter a dead session, which fails the same
+      # way as no session at all but much harder to read.
+      if ! grep -qs '^STATE=active$' "/run/systemd/sessions/$id"; then
+        printf 'guest-desktop-session-id: session %s is not active.\n' "$id" >&2
+        exit 1
+      fi
+
+      printf '%s' "$id"
+    '';
+  };
+
   # The whole session entry, in one script, because the greeter only ever runs
   # one Exec and there is no per-user session concept to hook into.
   #
@@ -63,6 +125,33 @@ let
           exec ${niriPkg}/bin/niri-session
           ;;
         ${cfg.guestUser})
+          # The one variable mutter cannot start without, resolved from our own
+          # cgroup because greetd does not provide it (see sessionIdScript).
+          # Without it gnome-session's units all come up and then
+          # org.gnome.Shell@user.service fails with "Failed to find any matching
+          # session", taking the whole session down with it.
+          #
+          # Resolved per login and never cached: it is a property of this
+          # session, not of the user. In particular, never
+          # `systemctl --user set-environment XDG_SESSION_ID=...` in the box --
+          # linger keeps the box user manager, and its environment, alive across
+          # logouts, so a cached ID goes stale on the next login while
+          # everything keeps pointing at the dead session.
+          #
+          # First thing the branch does, before podman: it reads two files, so
+          # it costs nothing, and it fails with the real reason ("this is not
+          # the greeter") instead of burying a missing container in front of
+          # it.
+          XDG_SESSION_ID="$(${lib.getBin sessionIdScript}/bin/guest-desktop-session-id)"
+          export XDG_SESSION_ID
+
+          # Overrides the greeter's niri-derived values, which is the entire
+          # reason the dispatcher exists rather than two session entries.
+          # XDG_SESSION_TYPE stays what the greeter set (wayland, from the
+          # wayland-sessions directory).
+          export XDG_CURRENT_DESKTOP=GNOME
+          export XDG_SESSION_DESKTOP=gnome
+
           # Refuse to start unless the container is already there.
           #
           # `distrobox enter` does NOT fail on a missing container: it offers to
@@ -91,20 +180,35 @@ let
             exit 1
           fi
 
-          # Overrides the greeter's niri-derived values, which is the entire
-          # reason the dispatcher exists rather than two session entries.
-          # XDG_SESSION_TYPE stays what the greeter set (wayland, from the
-          # wayland-sessions directory), and XDG_SESSION_ID stays the guest's
-          # real logind session: distrobox enter forwards both, and mutter
-          # needs them to find the session on the host logind (see
-          # containerFlags below). Both are per-login values from PAM; nothing
-          # here or in the box may cache them (in particular, never
-          # `systemctl --user set-environment XDG_SESSION_ID=...` in the box:
-          # linger keeps the box user manager -- and its environment -- alive
-          # across logouts, so a cached ID goes stale on the next login while
-          # everything keeps pointing at the dead session).
-          export XDG_CURRENT_DESKTOP=GNOME
-          export XDG_SESSION_DESKTOP=gnome
+          # Put the host's session files where mutter looks for them.
+          #
+          # containerFlags mounts /run/systemd/sessions into the box, and it is
+          # silently not there: the box runs systemd as init, so it has its own
+          # /run/systemd and its own session, and that shadowed the bind mount.
+          # Measured inside the box: `/run/systemd/sessions` was not a
+          # mountpoint and held only the box's own `c1`, while the host's `1` and
+          # `4` were visible through distrobox's own host-root mount. mutter
+          # resolves XDG_SESSION_ID with sd_session_is_active, which reads
+          # /run/systemd/sessions/<id> *directly* and never asks logind, so a
+          # missing file there is fatal even though the host system bus is
+          # mounted correctly and answering.
+          #
+          # Rebinding from /run/host rather than adding another mount to
+          # containerFlags is deliberate: it needs no container recreation (the
+          # flags are fixed at create time), /run/host is the host root that
+          # every distrobox container has and that distrobox-host-exec itself
+          # relies on, and it is verified to survive where the /run/systemd bind
+          # did not.
+          # Kept on one line, with no continuation: a trailing backslash inside an
+          # `if !` condition trips shellcheck rule SC2251, and this is not worth
+          # fighting over formatting.
+          if ! ${lib.getBin pkgs.distrobox}/bin/distrobox enter --name ${cfg.containerName} -- sudo -n mount --bind /run/host/run/systemd/sessions /run/systemd/sessions; then
+            printf 'desktop-session: could not expose the host session files to the box.\\n' >&2
+            printf 'mutter resolves XDG_SESSION_ID by reading /run/systemd/sessions/<id>\\n' >&2
+            printf 'directly, so without this the session cannot start.\\n' >&2
+            exit 1
+          fi
+
           # A bare gnome-session, deliberately NOT under dbus-run-session: the
           # container runs its own systemd --user, so the user bus already
           # exists, and dbus-run-session would *replace* it with a private bus
