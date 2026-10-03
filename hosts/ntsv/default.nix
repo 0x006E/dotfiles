@@ -25,7 +25,6 @@ delib.host {
     services = {
       boomaga.enable = true;
       desktop-services.enable = true;
-      guest-box.enable = true;
       printing.enable = true;
       system-services.enable = true;
       virtualization.enable = true;
