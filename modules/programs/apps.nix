@@ -13,8 +13,12 @@ delib.module {
       librum
       # TODO: re-enable once winboat drops electron_40 (EOL/insecure in nixpkgs, nixpkgs#537847)
       # winboat
+      # filen-desktop dropped, not blocked: its bundled node-canvas 3.1.0 does
+      # not build against gcc 16 (transitive <cstdint> includes removed), which
+      # breaks the toplevel build on any nixpkgs bump. Upstream, unfixed:
+      # NixOS/nixpkgs#569059. The CLI (filen-cli) is a separate derivation and
+      # is fine.
       filen-cli
-      filen-desktop
       libreoffice
       gimp
       foot
