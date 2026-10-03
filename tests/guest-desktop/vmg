@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+# Talk to the running test VM without fighting base64 over a serial console.
+#
+# The guest gets /tmp/xchg from a virtiofs mount whose host side is a temp dir
+# the qemu runner invents fresh on every boot, so the first job is finding it.
+# Scripts go in via that mount, output and screenshots come back out the same
+# way, and the serial console is only used to start things and to read the
+# guest log.
+#
+#   ./vmg run <script.sh> [seconds]   run a guest script, print its output
+#   ./vmg send <command>              type a command at the guest shell
+#   ./vmg log [lines]                 tail the guest's serial console
+#   ./vmg shot <name> [format]        QMP screendump into the host's cwd
+#   ./vmg logins guest guest          log in at the tty prompt
+#   ./vmg files                       what is in the exchange dir right now
+#   ./vmg dir                         the exchange dir path, nothing else
+set -uo pipefail
+
+here="$(cd -- "$(dirname -- "$0")" && pwd)"
+console="nix shell nixpkgs#python3 -c python3 $here/vm-console.py console"
+log=/tmp/guest-desktop-vm/console.log
+
+# The runner makes a new virtiofs temp dir per boot; find it by asking the
+# virtiofsd processes, and wait for it because they start after qemu does.
+find_dir() {
+  for _ in $(seq 1 60); do
+    d="$(ps -eo args --no-headers 2>/dev/null |
+      grep -a 'virtiofsd' | grep -v grep |
+      grep -aoE 'shared-dir=[^ ]*xchg' | head -1 | cut -d= -f2)"
+    if [ -n "$d" ] && [ -d "$d" ]; then
+      printf '%s' "$d"
+      return 0
+    fi
+    sleep 0.5
+  done
+  return 1
+}
+
+# stage puts the probes and the runner script in place, once per boot, and
+# always prints the exchange dir. It has to print even when nothing needed
+# staging: the caller captures stdout, so an early return on the
+# already-staged path would hand back an empty path.
+stage() {
+  x="$(find_dir)" || return 1
+  if [ ! -f "$x/.staged" ]; then
+    mkdir -p "$x"
+    cp "$here"/eglprobe/probe "$here"/eglprobe/probe2 "$x/" 2>/dev/null
+    chmod 755 "$x"/probe "$x"/probe2 2>/dev/null
+    cat >"$x/runit.sh" <<'EOF'
+#!/bin/sh
+sh /tmp/xchg/"$1" >/tmp/xchg/out.txt 2>&1
+echo "RC=$?" >> /tmp/xchg/out.txt
+EOF
+    chmod 755 "$x/runit.sh"
+    touch "$x/.staged"
+  fi
+  printf '%s' "$x"
+}
+
+cmd="${1:-}"; shift || true
+
+case "$cmd" in
+  dir)
+    stage
+    ;;
+  files)
+    x="$(stage)"; ls -l "$x"
+    ;;
+  run)
+    script="$1"; secs="${2:-8}"
+    x="$(stage)" || {
+      echo "no virtiofs exchange dir yet" >&2
+      exit 1
+    }
+    cp "$script" "$x/" || exit 1
+    $console --send "sh /tmp/xchg/runit.sh $(basename "$script")" >/dev/null 2>&1
+    sleep "$secs"
+    cat "$x/out.txt" 2>/dev/null || echo "(no output yet)"
+    ;;
+  send)
+    $console --send "$1" >/dev/null 2>&1
+    sleep "${2:-3}"
+    ;;
+  log)
+    tail -c "${2:-1200}" "$log" | tr -d '\000' |
+      sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' | tail -"${2:-1200}"
+    ;;
+  shot)
+    nix shell nixpkgs#python3 -c "python3 $here/vm-shot.sh" "${1:-/tmp/shot.png}" >/dev/null 2>&1
+    ls -l "${1:-/tmp/shot.png}" 2>/dev/null
+    ;;
+  logins)
+    user="$1"; pass="$2"
+    $console --send "$user" >/dev/null 2>&1
+    sleep 2
+    $console --send "$pass" >/dev/null 2>&1
+    sleep 5
+    ;;
+  *)
+    sed -n '2,20p' "$0"
+    exit 1
+    ;;
+esac
