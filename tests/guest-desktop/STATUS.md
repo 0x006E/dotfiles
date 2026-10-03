@@ -111,3 +111,31 @@ native-compositor path above is the only one, and it works.
   set-environment` is needed if the manager does not already carry it.
 - Whether mutter can claim a VT and mode-set the real panel vs headless.
 - Greeter handoff on the real machine; `nithin` regression check after.
+## Test-VM staleness gotcha
+
+`run-nixos-vm` boots the kernel/initrd from the current build but stage-2
+switches into the system *installed on the qcow2*. Rebuilding the flake does
+not update a booted disk: new `vm.nix` options (e.g. `services.qemuGuest`)
+only take effect after `./vm-up.sh --reset`. Symptom of a stale disk is
+commands failing for things the current `vm.nix` definitely enables.
+
+## vm-qga.mjs: guest-exec without the serial console
+
+`./vm-qga.mjs [--as USER] [--timeout SECS] [--input-file F] [--transcript P]
+<command> [args...]` runs a command in the guest via the QEMU guest agent and
+streams stdout/stderr back with the real exit code. `--transcript PATH`
+appends a timestamped record for following along with `tail -f`.
+
+Three things learned building it:
+
+- The agent socket is spoken to **directly** (`/tmp/guest-desktop-vm/qga.sock`),
+  not through QMP. The qemu build `run-nixos-vm` uses (qemu-host-cpu-only)
+  has no `guest-*` QMP proxy commands compiled in at all — verified via
+  `query-commands` (241 commands, zero `guest-*`). The agent protocol is the
+  same JSON framing without the greeting/capabilities handshake; `guest-sync`
+  is the connectivity check.
+- `guest-exec` needs **absolute paths** (`/bin/sh`, not `sh`): the agent does
+  no PATH lookup ("Failed to execute child process").
+- Never put `#` comments inside a `\`-continued shell command (vm-up.sh once
+  had them): the comment ends the continuation and silently drops the rest,
+  which is how vm-console.py received an empty argv and died with IndexError.

@@ -19,6 +19,13 @@
 # refuses `-vnc` in that configuration ("The console requires a GL context").
 # `-display egl-headless` plus `-spice` is the combination that works, and
 # `spicy`/`spicy-screenshot` (spice-gtk) are the clients for it.
+#
+# rendernode is pinned to the Intel node rather than left to QEMU's probing:
+# left alone, egl-headless walks /dev/dri/renderD* in order, and on this
+# machine that walk can die on the NVIDIA node with "eglInitialize failed:
+# EGL_NOT_INITIALIZED" / "render node init failed" -- even though nothing
+# about the NVIDIA GPU changed and plain host EGL still initializes. Pinning
+# also makes the choice deterministic instead of enumeration-order luck.
 set -euo pipefail
 
 here="$(cd -- "$(dirname -- "$0")" && pwd)"
@@ -52,7 +59,7 @@ if [ "$reset" -eq 1 ]; then
 fi
 
 # A stale socket from a killed qemu makes the new one refuse to bind.
-rm -f "$qmp"
+rm -f "$qmp" "$run_dir/qga.sock"
 
 # -vga none is not optional. QEMU otherwise adds a std VGA (bochs-drm) device,
 # which shows up as a second /dev/dri/cardN in the guest; the VM then has two DRM
@@ -66,12 +73,25 @@ cd "$run_dir"
 #   vm-console.py --port $console_port --send 'text\n'   types at the guest
 #   vm-console.py --port $console_port --watch           follows the console
 # vmg (in this directory) wraps that in the higher-level helpers.
+#
+# The -chardev/-device virtserialport lines are the guest-agent channel. vm.nix
+# runs services.qemuGuest, which starts qemu-ga when udev sees the
+# org.qemu.guest_agent.0 virtio port. vm-qga.mjs talks to it over QMP
+# (guest-exec): real command execution with stdout/stderr/exit codes, no
+# serial corruption, no virtiofs staging.
+#
+# NOTE: no # comments inside the continued command below. A comment line ends
+# the continuation, silently dropping the rest of the command -- which is how
+# vm-console.py once received an empty argv and died with IndexError.
 nohup nix shell nixpkgs#python3 -c \
   python3 "$here/vm-console.py" serve --log "$log" --port "$console_port" -- \
   "$runner" \
   -vga none \
   -device virtio-gpu-gl-pci \
-  -display egl-headless \
+  -display egl-headless,rendernode=/dev/dri/renderD128 \
+  -chardev "socket,path=$run_dir/qga.sock,server=on,wait=off,id=qga0" \
+  -device virtio-serial-pci \
+  -device "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0" \
   -spice "port=$spice_port,disable-ticketing=on" \
   -qmp "unix:$qmp,server=on,wait=off" \
   >"$run_dir/qemu.log" 2>&1 &

@@ -23,6 +23,14 @@
 
   security.polkit.enable = true;
 
+  # The QEMU guest agent. This is what makes the VM scriptable without the
+  # serial console: guest-exec runs a command in the guest and returns its
+  # stdout/stderr/exit code over QMP, so there is no base64-over-a-pty, no
+  # quoting hell, and no virtiofs staging. It starts on udev seeing the
+  # org.qemu.guest_agent.0 virtio port, which vm-up.sh adds to the QEMU
+  # command line. Serial stays for early boot (the agent starts late).
+  services.qemuGuest.enable = true;
+
   # No greeter and no display manager: greetd needs wlroots and the real session
   # entrypoints, and neither is what this VM tests. What it tests is that the
   # dispatcher picks the right branch for each user and that the login hook
