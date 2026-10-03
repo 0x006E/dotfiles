@@ -20,10 +20,14 @@ persists, so it survives reboots.
       --image registry.fedoraproject.org/fedora:44 \
       --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /run/systemd/sessions:/run/systemd/sessions:ro"
 
-then install the desktop:
+then install the desktop and pull the graphical trigger (see below for why
+the second half exists):
 
     distrobox enter -n gnome
     sudo dnf group install -y gnome-desktop
+    mkdir -p ~/.config/systemd/user/gnome-session@gnome.target.d
+    printf '[Unit]\nWants=graphical-session.target\nAfter=graphical-session.target\n' \
+      > ~/.config/systemd/user/gnome-session@gnome.target.d/pull-graphical.conf
     exit
 
 To do this without a working login shell, use a real session so `XDG_RUNTIME_DIR`
@@ -141,10 +145,26 @@ privileged operations are denied — but enumeration (sessions, devices) is
 visible, and there is no narrower option: logind is the only path mutter
 accepts.
 
-Open question for the full session: components other than the shell that look
-up their session *by PID* (gnome-settings-daemon is the prime suspect) still
-fail, because box PIDs are not in any host scope. Easy to spot in the box's
-user journal if it happens; the shell itself is proven fine.
+One more piece is needed for the *full* session that the compositor alone
+does not need: something must start `graphical-session.target`. Nothing in
+any unit file Wants or Requires it (verified by grep across
+`/usr/lib/systemd/user`), yet `gnome-session-pre.target` Requires it and the
+whole tree stays dead without it — gnome-session starts
+`gnome-session@gnome.target`, finds `graphical-session-pre.target` inactive,
+and quits watching it. On a GDM system whatever launches the session evidently
+triggers it; since this setup replaces GDM, that step belongs here. The fix is
+a three-line drop-in in the box (part of the one-time setup, below), which
+makes the session target pull it declaratively — `RefuseManualStart` blocks a
+direct start, so a `Wants=` is the only way in:
+
+    mkdir -p ~/.config/systemd/user/gnome-session@gnome.target.d
+    printf '[Unit]\nWants=graphical-session.target\nAfter=graphical-session.target\n' \
+      > ~/.config/systemd/user/gnome-session@gnome.target.d/pull-graphical.conf
+
+With that in place the full session comes up: 27 GNOME units running
+(settings daemon components, keyring, portals), verified in the VM with a
+rendered desktop to show for it. No PID-resolving component has failed yet;
+if one ever does, the box's user journal is where it shows.
 
 **2. Do not wrap anything in `dbus-run-session`.** An earlier version of the
 dispatcher ran `dbus-run-session -- gnome-session`, on the theory that mutter
@@ -191,12 +211,9 @@ run cannot be overwritten.
 
 ## Not verified
 
-- `gnome-session` itself, end to end. The compositor is proven; the session
-  manager plus its units (settings daemon, portals, keyring) still need a run.
-  Watch for components that resolve their session *by PID* rather than by
-  `XDG_SESSION_ID` — those still fail without scope attribution, visible in
-  the box's user journal.
 - Whether mutter can claim a VT and mode-set the real panel, rather than the
-  VM's virtual output.
+  VM's virtual output. Everything else in the chain is proven in the VM.
 - Logging out of the greeter session and back in as `nithin`, which is the
   regression check for `/tmp` ownership and XWayland.
+- Long-run stability (lingering, idle/screen-lock behavior without GDM —
+  expect a "screen lock requires GDM" notice, which is cosmetic).

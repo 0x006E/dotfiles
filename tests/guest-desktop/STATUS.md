@@ -88,9 +88,22 @@ ID exported into the compositor's environment:
 
 With both in place, plain `distrobox enter` (no STOP/CONT dance, no cgroup
 writes, guest-uid throughout) starts a rendering compositor: session found,
-`TakeControl` granted, monitor configured, third screenshot. The earlier
+`TakeControl` granted, monitor configured, fourth screenshot. The earlier
 "Failed to get status of XDG_SESSION_ID" failures were all missing-file or
 missing-variable cases, never a scope problem.
+
+Follow-on, same session: the full `gnome-session` also completes once a
+three-line drop-in pulls `graphical-session.target`
+(`~/.config/systemd/user/gnome-session@gnome.target.d/pull-graphical.conf`
+with `Wants=`+`After=` — `RefuseManualStart` blocks a direct start, and
+nothing in any unit file pulls it otherwise; without it gnome-session starts
+its target, finds `graphical-session-pre.target` inactive, and quits).
+27 GNOME units running (settings daemon, keyring, portals), fifth screenshot.
+Root causes along the way, all confirmed: box user manager idling out (pin
+with `touch /var/lib/systemd/linger/guest` as box-root, since polkit denies
+both uids the `loginctl` form), and a root-owned `/run/user/1000/dconf/user`
+from early root-run days breaking gsettings session-name resolution (delete
+it once).
 
 Why the confusion lasted so long: most probe runs never had `XDG_SESSION_ID`
 in the compositor's environment at all (distrobox-enter's denylist was
