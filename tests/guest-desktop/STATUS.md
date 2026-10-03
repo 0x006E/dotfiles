@@ -25,6 +25,71 @@ console cannot survive nested quoting:
 Use a fresh inner filename each run: a file chowned to `guest` on an earlier run
 cannot be overwritten by the next one ("Permission denied").
 
+### Harness gaps that cost real time
+
+**This VM had no greeter.** `vm.nix` said so explicitly: "No greeter and no
+display manager: greetd needs wlroots and neither is what this VM tests." That
+omission is the single reason the greetd-only bug below survived the entire life
+of this feature — every probe ran from a TTY or the agent socket, which is a
+different code path from greetd. There is now a greeter (tuigreet) and logging in
+as `guest` through it is a required step, not an extra.
+
+**`vm-shot.sh` and `vm-console.py` are python3**, which the agent does not have,
+so the two tools that could type at the guest were unusable from here.
+`vm-key.mjs` (node, talks QMP directly) covers screenshots and keys. Note this
+QEMU build (`qemu-host-cpu-only`) has **no `sendkey`** QMP command, so keyboard
+input has to come from a real SPICE client; keystrokes into the VM are the one
+step a human still has to do.
+
+## PROVEN: the greetd login path, end to end
+
+A real tuigreet login as `guest`, with the container created but **without** the
+2 GB GNOME desktop — the probe records what the box receives instead, so this
+costs a ~70 MB image and runs in minutes.
+
+The chain, all confirmed from inside the box during the greeter-launched session:
+
+    XDG_SESSION_ID=4            # derived from greetd's session scope
+    XDG_SESSION_TYPE=wayland
+    XDG_CURRENT_DESKTOP=GNOME
+    XDG_SESSION_DESKTOP=gnome
+    CONTAINER_ID=gnome
+    0::/init.scope              # the box's own cgroup: never a session
+    # /run/systemd/sessions/4 now reads:
+    SERVICE=greetd  DESKTOP=desktop  TYPE=wayland  CLASS=user
+    SEAT=seat0  SCOPE=session-4.scope  LEADER=913
+    # sessions visible in the box: 1 3 4
+    # /run/systemd/sessions is a mountpoint
+    # host system bus answers: org.freedesktop.login1 present
+
+`loginctl` in the guest agrees: session 4, uid 1000, seat0, class user, tty1.
+
+### Three bugs this found, all invisible from a TTY probe
+
+1. **greetd never sets `XDG_SESSION_ID`.** `strings` on greetd 0.10.3 yields only
+   `XDG_SEAT`, `XDG_SESSION_CLASS`, `XDG_VTNR`. The old probes set the variable by
+   hand, which *supplied* the missing thing and made the mechanism look proven.
+   The dispatcher now derives it from its own cgroup (`session-<id>.scope`).
+2. **`${lib.getBin sessionIdScript}` pointed at a directory**, not the binary, so
+   the session died in under a second with `Is a directory` flashing on the
+   greeter. Note how the surrounding code does it: `${lib.getBin pkg}/bin/name`.
+3. **The `containerFlags` mount of `/run/systemd/sessions` does not survive.**
+   Inside the box the path is *not a mountpoint* and holds only the box's own
+   `c1`: the box runs systemd as init, has its own `/run/systemd`, and shadows it.
+   mutter resolves the id with `sd_session_is_active`, which reads that path
+   directly and never asks logind, so this alone is fatal — even though the host
+   *system bus* mount works fine (same inode as the host socket, and
+   `org.freedesktop.login1` answers through it).
+   distrobox's own `/run/host` mount does survive, so the dispatcher rebinds
+   `/run/host/run/systemd/sessions` onto `/run/systemd/sessions` inside the box
+   before starting the session. Rebinding at runtime rather than adding a flag to
+   `containerFlags` means no container recreation is needed.
+
+What is still unverified: mutter actually starting (`org.gnome.Shell@user.service`
+reaching "Running GNOME Shell as a Wayland display server") needs the full 2 GB
+desktop in the box. Earlier rounds did prove that once the id and files are
+valid; the open question is only whether the rebind holds on real hardware.
+
 ## What is proven
 
 Rootless podman works for `guest` (`podman pull` succeeds; `distrobox create`
