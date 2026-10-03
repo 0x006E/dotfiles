@@ -69,7 +69,12 @@ let
           # wayland-sessions directory), and XDG_SESSION_ID stays the guest's
           # real logind session: distrobox enter forwards both, and mutter
           # needs them to find the session on the host logind (see
-          # containerFlags below).
+          # containerFlags below). Both are per-login values from PAM; nothing
+          # here or in the box may cache them (in particular, never
+          # `systemctl --user set-environment XDG_SESSION_ID=...` in the box:
+          # linger keeps the box user manager -- and its environment -- alive
+          # across logouts, so a cached ID goes stale on the next login while
+          # everything keeps pointing at the dead session).
           export XDG_CURRENT_DESKTOP=GNOME
           export XDG_SESSION_DESKTOP=gnome
           # A bare gnome-session, deliberately NOT under dbus-run-session: the
@@ -78,7 +83,22 @@ let
           # -- which is exactly what broke gnome-session with "Failed to upload
           # environment to systemd". The path is inside the container, hence not
           # a store path.
-          exec ${lib.getBin pkgs.distrobox}/bin/distrobox enter --name ${cfg.containerName} -- \
+          #
+          # No `exec` here, on purpose: the trap below has to run when the
+          # session ends, and exec would replace this shell before it can.
+          # Logout teardown: the box outlives the greeter session (its
+          # processes sit in a libpod scope, not the session scope, so
+          # logind's session cleanup never touches them). Without this, a
+          # second login finds the previous session's units still running --
+          # bus name taken, DRM master held -- and the new session fails to
+          # start. Stopping the session target leaves the box running but
+          # sessionless, which is exactly what a fresh login expects.
+          box_stop() {
+            ${lib.getBin pkgs.distrobox}/bin/distrobox enter --name ${cfg.containerName} -- \
+              systemctl --user stop gnome-session@gnome.target >/dev/null 2>&1 || :
+          }
+          trap box_stop EXIT
+          ${lib.getBin pkgs.distrobox}/bin/distrobox enter --name ${cfg.containerName} -- \
             ${cfg.gnomeSessionCommand}
           ;;
         *)
@@ -279,6 +299,12 @@ delib.module {
       #     pkgs.shadow, whose basename does not exist in Fedora.
       users.users.${cfg.guestUser} = {
         shell = pkgs.bash;
+        # Lingering, declaratively: without it the guest's user units only
+        # start at login, and rootless podman loses its systemd user session
+        # (falling back to cgroupfs with a warning). With it the user manager
+        # is always there. /var/lib/systemd/linger persists via impermanence's
+        # /var/lib/systemd entry, so this survives reboots.
+        linger = true;
         # `render` is what makes /dev/dri/renderD* usable, which is how the
         # container's compositor reaches the GPU. `video` and `audio` were
         # already there for the old LXQt kiosk and still apply.

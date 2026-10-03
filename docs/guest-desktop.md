@@ -35,6 +35,33 @@ exists:
 
     machinectl shell guest@
 
+Also inside the box, once, pin its user manager (it idles out otherwise, and
+polkit denies both uids the `loginctl` form — the file is all linger is):
+
+    distrobox enter -n gnome
+    sudo touch /var/lib/systemd/linger/guest
+    exit
+
+And delete `/run/user/1000/dconf/user` in the box if it is owned by root (it
+gets that way if anything ever ran dconf as box-root, e.g. an early
+`podman exec` without `--user`): a root-owned db breaks gsettings reads,
+including the session-name lookup, for no visible reason.
+
+## First greeter login as guest
+
+Do this with a way back in hand:
+
+- Apply with `nh os test`, not `switch`, so a reboot reverts.
+- Keep a root TTY logged in (`Ctrl+Alt+F3`) before touching the greeter.
+- Log in as guest, confirm the desktop, log back out, log in again, and
+  switch between `nithin` and `guest` without rebooting. The second login is
+  the test that matters: `XDG_SESSION_ID` is per-login from PAM, and anything
+  caching the old ID breaks. By construction nothing caches it — the
+  dispatcher forwards the live environment, the box user manager never carries
+  `XDG_SESSION_ID` (only the stable `XDG_SESSION_TYPE`/`XDG_CURRENT_DESKTOP`),
+  and the dispatcher's EXIT trap stops the box session on logout so the next
+  login starts clean — but verify it rather than trusting the design.
+
 Three things in that command line are load-bearing:
 
 - **`--additional-flags`, not `--device`.** distrobox has no `--device` flag and
