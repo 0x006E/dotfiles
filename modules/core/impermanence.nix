@@ -131,26 +131,31 @@ delib.module {
       # own container storage.
       system.activationScripts.assertHomeOwnership = {
         supportsDryActivation = true;
-        text =
-          lib.concatMapStringsSep "\n" (
+        text = ''
+          # mkdir first: on the first switch that ever declares a persist dir,
+          # the /persist side does not exist yet -- systemd only creates the
+          # bind-mount source when it mounts the unit, which happens *after*
+          # this script -- and a bare chown against a missing path aborts the
+          # whole activation. Idempotent, so the steady state is unchanged.
+          assert_dir() {
+            mkdir -p "$1"
+            chown "$2:users" "$1"
+            chmod "$3" "$1"
+          }
+
+          ${lib.concatMapStringsSep "\n" (
             dir:
             let
               mode = if dir == home then "0700" else "0755";
             in
             ''
-              chown ${username}:users '${dir}'
-              chmod ${mode} '${dir}'
-              chown ${username}:users '/persist${dir}'
-              chmod ${mode} '/persist${dir}'
+              assert_dir '${dir}' ${username} ${mode}
+              assert_dir '/persist${dir}' ${username} ${mode}
             ''
-          ) parents
-          + ''
-
-            chown guest:users '${guest}'
-            chmod 0700 '${guest}'
-            chown guest:users '/persist${guest}'
-            chmod 0700 '/persist${guest}'
-          '';
+          ) parents}
+          assert_dir '${guest}' guest 0700
+          assert_dir '/persist${guest}' guest 0700
+        '';
       };
 
       # Wipe mechanism: recreate the @ root subvolume on every boot.
