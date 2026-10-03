@@ -1,2 +1,4 @@
 # nix build output symlink
 /result
+# stray VM disk (live one lives in /tmp/guest-desktop-vm/)
+/nixos.qcow2
