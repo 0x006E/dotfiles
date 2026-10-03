@@ -63,6 +63,34 @@ let
           exec ${niriPkg}/bin/niri-session
           ;;
         ${cfg.guestUser})
+          # Refuse to start unless the container is already there.
+          #
+          # `distrobox enter` does NOT fail on a missing container: it offers to
+          # create one and, with no terminal to ask (greetd gives the session no
+          # usable stdin), `read` returns EOF, the default answer is taken, and
+          # it creates the container from container_image_default --
+          # registry.fedoraproject.org/fedora-toolbox:latest -- with none of the
+          # flags in containerFlags: no systemd init, no dbus-daemon, no /dev/dri,
+          # no host bus mount. That container cannot run GNOME at all; the
+          # session dies seconds later on a missing /usr/bin/gnome-session, and
+          # what is left behind is a 2 GB wrong container that the next login
+          # happily reuses. This is the exact failure the one-time setup in
+          # docs/guest-desktop.md exists to prevent, so the check is here, in
+          # code, rather than left to the guest to remember.
+          #
+          # `podman container exists` rather than parsing distrobox output: it is
+          # the same query the login hook uses, and it cannot be defeated by a
+          # prompt we cannot see.
+          if ! ${lib.getBin podmanPkg}/bin/podman container exists ${cfg.containerName}; then
+            printf 'desktop-session: distrobox container %s does not exist.\n' \\
+              ${cfg.containerName} >&2
+            printf 'It is created once, by hand, as %s -- see docs/guest-desktop.md.\n' \\
+              ${cfg.guestUser} >&2
+            printf 'Refusing to start: distrobox would otherwise create one with no\n' >&2
+            printf 'systemd init, no /dev/dri and no host bus, which cannot run GNOME.\n' >&2
+            exit 1
+          fi
+
           # Overrides the greeter's niri-derived values, which is the entire
           # reason the dispatcher exists rather than two session entries.
           # XDG_SESSION_TYPE stays what the greeter set (wayland, from the
@@ -93,6 +121,11 @@ let
           # bus name taken, DRM master held -- and the new session fails to
           # start. Stopping the session target leaves the box running but
           # sessionless, which is exactly what a fresh login expects.
+          # NB: never export DBX_NON_INTERACTIVE=1 here, even though it looks
+          # like the way to stop distrobox asking questions. It does the exact
+          # opposite: it selects the "no terminal, assume yes" branch and
+          # auto-creates the container from the default image. The guard above is
+          # the only thing standing between a missing container and a broken one.
           box_stop() {
             ${lib.getBin pkgs.distrobox}/bin/distrobox enter --name ${cfg.containerName} -- \
               systemctl --user stop gnome-session@gnome.target >/dev/null 2>&1 || :

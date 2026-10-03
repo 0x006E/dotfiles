@@ -47,6 +47,31 @@ gets that way if anything ever ran dconf as box-root, e.g. an early
 `podman exec` without `--user`): a root-owned db breaks gsettings reads,
 including the session-name lookup, for no visible reason.
 
+## If `gnome` already exists, it is probably wrong
+
+`distrobox enter` does not fail when the container is missing. It prints
+`Create it now, out of image <default>?`, and with no terminal to answer — which
+is exactly the greeter's situation — `read` gets EOF, the default answer is
+taken, and it creates the container itself from its built-in default image
+`registry.fedoraproject.org/fedora-toolbox:latest`, with **none** of the flags
+above: no `--init systemd`, no dbus-daemon, no `/dev/dri`, no host bus mount.
+The login then dies within seconds on a missing `/usr/bin/gnome-session`, and a
+2 GB unusable container is left behind that every later login reuses.
+
+The module now refuses to start when the container is missing, so this cannot
+happen from the greeter again. If you are reading this because a container
+exists but the session still fails, check it before trusting it:
+
+    podman inspect gnome --format '{{.ImageName}} {{.HostConfig.Init}}'
+
+`fedora-toolbox` and an empty `Init` mean it is one of these accidental
+containers. Delete it and create it properly:
+
+    distrobox rm -f gnome
+
+then run the `distrobox create` above. A correctly created one reports
+`registry.fedoraproject.org/fedora:44` and `Init` of `systemd`.
+
 ## First greeter login as guest
 
 Do this with a way back in hand:
