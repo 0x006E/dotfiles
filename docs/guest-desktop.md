@@ -24,11 +24,44 @@ then install the desktop and pull the graphical trigger (see below for why
 the second half exists):
 
     distrobox enter -n gnome
-    sudo dnf group install -y gnome-desktop
+    sudo dnf group install -y --setopt=tsflags=notriggers gnome-desktop
     mkdir -p ~/.config/systemd/user/gnome-session@gnome.target.d
     printf '[Unit]\nWants=graphical-session.target\nAfter=graphical-session.target\n' \
       > ~/.config/systemd/user/gnome-session@gnome.target.d/pull-graphical.conf
     exit
+
+### `dnf` always fails in this box — use `tsflags=notriggers`
+
+A plain `dnf install` ends in `Transaction failed`, after every package has
+already unpacked:
+
+    fchownat() of /dev/kvm failed: Operation not permitted
+    Failed to set unit properties on systemd-udevd.service: Unit systemd-udevd.service is masked.
+    Transaction failed: Rpm transaction failed.
+
+Two independent causes, both inherent to a rootless distrobox rather than
+anything wrong with the packages:
+
+- distrobox bind-mounts the host `/dev` (rslave), so udev's rules fire on host
+  device nodes — `/dev/kvm`, `/dev/snd/*`, `/dev/vhost-*` — and try to chown them
+  to gids that do not map inside the box's user namespace. `EPERM`.
+- distrobox deliberately masks `systemd-udevd.service`, because a second udevd
+  cannot bind the control socket. systemd's `%triggerin` fails its
+  `set-property` call against that masked unit.
+
+`%triggerin` is the last stage, after unpack and `%posttrans`, so the install
+itself usually succeeded and only the trigger bookkeeping failed. `--setopt=
+tsflags=notriggers` skips exactly the stage that cannot pass here, which makes
+the transaction complete cleanly. Use it for all package work in the box.
+
+If you already ran it without the flag, check what landed rather than assuming
+either way:
+
+    rpm -q gnome-session gnome-shell mutter
+
+`ls -l /dev/dri/renderD128` from inside the box is the device check worth
+having: it is the one property the VM could not prove, and a `nobody:nobody`
+owner there means the compositor cannot open the GPU.
 
 To do this without a working login shell, use a real session so `XDG_RUNTIME_DIR`
 exists:
