@@ -62,15 +62,15 @@ The module now refuses to start when the container is missing, so this cannot
 happen from the greeter again. If you are reading this because a container
 exists but the session still fails, check it before trusting it:
 
-    podman inspect gnome --format '{{.ImageName}} {{.HostConfig.Init}}'
+    podman inspect gnome --format '{{.ImageName}} systemd={{.Config.SystemdMode}}'
 
-`fedora-toolbox` and an empty `Init` mean it is one of these accidental
+`fedora-toolbox` with `systemd=false` means it is one of these accidental
 containers. Delete it and create it properly:
 
     distrobox rm -f gnome
 
 then run the `distrobox create` above. A correctly created one reports
-`registry.fedoraproject.org/fedora:44` and `Init` of `systemd`.
+`registry.fedoraproject.org/fedora:44 systemd=true`.
 
 ## First greeter login as guest
 
@@ -91,9 +91,18 @@ Three things in that command line are load-bearing:
 
 - **`--additional-flags`, not `--device`.** distrobox has no `--device` flag and
   fails with `Invalid flag '--device'`. `--additional-flags` does reach the
-  runtime; check with
-  `podman inspect gnome --format '{{json .HostConfig.Devices}}'`, which must not
-  be `[]`.
+  runtime. Verify with `podman inspect gnome` and check two fields:
+
+      podman inspect gnome --format '{{.ImageName}} systemd={{.Config.SystemdMode}}'
+
+  `fedora:44` with `systemd=true` is correct. Two traps here: `HostConfig.Init`
+  is *not* it (that field means an init binary like tini was injected, whereas
+  distrobox's `--init systemd` becomes podman's `--systemd=always`), and
+  `HostConfig.Devices` is **always** `[]` because distrobox passes
+  `--privileged` and podman skips enumerating devices for privileged containers
+  (`GetDevices` returns empty whenever priv is set). For the devices, run
+  `distrobox create --verbose` and look for `Non-CDI device /dev/dri`, or just
+  check the result from inside the box with `ls -l /dev/dri/renderD128`.
 - **`dbus-daemon` is a separate package from `dbus`.** Without it the container
   has no working user bus for gnome-session to talk to.
 - **The host system bus and session files are mounted into the box.** These

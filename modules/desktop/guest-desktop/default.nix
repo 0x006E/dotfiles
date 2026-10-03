@@ -243,9 +243,16 @@ delib.module {
 
           These go through distrobox's --additional-flags, not a --device flag:
           distrobox has no --device option and fails with "Invalid flag
-          '--device'". --additional-flags does reach the runtime, which is
-          checkable with `podman inspect <name> --format
-          '{{json .HostConfig.Devices}}'` (it must be non-empty).
+          '--device'". --additional-flags does reach the runtime. Confirm it
+          from `distrobox create --verbose`, which prints `Non-CDI device
+          /dev/dri` for each one accepted.
+
+          Do NOT check `podman inspect --format '{{json .HostConfig.Devices}}'`
+          for this: distrobox always passes --privileged, and podman returns an
+          empty device list for privileged containers regardless of what was
+          requested (GetDevices skips the spec entirely when priv is set), so
+          that field is always []. HostConfig.Init is unrelated too -- it means
+          an init binary was injected, not that systemd is the box's init.
 
           Why --device rather than --volume for /dev/dri: /dev/dri is
           bind-mounted by distrobox implicitly, which makes the devices
