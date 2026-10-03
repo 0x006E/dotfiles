@@ -108,7 +108,9 @@ async function main() {
   }
 
   let argv = rest;
-  if (opts.asUser) argv = ["runuser", "-u", opts.asUser, "--", ...rest];
+  // Absolute path: the agent does no PATH lookup at all. This one is
+  // NixOS-specific, which is fine -- the only guest this ever talks to is.
+  if (opts.asUser) argv = ["/run/current-system/sw/bin/runuser", "-u", opts.asUser, "--", ...rest];
 
   const execArgs = { path: argv[0], "capture-output": true };
   if (argv.length > 1) execArgs.arg = argv.slice(1);
