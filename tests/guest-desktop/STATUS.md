@@ -181,6 +181,27 @@ enumeration but breaks cgroups. The migrate approach (exec + cgroup fix) is
 the one that reaches a desktop. The GUdev-nsenter discrepancy itself is
 unexplained; it no longer matters.
 
+## Verdicts on proposed alternatives (all tested or sourced)
+
+- **`podman run/create --cgroups=disabled`**: DEAD. Plain commands work, but
+  systemd-as-init exits 255 instantly and silently in every variant (with and
+  without `--systemd=always`). The box needs its init and user manager, so
+  cgroups stay managed (and the libpod scope with them).
+- **`nsenter -r -w`**: wrong model. strace proves libudev fails opening
+  `/proc/self/fd` mid-resolution (no `-p`), which root/cwd flags cannot
+  affect. Files were already proven identical across views.
+- **"Start the box from the session so children inherit"**: wrong about
+  podman. crun ALWAYS assigns libpod scopes regardless of creator scope
+  (proven: creator in agent-service scope, box in libpod scope). Only
+  `--cgroups=disabled` would inherit, which is dead per above.
+- **PAMName= system unit**: moves privilege without removing it, and adds
+  session-lifecycle problems (service outlives logout, holds DRM into the
+  next login). Worse than the migrator.
+- **Migrating box init**: pointless alone — exec children fork from conmon
+  (libpod scope), not from init. Migrating CONMON would cover all future
+  execs, but conmon dying on logout orphans box management; next login must
+  `podman start` fresh (which then lands correctly). Considered, not tested.
+
 ## VM operation notes
 
 - `loginctl enable-linger guest` is required before `distrobox create --init`,
