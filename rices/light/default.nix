@@ -5,7 +5,9 @@ delib.rice {
   nixos = {
     imports = [
       ({ pkgs, ... }: {
-        stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-latte.yaml";
+        # Vendored, same as the dark rice: see rices/dark/default.nix for why
+        # this is a file in the repo rather than ${pkgs.base16-schemes}/...
+        stylix.base16Scheme = ./catppuccin-latte.yaml;
         stylix.polarity = "light";
         stylix.image = ./wallpaper.jpg;
 

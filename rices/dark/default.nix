@@ -5,7 +5,12 @@ delib.rice {
   nixos = {
     imports = [
       ({ pkgs, ... }: {
-        stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/ayu-dark.yaml";
+        # Vendored from tinted-theming/schemes (the same rev nixpkgs
+        # packages as base16-schemes): a store *source* path, not a derivation
+        # output. Pointing this at ${pkgs.base16-schemes}/... instead makes
+        # every evaluation an IFD build, which breaks the moment that output
+        # is garbage-collected.
+        stylix.base16Scheme = ./ayu-dark.yaml;
         stylix.polarity = "dark";
         # Snowy night forest (wallhaven 95o881, uploader mpjuan06):
         # near-black left third for the vertical bar, blue/cyan canopy
