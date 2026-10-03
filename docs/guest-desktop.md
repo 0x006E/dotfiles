@@ -1,0 +1,177 @@
+# The guest desktop
+
+`nithin` gets niri on the host. `guest` gets a full GNOME desktop that is not
+installed on this machine at all: it lives in a rootless distrobox container,
+created once by hand and then entered by a single greeter session.
+
+The module is `modules/desktop/guest-desktop`, toggled in the host manifest with
+`desktop.guest-desktop.enable`. Turn that off and there is no `guest` session,
+no podman, no container entry; the account in `modules/config/user.nix` stays.
+
+## One-time setup, as `guest`
+
+Run these once, from a login on the `guest` account. The container is imperative
+on purpose: it is ~2 GB of desktop, and a rebuild should not silently re-download
+it. Its storage is under `~/.local/share/containers`, which impermanence already
+persists, so it survives reboots.
+
+    distrobox create --name gnome --init \
+      --additional-packages "systemd dbus dbus-daemon" \
+      --image registry.fedoraproject.org/fedora:44 \
+      --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket"
+
+then install the desktop:
+
+    distrobox enter -n gnome
+    sudo dnf group install -y gnome-desktop
+    exit
+
+To do this without a working login shell, use a real session so `XDG_RUNTIME_DIR`
+exists:
+
+    machinectl shell guest@
+
+Three things in that command line are load-bearing:
+
+- **`--additional-flags`, not `--device`.** distrobox has no `--device` flag and
+  fails with `Invalid flag '--device'`. `--additional-flags` does reach the
+  runtime; check with
+  `podman inspect gnome --format '{{json .HostConfig.Devices}}'`, which must not
+  be `[]`.
+- **`dbus-daemon` is a separate package from `dbus`.** Without it the container
+  has no working user bus for gnome-session to talk to.
+- **The host system bus is mounted into the box.** This is the one deliberate
+  hole in the container boundary (see below), and without it nothing starts:
+  mutter finds its seat and session through logind on the *system* bus, and the
+  box's own logind knows no seat.
+- **`registry.fedoraproject.org/fedora:44`** — current stable, GNOME 50. Fedora 43
+  works too; 42 and older do not, because mutter removed its X11 backend in the 50
+  cycle and this needs none.
+
+## How the session starts
+
+One greeter entry, `Name=Desktop`, whose `Exec` is a dispatcher that switches on
+the user:
+
+- `nithin` → `niri-session`, natively.
+- `guest` → `distrobox enter --name gnome -- /usr/bin/gnome-session`.
+
+That entry is a `services.displayManager.sessionPackages` member rather than an
+`environment.etc` file, because that option is what makes NixOS copy the entry
+into a store tree on `XDG_DATA_DIRS`, which is where the greeter looks.
+
+The greeter only knows one `Name=`, so `XDG_CURRENT_DESKTOP` would be wrong for
+one of the two users. The dispatcher overrides it per user rather than relying on
+`DesktopNames=`, which is the entire reason it exists instead of two entries.
+
+## Why this works at all, given GNOME 50 has no X11 backend
+
+The obvious approach — share the host's X server, as the upstream distrobox
+write-up does — is dead. That write-up is GNOME 42, where mutter had an X11
+backend and the container's desktop was an X11 *client*; the `/tmp/.X11-unix`
+chown workaround in it exists for that reason. Mutter dropped the X11 backend
+outright in the 50 cycle, so there is no X11 route and no `--nested` either
+(`mutter --help` documents `--display-server` as "rather than nested", and the
+flag it would invert no longer exists).
+
+What works instead is option B from the same write-up, which its Hyprland section
+uses: the container's compositor takes the GPU itself.
+
+    distrobox create ... --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket"
+
+The container runs **mutter as a real Wayland display server**. Verified on
+Fedora 44 in the test VM:
+
+    Running Mutter (using mutter 50.5) as a Wayland display server
+    Added device '/dev/dri/renderD128' (virtio_gpu) using no mode setting.
+    GPU /dev/dri/renderD128 selected as primary
+    Using Wayland display name 'wayland-0'
+
+X11 applications still work: mutter starts XWayland for them. That is the
+replacement for what the X11 backend used to provide.
+
+The upstream caveat for this mode — "requires you to not have any other Wayland
+sessions running" — is already satisfied, since only one user is logged in at a
+time here.
+
+## The two things that are easy to get wrong
+
+Both cost real debugging time, so both are worth keeping.
+
+**1. Device access is not the problem; the logind session is.** A rootless
+container maps only its own user's uid and gid, so `/dev/dri/card0` appears as
+`nobody:nobody 0660` — which *looks* like a permissions wall but is not one.
+Inside a rootless container the user is root-mapped, so `test -w` always says
+yes and means nothing; a real `open(O_RDWR)` succeeds, verified on this
+machine's real GPU. Do not "fix" this with an ACL (udev has no ACL key at all —
+`ACLS=` fails the build with `Invalid key 'ACLS'`) or with `MODE="0666"`, which
+would make the primary GPU node world-writable for no reason.
+
+The actual wall is one layer up. Mutter's native backend takes its display
+devices through logind (`meta-launcher.c`: `TakeDevice` on the session's seat),
+and it finds the session through the *system* bus — trying `XDG_SESSION_ID`,
+then its own PID, then the display, and dying with "Failed to find any matching
+session" when none resolve. The box's own logind can never satisfy this: its
+sessions are all `type=unspecified`, and its `seat0` has `Devices: n/a`, because
+distrobox masks `systemd-udevd` and no second udevd can bind the control socket
+("Address already in use") — so no `ID_SEAT` tags ever exist in the box.
+
+Hence the `-v /run/dbus/system_bus_socket:...` mount: with the host bus visible,
+the box sees the guest's real host session and mutter starts cleanly. This is
+the one deliberate hole in the container boundary. D-Bus policy still applies
+and the box presents as the unprivileged guest uid, so privileged operations are
+denied — but enumeration (sessions, devices) is visible, and there is no
+narrower option: logind is the only path mutter accepts.
+
+**2. Do not wrap anything in `dbus-run-session`.** An earlier version of the
+dispatcher ran `dbus-run-session -- gnome-session`, on the theory that mutter
+needs a session bus and `distrobox enter` provides none. Both halves are wrong
+here: the container runs its own systemd `--user`, so the user bus already
+exists, and `dbus-run-session` *replaces* it with a private one — which is
+exactly what broke gnome-session with "Failed to upload environment to systemd".
+Plain `distrobox enter` connects to the working user bus. The `set_gnome_env`
+assertion that motivated the wrapper only fires when there is no bus at all
+(seen once, running bare `podman run` without `XDG_RUNTIME_DIR`), never under
+`distrobox enter`.
+
+## `/tmp/.X11-unix`
+
+Deliberately untouched. The upstream write-up chowns it to the user because its
+GNOME was an X11 client; this one's compositor is native and does not need it.
+Two users share `/tmp`, so a blanket chown to `guest` would be a footgun. If
+XWayland ever does complain, the smallest fix is a `systemd.tmpfiles` rule
+creating `/tmp/.X11-unix` as `1777 root:root` — sticky, not owned by anyone.
+
+## Testing
+
+`tests/guest-desktop/`, two harnesses for two different questions.
+
+    ./host-probe.sh gpu      # device access + mutter, on this machine's real GPU
+    ./host-probe.sh clean    # remove the throwaway container and image
+    ./vm-up.sh               # boot the test VM (serial console + SPICE)
+    ./vmg send '<command>'   # type at the VM's serial console
+
+Use `host-probe.sh` for anything to do with the GPU. The VM's GPU is virgl —
+software GL 4.2 — so it cannot answer those questions, and using it anyway
+produced two wrong conclusions that the real GPU immediately reversed:
+
+- "rootless podman `--device` cannot reach card0" — false; the real cause was a
+  plain `--volume` bind mount, which leaves host gids unmapped.
+- "`-r`/`-w` inside the container proves access" — false, as above.
+
+The VM is for the one thing the host cannot test: whether the greeter hands off to
+this session correctly.
+
+Long commands go through `vmg`, which stages a script over the virtiofs exchange
+directory. Use a fresh filename per run; a file chowned to `guest` by an earlier
+run cannot be overwritten.
+
+## Not verified
+
+- `gnome-session` itself, end to end, coming up in the container. The compositor
+  running is necessary but not sufficient: the session also wants gsettings/dconf,
+  portals, and a seat it is allowed to own. This is the next thing to test.
+- Whether mutter can claim a VT and mode-set the real panel, rather than running
+  headless with a virtual monitor.
+- Logging out of the greeter session and back in as `nithin`, which is the
+  regression check for `/tmp` ownership and XWayland.
