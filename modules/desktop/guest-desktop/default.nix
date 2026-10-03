@@ -182,6 +182,8 @@ delib.module {
           "/dev/input"
           "-v"
           "/run/dbus/system_bus_socket:/run/dbus/system_bus_socket"
+          "-v"
+          "/run/systemd/sessions:/run/systemd/sessions:ro"
         ];
         description = ''
           Devices and mounts passed into the container when it is created.
@@ -210,11 +212,21 @@ delib.module {
           real host session and mutter starts with no errors. Without it the
           shell dies with "Failed to find any matching session".
 
-          This is the one deliberate hole in the container boundary: the box can
-          talk to host system services. D-Bus policy still applies, and the box
-          presents as the unprivileged guest uid, so privileged operations are
-          denied -- but enumeration (sessions, devices) is visible. There is no
-          narrower option: logind is the only path mutter accepts.
+          The sessions mount looks redundant next to the bus mount, and it is
+          not: `sd_session_is_active` -- which is how mutter validates the
+          `XDG_SESSION_ID` it is given -- never talks to logind. It reads the
+          file `/run/systemd/sessions/<id>` directly (`sd-login.c:
+          file_of_session`; a missing file surfaces as the `ENXIO` "No such
+          device or address" failure). The box has no such files of its own,
+          so without the mount the lookup fails before logind is ever asked.
+          Read-only is sufficient; only host logind writes them.
+
+          These two mounts are the deliberate holes in the container boundary:
+          the box can talk to host system services and read host session state.
+          D-Bus policy still applies and the box presents as the unprivileged
+          guest uid, so privileged operations are denied -- but enumeration
+          (sessions, devices) is visible. There is no narrower option: logind
+          is the only path mutter accepts.
         '';
       };
 

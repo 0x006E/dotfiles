@@ -18,7 +18,7 @@ persists, so it survives reboots.
     distrobox create --name gnome --init \
       --additional-packages "systemd dbus dbus-daemon" \
       --image registry.fedoraproject.org/fedora:44 \
-      --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket"
+      --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /run/systemd/sessions:/run/systemd/sessions:ro"
 
 then install the desktop:
 
@@ -40,10 +40,11 @@ Three things in that command line are load-bearing:
   be `[]`.
 - **`dbus-daemon` is a separate package from `dbus`.** Without it the container
   has no working user bus for gnome-session to talk to.
-- **The host system bus is mounted into the box.** This is the one deliberate
-  hole in the container boundary (see below), and without it nothing starts:
-  mutter finds its seat and session through logind on the *system* bus, and the
-  box's own logind knows no seat.
+- **The host system bus and session files are mounted into the box.** These
+  are the two deliberate holes in the container boundary (see below), and
+  without them nothing starts: mutter finds its seat through logind on the
+  *system* bus, and validates `XDG_SESSION_ID` against the session *files*,
+  and the box's own logind knows no seat and keeps no session files.
 - **`registry.fedoraproject.org/fedora:44`** — current stable, GNOME 50. Fedora 43
   works too; 42 and older do not, because mutter removed its X11 backend in the 50
   cycle and this needs none.
@@ -109,19 +110,41 @@ would make the primary GPU node world-writable for no reason.
 
 The actual wall is one layer up. Mutter's native backend takes its display
 devices through logind (`meta-launcher.c`: `TakeDevice` on the session's seat),
-and it finds the session through the *system* bus — trying `XDG_SESSION_ID`,
-then its own PID, then the display, and dying with "Failed to find any matching
-session" when none resolve. The box's own logind can never satisfy this: its
-sessions are all `type=unspecified`, and its `seat0` has `Devices: n/a`, because
-distrobox masks `systemd-udevd` and no second udevd can bind the control socket
+and it finds the session by trying `XDG_SESSION_ID`, then its own PID, then
+the display, dying with "Failed to find any matching session" when none
+resolve. The box's own logind can never satisfy this: its sessions are all
+`type=unspecified`, and its `seat0` has `Devices: n/a`, because distrobox
+masks `systemd-udevd` and no second udevd can bind the control socket
 ("Address already in use") — so no `ID_SEAT` tags ever exist in the box.
 
-Hence the `-v /run/dbus/system_bus_socket:...` mount: with the host bus visible,
-the box sees the guest's real host session and mutter starts cleanly. This is
-the one deliberate hole in the container boundary. D-Bus policy still applies
-and the box presents as the unprivileged guest uid, so privileged operations are
-denied — but enumeration (sessions, devices) is visible, and there is no
-narrower option: logind is the only path mutter accepts.
+Two mounts bridge the gap, and both are needed for different halves:
+
+- `-v /run/dbus/system_bus_socket:...` lets the box talk to host logind, so
+  the PID and display fallbacks resolve against the guest's real session.
+- `-v /run/systemd/sessions:/run/systemd/sessions:ro` serves the
+  `XDG_SESSION_ID` fast path: `sd_session_is_active` never talks to logind at
+  all, it reads `/run/systemd/sessions/<id>` directly (`sd-login.c:
+  file_of_session`; a missing file is the `ENXIO` "No such device or
+  address" failure). The box has no such files of its own.
+
+With both in place, a plain `distrobox enter` — no cgroup migration, no
+privilege — starts a working compositor: session found, `TakeControl` granted
+(the caller must be the box guest, i.e. the session owner uid, which is what
+`distrobox enter` runs as by default), display modeset, rendered desktop.
+Verified with screenshots. An earlier theory that the compositor must sit in
+the host session scope turned out wrong: only the `XDG_SESSION_ID`+file path
+matters, and it is cgroup-independent.
+
+These two mounts are the deliberate holes in the container boundary. D-Bus
+policy still applies and the box presents as the unprivileged guest uid, so
+privileged operations are denied — but enumeration (sessions, devices) is
+visible, and there is no narrower option: logind is the only path mutter
+accepts.
+
+Open question for the full session: components other than the shell that look
+up their session *by PID* (gnome-settings-daemon is the prime suspect) still
+fail, because box PIDs are not in any host scope. Easy to spot in the box's
+user journal if it happens; the shell itself is proven fine.
 
 **2. Do not wrap anything in `dbus-run-session`.** An earlier version of the
 dispatcher ran `dbus-run-session -- gnome-session`, on the theory that mutter
@@ -168,10 +191,12 @@ run cannot be overwritten.
 
 ## Not verified
 
-- `gnome-session` itself, end to end, coming up in the container. The compositor
-  running is necessary but not sufficient: the session also wants gsettings/dconf,
-  portals, and a seat it is allowed to own. This is the next thing to test.
-- Whether mutter can claim a VT and mode-set the real panel, rather than running
-  headless with a virtual monitor.
+- `gnome-session` itself, end to end. The compositor is proven; the session
+  manager plus its units (settings daemon, portals, keyring) still need a run.
+  Watch for components that resolve their session *by PID* rather than by
+  `XDG_SESSION_ID` — those still fail without scope attribution, visible in
+  the box's user journal.
+- Whether mutter can claim a VT and mode-set the real panel, rather than the
+  VM's virtual output.
 - Logging out of the greeter session and back in as `nithin`, which is the
   regression check for `/tmp` ownership and XWayland.

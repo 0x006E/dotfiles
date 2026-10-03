@@ -64,6 +64,41 @@ Inside the container:
 - `loginctl list-seats` shows `seat0`; `/dev/tty0` and `/dev/input/event0` are
   visible.
 
+## SUPERSEDED: the cgroup-migration detour (kept as a warning)
+
+An earlier version of this section concluded the compositor must live in the
+host session scope, proven by migrating PIDs into it via `cgroup.procs` (and
+two rendered screenshots). That mechanism is real, but it is NOT required.
+What actually fixed it, with zero migration and zero privilege, is below. The
+migration evidence stays valid for components that resolve their session *by
+PID*; only the "must" was wrong.
+
+## Resolved: XDG_SESSION_ID + two mounts, no migration
+
+The compositor does not need to sit in the host session scope. mutter's first
+lookup reads `XDG_SESSION_ID` and validates it with `sd_session_is_active`,
+which reads `/run/systemd/sessions/<id>` directly (`sd-login.c:
+file_of_session`; missing file = the `ENXIO` "No such device or address" that
+appeared in every early failure). The box keeps no such files, so the fix is
+a read-only bind of the host directory plus the bus mount, with the session
+ID exported into the compositor's environment:
+
+    -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+    -v /run/systemd/sessions:/run/systemd/sessions:ro
+
+With both in place, plain `distrobox enter` (no STOP/CONT dance, no cgroup
+writes, guest-uid throughout) starts a rendering compositor: session found,
+`TakeControl` granted, monitor configured, third screenshot. The earlier
+"Failed to get status of XDG_SESSION_ID" failures were all missing-file or
+missing-variable cases, never a scope problem.
+
+Why the confusion lasted so long: most probe runs never had `XDG_SESSION_ID`
+in the compositor's environment at all (distrobox-enter's denylist was
+suspected; the actual cause was quoting dropping the export through five
+shell layers, plus dead session IDs reused across runs). The PID fallback
+then ran and failed for the real reason (box PIDs in no host scope), which
+made scope look load-bearing.
+
 ## Resolved: the seat, not the device
 
 The `/dev/dri/card0` scare was a misdiagnosis. `nobody:nobody 0660` looks like a
