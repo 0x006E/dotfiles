@@ -101,16 +101,106 @@ the 50 cycle and has no `--nested` either (`--display-server` is documented as
 "rather than nested", and the flag it would invert no longer exists) — so the
 native-compositor path above is the only one, and it works.
 
-## Still open
+## PROVEN: full GNOME session in the box, with screenshots
 
-- `gnome-session` end to end in the box (compositor runs; the full session with
-  `org.gnome.Shell@user` still needs the host-bus mount in place, untested
-  together).
-- The `AssertEnvironment=XDG_SESSION_TYPE=wayland` on `org.gnome.Shell@.service`
-  is checked against the *user manager's* environment: `systemctl --user
-  set-environment` is needed if the manager does not already carry it.
-- Whether mutter can claim a VT and mode-set the real panel vs headless.
-- Greeter handoff on the real machine; `nithin` regression check after.
+`gnome-shell --mode=user` runs as a Wayland display server in the rootless
+box, takes the display through logind, and renders. Two SPICE captures show
+the Fedora welcome tour and then the Activities overview (wallpaper, search,
+clock, dash). The exact recipe that works:
+
+1. Box created WITH `-v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket`
+   (else the box's logind knows no seat and mutter dies with "Failed to find
+   any matching session" — from `meta-launcher.c:394`, after three fallbacks:
+   XDG_SESSION_ID, PID, display).
+2. Box's user manager carries the session env (`systemctl --user
+   set-environment XDG_SESSION_TYPE=wayland ...`), or the
+   `AssertEnvironment=` on `org.gnome.Shell@.service` refuses.
+3. The compositor process runs as the box guest (== session owner uid), or
+   `TakeControl` denies with "Only owner of session may take control"
+   (`logind-session-dbus.c:402`; mutter passes force=false, so owner-uid is
+   enough — but `podman exec` defaults to container-root, which maps to a
+   subordinate uid, hence denied).
+4. The compositor process lives in the host logind session scope (see below).
+5. No `dbus-run-session` anywhere (it shadows the working user bus).
+
+Still open: `gnome-session` itself (only `gnome-shell --mode=user` proven;
+same env, should follow), VT/modeset on real hardware, greeter handoff,
+`nithin` regression check.
+
+## The cgroup problem (and why podman exec is not enough)
+
+`podman exec` moves processes OUT of the caller's cgroup into a libpod scope
+(box procs show `.../libpod-<id>.scope/container/init.scope`). Host logind
+attributes sessions by cgroup path, so a compositor there is invisible:
+`GetSessionByPID` → "does not belong to any known session". Verified:
+migrating the PID into the session scope via `cgroup.procs` makes logind
+attribute it (`GetSessionByPID` → the session), and everything downstream
+works. Deterministic form: payload starts STOPPED (`sh -c 'kill -STOP $$;
+exec ...'`), migrate, `kill -CONT` — no race with mutter's ~1s startup lookup.
+
+**Who can migrate is THE open design question.** Root can. The guest cannot:
+writing the session scope's `cgroup.procs` (or `mkdir` under it) as the
+session owner is denied — delegation covers the user slice, not logind's
+session scopes. So the real machine needs a privileged migrator (setuid
+helper or sudoers entry, migrating only own-uid PIDs into the caller's own
+session). See the plan note below; not yet implemented.
+
+Related traps, all verified:
+- `CreateSession` moves ONLY the given PID, not its existing children. Target
+  the worker's own PID (recorded via `$$` before it forks anything), never a
+  wrapper's (runuser forks first; its children stay behind in the old scope).
+- Stale sessions hold VTs: `CreateSession` fails with "Virtual terminal
+  already occupied" until old ones are terminated. Stale controllers fail
+  `TakeControl` with EBUSY.
+- `loginctl terminate-session` on an empty-scope session removes it; cgroup
+  paths in scripts must be re-resolved (box init PID changes across restarts;
+  hardcoded PIDs go stale).
+- Too many backgrounded sleeps exhaust the VM's FD table ("Too many open
+  files in system", even `grep` fails to spawn). Reboot to clear; disk
+  persists.
+
+## The nsenter dead end (do not retry without new information)
+
+`nsenter -U -m` (keep host cgroups, take box rootfs) fails differently at
+every layer, investigated to strace level:
+- Net and IPC namespaces are HOST-SHARED in distrobox boxes (same inodes as
+  host init) — joining them EPERMs; correctly skipped, nothing lost.
+- UTS joins fine; PID was never cleanly isolated.
+- GUdev DRM enumeration (`match name=card* + tag=seat`) returns EMPTY via
+  nsenter but matches via `podman exec`, with byte-identical files, libs,
+  and db content (same dev:ino), in side-by-side A/B/C runs. `udevadm
+  export-db` shows 431 devices via enter, 0 via nsenter.
+- strace shows libudev opening `/proc/self/fd` mid-resolution and failing
+  (the box has its own pidns, entered only with `-p`).
+- `-p` fixes `/proc/self` but gives the child a box-local PID, breaking
+  host-logind PID identity — mutually exclusive with the session lookup.
+- Remounting proc in a private clone is denied (container-root lacks the
+  mount cap under podman's seccomp/cap set).
+Net: nsenter keeps cgroups but breaks device enumeration; podman exec keeps
+enumeration but breaks cgroups. The migrate approach (exec + cgroup fix) is
+the one that reaches a desktop. The GUdev-nsenter discrepancy itself is
+unexplained; it no longer matters.
+
+## VM operation notes
+
+- `loginctl enable-linger guest` is required before `distrobox create --init`,
+  or podman falls back to cgroupfs and the box's systemd fails ("Container
+  Setup Failure!").
+- Unmasking `systemd-udevd` in the box is impossible (host owns the control
+  socket: "Address already in use") and unnecessary — leave it masked. But
+  its mask breaks `dnf group install gnome-desktop` at the last transaction
+  step; unmask (box-root), re-run to complete, done. Harmless to leave
+  unmasked.
+- Manual `setfacl u:guest:rw /dev/dri/card0` stands in for logind-uaccess (no
+  real seat session exists in the VM). It gets wiped by udev re-triggers
+  (observed twice); re-apply right before use. On the real machine logind
+  maintains it. `chmod 0666` was used once diagnostically; not a proposal.
+- `podman exec -d --user guest` for payloads (default exec user is
+  container-root, which fails the TakeControl owner check).
+- Guest-exec needs absolute paths for EVERYTHING (`/bin/sh` does not exist
+  on NixOS; the agent does no PATH lookup).
+- `vm-qga.mjs --input-file` feeds stdin (used for python probes and file
+  staging into the box).
 ## Test-VM staleness gotcha
 
 `run-nixos-vm` boots the kernel/initrd from the current build but stage-2
