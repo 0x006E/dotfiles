@@ -4,8 +4,19 @@
 # from modules it deliberately leaves out (hardware, secrets, greeter).
 {
   pkgs,
+  lib,
   ...
 }:
+let
+  # false = run the real GNOME session through the greeter, which is the thing
+  # worth verifying and the reason this VM has a greeter at all.
+  # true = replace it with a probe that only records what the box receives. That
+  # asserts the whole greetd -> dispatcher -> distrobox -> box chain with a
+  # ~70 MB image and minutes instead of the 2 GB desktop, and it catches
+  # breakage that a full GNOME login buries in compositor log noise. Flip this
+  # when the session chain is in question and put it back when it is settled.
+  useProbe = false;
+in
 {
   # virtio_gpu is the DRM driver the container's compositor will use;
   # fuse is what fuse-overlayfs (the pinned storage driver) needs.
@@ -99,24 +110,8 @@
   # Let the container engine read the certificate store for its image pull.
   networking.nameservers = [ "1.1.1.1" ];
 
-  # Record what the box actually receives, instead of only asserting that
-  # gnome-session eventually failed. The failure that cost a hardware cycle
-  # ("Failed to find any matching session") was invisible in every log because
-  # the dispatcher's stderr goes to the greeter's screen and nothing recorded
-  # the environment mutter would have seen.
-  #
-  # /home/guest is bind-mounted into the container, so a file written there from
-  # inside the box is readable on the guest side, and the agent can fetch it.
-  # That asserts the whole chain at once: greetd started the dispatcher as a
-  # session child, the resolver derived the id from that session's scope,
-  # distrobox forwarded it, and the box can see the session file it names.
-  # gnome-session is not needed for any of that, which is what keeps this test
-  # to a ~70 MB image instead of the 2 GB desktop.
-  #
-  # A real file rather than an inline `sh -c`: the payload is full of single
-  # quotes and $VARs meant to expand inside the box, which shellcheck rightly
-  # refuses to inline (SC2016), and which would be unreadable if it did.
-  system.activationScripts.guestDesktopTestProbe = {
+  # Opt-in probe; see useProbe above.
+  system.activationScripts.guestDesktopTestProbe = lib.mkIf useProbe {
     text = ''
       mkdir -p /home/guest
       cat >/home/guest/dump-session-env.sh <<'PROBE'
@@ -134,12 +129,16 @@
         cat /proc/self/cgroup
         echo "--- the session file XDG_SESSION_ID names, read from inside the box"
         cat "/run/systemd/sessions/$XDG_SESSION_ID" 2>&1
-        echo "--- every session file visible in the box"
+        echo "--- every session file visible in the box (host's AND the box's own)"
         ls /run/systemd/sessions 2>&1
-        echo "--- is it a bind mount of the host's (not the box's own logind)?"
+        echo "--- is the host session a bind mount, and is the box's own dir intact?"
         mountpoint /run/systemd/sessions 2>&1
         echo "--- host system bus reachable from the box?"
         timeout 10 busctl --system --no-pager list 2>&1 | grep -c org.freedesktop.login1
+        echo "--- can the box still start its own user manager? (the regression a"
+        echo "--- whole-directory bind caused: binds the host's files over the box's"
+        echo "--- own, so its logind loses its session and user@guest.service dies)"
+        systemctl --user echo USER_MANAGER_OK 2>&1 | tail -2
       } >/home/guest/session-env.txt 2>&1
       sleep 3600
       PROBE
@@ -148,13 +147,42 @@
     '';
   };
 
-  services.guest-desktop.gnomeSessionCommand = "/home/guest/dump-session-env.sh";
+  services.guest-desktop.gnomeSessionCommand = lib.mkIf useProbe "/home/guest/dump-session-env.sh";
 
   # The disk is not optional: the GNOME image is ~2 GB and podman stages it in
   # /var/tmp, on top of the image itself. The default qemu-vm root filesystem
   # fills up mid-install.
-  virtualisation.diskSize = 16384;
+  # 16G was not enough: a full image rebuild peaks near 17G (buildah's
+  # writable layer plus the commit blob exist at the same time), so every
+  # rebuild after the VM had aged hit "no space left on device" at the
+  # layer-commit step. The runner only creates nixos.qcow2 when it is
+  # missing, so this value applies to fresh disks; an existing one is
+  # grown out-of-band with qemu-img resize + resize2fs.
+  virtualisation.diskSize = 40960;
   virtualisation.memorySize = 4096;
   virtualisation.cores = 4;
   virtualisation.graphics = false;
+
+  # QEMU hardware extras the automated audit (qmp.mjs) drives against:
+  # - vmport=off: the pc machine ships a fake VMware mouse (vmport + vmmouse
+  #   devices) alongside usb-tablet. QMP input-send-event without an input
+  #   routing config broadcasts to *every* pointer device, and the guest ends
+  #   up blending the tablet's documented 0..0x7fff absolute axes with the
+  #   VMware mouse's differently-scaled range: moves landed where calibrated,
+  #   clicks landed twice as far down, i.e. no single coordinate mapping
+  #   holds. With vmport off, usb-tablet is the only pointer and one mapping
+  #   governs everything.
+  # - intel-hda + hda-duplex: QEMU was started with no sound device at all
+  #   (guest /dev/snd has only seq+timer, no PCM), so the audio audit item
+  #   had no sink to appear in. The pipewire backend drains it to the host.
+  virtualisation.qemu.options = [
+    "-machine"
+    "vmport=off"
+    "-audiodev"
+    "pipewire,id=aud0"
+    "-device"
+    "intel-hda"
+    "-device"
+    "hda-duplex,audiodev=aud0"
+  ];
 }

@@ -10,49 +10,57 @@ no podman, no container entry; the account in `modules/config/user.nix` stays.
 
 ## One-time setup, as `guest`
 
-Run these once, from a login on the `guest` account. The container is imperative
-on purpose: it is ~2 GB of desktop, and a rebuild should not silently re-download
-it. Its storage is under `~/.local/share/containers`, which impermanence already
-persists, so it survives reboots.
+The box is built from `containers/gnome/Containerfile` and created with
+`containers/gnome/build.sh`. Run this once, from a login on the `guest`
+account:
 
-    distrobox create --name gnome --init \
-      --additional-packages "systemd dbus dbus-daemon" \
-      --image registry.fedoraproject.org/fedora:44 \
-      --additional-flags "--device /dev/dri --device /dev/input -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /run/systemd/sessions:/run/systemd/sessions:ro"
+    ~/nix/containers/gnome/build.sh --enter
 
-then install the desktop and pull the graphical trigger (see below for why
-the second half exists):
+That builds the `gnome-box` image (systemd, dbus-daemon, the full
+`gnome-desktop` group, the `graphical-session.target` pull-in and the linger
+pin — all baked in, see the Containerfile for why each is there), creates the
+`gnome` container with the device and host-bus mounts, and verifies it. The
+container is imperative on purpose: it is ~2 GB of desktop, and a rebuild
+should not silently re-download it. Its storage is under
+`~/.local/share/containers`, which impermanence already persists, so it
+survives reboots.
 
-    distrobox enter -n gnome
-    sudo dnf group install -y --setopt=tsflags=notriggers gnome-desktop
-    mkdir -p ~/.config/systemd/user/gnome-session@gnome.target.d
-    printf '[Unit]\nWants=graphical-session.target\nAfter=graphical-session.target\n' \
-      > ~/.config/systemd/user/gnome-session@gnome.target.d/pull-graphical.conf
-    exit
+To do this without a working login shell, use a real session so `XDG_RUNTIME_DIR`
+exists:
 
-### `dnf` always fails in this box — use `tsflags=notriggers`
+    machinectl shell guest@
 
-A plain `dnf install` ends in `Transaction failed`, after every package has
-already unpacked:
+then run `build.sh` from there with `NO_DBX=1` in the environment, so the login
+hook does not try to enter a container that does not exist yet.
+
+If the container already exists from the old manual procedure, `build.sh`
+says so and stops; pass `--recreate` to replace it with the image-built one.
+
+### `dnf` in this box — noisy scriptlets, complete transactions
+
+A plain `dnf install` prints alarming scriptlet output after unpacking:
 
     fchownat() of /dev/kvm failed: Operation not permitted
     Failed to set unit properties on systemd-udevd.service: Unit systemd-udevd.service is masked.
-    Transaction failed: Rpm transaction failed.
 
-Two independent causes, both inherent to a rootless distrobox rather than
-anything wrong with the packages:
+Two causes, both inherent to a rootless distrobox rather than anything wrong
+with the packages:
 
 - distrobox bind-mounts the host `/dev` (rslave), so udev's rules fire on host
   device nodes — `/dev/kvm`, `/dev/snd/*`, `/dev/vhost-*` — and try to chown them
   to gids that do not map inside the box's user namespace. `EPERM`.
 - distrobox deliberately masks `systemd-udevd.service`, because a second udevd
-  cannot bind the control socket. systemd's `%triggerin` fails its
-  `set-property` call against that masked unit.
+  cannot bind the control socket. systemd's helper trips over the masked unit.
 
-`%triggerin` is the last stage, after unpack and `%posttrans`, so the install
-itself usually succeeded and only the trigger bookkeeping failed. `--setopt=
-tsflags=notriggers` skips exactly the stage that cannot pass here, which makes
-the transaction complete cleanly. Use it for all package work in the box.
+On Fedora 44 every trigger that can print this ends in `|| :`, so the noise
+is harmless: a default-flags `dnf reinstall systemd-udev` printed exactly the
+two lines above and still ended in `Complete!` (exit 0). `--setopt=
+tsflags=notriggers` skips the whole trigger stage instead — the image keeps
+it on its systemd/dbus bootstrap line only, and the desktop group install
+runs stock triggers, because skipped file triggers are what made `mime.cache`
+and the icon caches vanish in the first place (see the Containerfile header).
+Use plain `dnf` for package work in the box; add the flag only to silence
+scriptlet noise you do not want to read.
 
 If you already ran it without the flag, check what landed rather than assuming
 either way:
@@ -68,17 +76,12 @@ exists:
 
     machinectl shell guest@
 
-Also inside the box, once, pin its user manager (it idles out otherwise, and
-polkit denies both uids the `loginctl` form — the file is all linger is):
+then run `build.sh` from there with `NO_DBX=1` in the environment, so the login
+hook does not try to enter a container that does not exist yet.
 
-    distrobox enter -n gnome
-    sudo touch /var/lib/systemd/linger/guest
-    exit
-
-And delete `/run/user/1000/dconf/user` in the box if it is owned by root (it
-gets that way if anything ever ran dconf as box-root, e.g. an early
-`podman exec` without `--user`): a root-owned db breaks gsettings reads,
-including the session-name lookup, for no visible reason.
+If `gsettings` reads ever fail for no visible reason inside the box, check for
+a root-owned dconf db (it gets that way if anything ever ran dconf as
+box-root, e.g. an early `podman exec` without `--user`) and delete it.
 
 ## If `gnome` already exists, it is probably wrong
 
@@ -102,8 +105,8 @@ containers. Delete it and create it properly:
 
     distrobox rm -f gnome
 
-then run the `distrobox create` above. A correctly created one reports
-`registry.fedoraproject.org/fedora:44 systemd=true`.
+then run `build.sh` from the setup section above. A correctly created one
+reports `localhost/gnome-box systemd=true`.
 
 ## First greeter login as guest
 
@@ -119,6 +122,14 @@ Do this with a way back in hand:
   `XDG_SESSION_ID` (only the stable `XDG_SESSION_TYPE`/`XDG_CURRENT_DESKTOP`),
   and the dispatcher's EXIT trap stops the box session on logout so the next
   login starts clean — but verify it rather than trusting the design.
+
+The manual equivalent of `build.sh`, for when the image needs debugging rather
+than rebuilding — every flag here is load-bearing:
+
+    distrobox create --name gnome --init \
+      --additional-packages "systemd dbus dbus-daemon" \
+      --image registry.fedoraproject.org/fedora:44 \
+      --additional-flags "--device /dev/dri --device /dev/input"
 
 Three things in that command line are load-bearing:
 
@@ -263,17 +274,31 @@ box, and in particular never pushed into the box's user manager with
 `systemctl --user set-environment XDG_SESSION_ID=...`, because linger keeps that
 manager — and its environment — alive across logouts.
 
-Two mounts bridge the gap, and both are needed for different halves:
+One bus cannot serve two systems, so the box keeps its own and only the
+session is pointed at the host's. Concretely:
 
-- `-v /run/dbus/system_bus_socket:...` lets the box talk to host logind, so
-  the PID and display fallbacks resolve against the guest's real session.
-- `-v /run/systemd/sessions:/run/systemd/sessions:ro` serves the
-  `XDG_SESSION_ID` fast path: `sd_session_is_active` never talks to logind at
-  all, it reads `/run/systemd/sessions/<id>` directly (`sd-login.c:
-  file_of_session`; a missing file is the `ENXIO` "No such device or
-  address" failure). The box has no such files of its own.
+- No system-bus socket is mounted into the box. Its own dbus-broker serves
+  its logind, PID 1, polkit and user manager, so all of that works exactly as
+  on a normal machine. (An earlier version of this setup did mount the host
+  socket, and it broke the box itself: every box client of the system bus
+  suddenly talked to the host, the box's logind could no longer start the
+  box's user manager, and gnome-session died with "No session bus running!"
+  before mutter ever ran.)
+- The dispatcher exports
+  `DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/host/run/dbus/system_bus_socket`
+  before starting the session. GDBus honors that variable, so mutter and the
+  session daemons talk to host logind while everything box-internal stays
+  local. The socket is reached through distrobox's own host-root mount, which
+  survives the box's init.
+- The single host session *file* the login needs is rebound into the box from
+  `/run/host` at login time (the dispatcher does it, one file, released on
+  logout): `sd_session_is_active` -- which is how mutter validates
+  `XDG_SESSION_ID` -- never talks to logind at all, it reads
+  `/run/systemd/sessions/<id>` directly (`sd-login.c: file_of_session`; a
+  missing file is the `ENXIO` "No such device or address" failure). The box
+  has no such files of its own.
 
-With both in place, a plain `distrobox enter` — no cgroup migration, no
+With that in place, a plain `distrobox enter` — no cgroup migration, no
 privilege — starts a working compositor: session found, `TakeControl` granted
 (the caller must be the box guest, i.e. the session owner uid, which is what
 `distrobox enter` runs as by default), display modeset, rendered desktop.
@@ -281,11 +306,12 @@ Verified with screenshots. An earlier theory that the compositor must sit in
 the host session scope turned out wrong: only the `XDG_SESSION_ID`+file path
 matters, and it is cgroup-independent.
 
-These two mounts are the deliberate holes in the container boundary. D-Bus
-policy still applies and the box presents as the unprivileged guest uid, so
-privileged operations are denied — but enumeration (sessions, devices) is
-visible, and there is no narrower option: logind is the only path mutter
-accepts.
+The deliberate holes in the container boundary are therefore per-session, not
+per-container: the session sees the guest's host session state and can talk
+to host system services as the unprivileged guest uid. D-Bus policy still
+applies, so privileged operations are denied -- but enumeration (sessions,
+devices) is visible, and there is no narrower option: logind is the only path
+mutter accepts.
 
 One more piece is needed for the *full* session that the compositor alone
 does not need: something must start `graphical-session.target`. Nothing in
@@ -318,6 +344,72 @@ Plain `distrobox enter` connects to the working user bus. The `set_gnome_env`
 assertion that motivated the wrapper only fires when there is no bus at all
 (seen once, running bare `podman run` without `XDG_RUNTIME_DIR`), never under
 `distrobox enter`.
+
+## The box inherits the host environment verbatim, so the session sanitises it
+
+`distrobox enter` forwards the **entire** host environment into the box, and the
+host is NixOS while the box is Fedora. The image itself ships everything the
+desktop needs — verified with `rpm` and `ls` inside a running session:
+`adwaita-cursor-theme-50`, `adwaita-icon-theme-50`, `gtk3`/`gtk4`/`libadwaita`,
+Cantarell/Noto fonts, and `/usr/share/icons/Adwaita/cursors/left_ptr`. What the
+first fully-running session was missing (cursor, icons, theme) was therefore
+never a package problem — it was the leaked host variables, measured in the
+session's own environment:
+
+- `XCURSOR_PATH` was an all-Nix list (`~/.icons:…:/run/current-system/sw/share/icons`)
+  **without `/usr/share/icons` in it at all**. When set, `XCURSOR_PATH`
+  *replaces* the default search path, so the box's only cursor theme was never
+  found: no pointer. This is the whole "cursor is missing" report.
+- `XDG_DATA_DIRS`/`XDG_CONFIG_DIRS`/`TERMINFO_DIRS`/`INFOPATH`/`LIBEXEC_PATH`/
+  `QTWEBKIT_PLUGIN_PATH`/`NIX_*`/`LESSKEYIN_SYSTEM` pointed at host directories,
+  six of `XDG_DATA_DIRS`' entries nonexistent in the box.
+- `GTK_PATH` pointed at host lib dirs — and **`/nix` is bind-mounted into the
+  box** (`podman inspect`: `/nix <- /nix`), so those paths *resolve*: the box's
+  GTK3/GTK4 would happily `dlopen` a host `.so` into a Fedora process.
+- `LOCALE_ARCHIVE=/run/current-system/sw/lib/locale/locale-archive` — the host
+  glibc's archive; the box's own is at `/usr/lib/locale` (verified present).
+- `SYSTEMD_XKB_DIRECTORY=/etc/X11/xkb` — no such directory in the box; xkb data
+  lives at `/usr/share/X11/xkb` (verified).
+- `PATH` was entirely host profile directories.
+
+So the session enter runs one sanitisation pass over its environment, per
+variable:
+
+1. Value mentions a host Nix path (`/nix/store`, `/nix/profile`,
+   `~/.nix-profile`, `/nix/var/nix`, `/run/current-system`,
+   `/etc/profiles/per-user`) → drop it. Two exceptions are *repaired* instead of
+   dropped: `PATH` is reset to `/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin`,
+   and `SHELL` is repointed at the user's shell in the box (`getent`), because
+   dropping those would leave children with no command search path and no login
+   shell.
+2. Absolute-path value with no entry that exists in the box → drop it (terminfo,
+   locales and xkb all fall back to working box defaults — verified above).
+3. `WAYLAND_DISPLAY` whose socket is not in the box runtime dir → drop it; the
+   box compositor has not started yet, so the value can only be a host leftover.
+
+`/run/host` is deliberately **not** a marker — it is how the session reaches the
+host system bus. The `DBUS_*` addresses start with `unix:`, not `/`, so they are
+kept by rule 2 regardless; `XDG_SESSION_ID`, `XDG_CURRENT_DESKTOP`, `HOME` and
+`LANG` are kept by design.
+
+The pass applies to the session process **and** to the box user manager
+(`systemctl --user unset-environment`/`set-environment`), because the units —
+`org.gnome.Shell@user.service` included — inherit the *manager*'s environment,
+and gnome-session's activation upload only sends the variables it *has*: a value
+merely unset locally would survive in the manager from the first enter's PAM
+import and reach gnome-shell anyway (that is exactly how `XCURSOR_PATH` got
+there). The transcript logs the result as `inner: host env stripped: …`.
+
+Known wrinkle: any *later* `distrobox enter` (an interactive shell login, say)
+re-imports some session variables into the manager mid-session. Already-running
+units are unaffected (they captured their environment at start), the unit
+drop-ins pin `XDG_SESSION_ID` on every service in the session target's closure
+regardless of what the manager carries, and the session enter re-sanitises on
+the next login. The closure-wide pin exists because one unit is never enough:
+with the drop-in on gnome-shell only, `gsd-media-keys` spawned without the id.
+(Note: closing that gap did not enable screen lock — lock additionally
+requires GDM upstream, see STATUS; the pin still stands on its own as the
+only channel that survives gnome-session's activation-env upload.)
 
 ## `/tmp/.X11-unix`
 
