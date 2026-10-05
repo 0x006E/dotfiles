@@ -1,0 +1,272 @@
+name: gradle-deps
+
+# Self-healing for Gradle offline locks (pkgs/*/deps.json).
+#
+# `nix-update` only bumps version/rev/hash; it knows nothing about the
+# mitm-cache lockfiles Gradle builds consume in the sandbox. So a bot bump
+# (new upstream deps) or a flake.lock bump (new Gradle resolving old deps
+# differently -- e.g. gradle 9.7.1 -> 9.8.0 demanding kotlin-reflect 2.4.10)
+# breaks `toplevel` with "Could not find <coord>", and nothing in the update
+# flow repairs it. This workflow closes that loop:
+#
+# - automatic: when a `ci` run fails on a same-repo PR, it downloads the
+#   failed toplevel log, checks the failure is a missing-dependency error,
+#   refreshes every Gradle lock on the PR head, and pushes the fix back.
+# - manual: workflow_dispatch on any PR number, skips the log check and
+#   refreshes unconditionally.
+#
+# Loop guard: at most two consecutive auto-fix commits at a PR head; the
+# third failure gets a comment and a human. Fix commits go through the
+# PAT (like the other bot flows) so CI re-runs on them.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: PR to refresh Gradle locks on
+        required: true
+        type: string
+      packages:
+        description: "Space-separated package attrs (default: all with a lock)"
+        required: false
+        type: string
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: gradle-deps-${{ inputs.pr-number || github.event.workflow_run.id }}
+  cancel-in-progress: true
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Resolve target PR
+        id: target
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "${{ inputs.pr-number }}" ]; then
+            echo "mode=manual" >> "$GITHUB_OUTPUT"
+            echo "pr=${{ inputs.pr-number }}" >> "$GITHUB_OUTPUT"
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "mode=auto" >> "$GITHUB_OUTPUT"
+          echo "proceed=false" >> "$GITHUB_OUTPUT"
+          CONCL="${{ github.event.workflow_run.conclusion }}"
+          if [ "$CONCL" != "failure" ]; then
+            echo "ci concluded $CONCL, nothing to do."
+            exit 0
+          fi
+          # workflow_run on main sees PR metadata only for PR-triggered runs.
+          PR=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
+          HEAD_REPO=$(jq -r '.workflow_run.head_repository.full_name // empty' "$GITHUB_EVENT_PATH")
+          if [ -z "$PR" ]; then
+            echo "failed run is not attached to a PR, nothing to do."
+            exit 0
+          fi
+          if [ "$HEAD_REPO" != "${{ github.repository }}" ]; then
+            echo "PR head is a fork ($HEAD_REPO), cannot push there."
+            exit 0
+          fi
+          echo "pr=$PR" >> "$GITHUB_OUTPUT"
+          echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Failure is a missing-dependency error
+        id: failure
+        if: steps.target.outputs.proceed == 'true' && steps.target.outputs.mode == 'auto'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the failed toplevel job of the triggering run and scan its
+          # log. Only a Gradle resolution failure qualifies for an automatic
+          # lock refresh; anything else exits quietly (a human owns it).
+          JOBS=$(gh api "repos/${{ github.repository }}/actions/runs/${{ steps.target.outputs.run_id }}/jobs?per_page=30")
+          JOB_ID=$(echo "$JOBS" | jq -r '.jobs[] | select(.name == "toplevel" and .conclusion == "failure") | .id' | head -1)
+          if [ -z "$JOB_ID" ]; then
+            echo "no failed toplevel job, nothing to do."
+            exit 0
+          fi
+          gh api "repos/${{ github.repository }}/actions/jobs/$JOB_ID/logs" > fail.log
+          # Real signatures seen in the wild (PR #146): Gradle's
+          # "Could not resolve all artifacts for configuration" +
+          # "Could not find group:name:version". A bare hash-mismatch on a
+          # *-deps fixed-output derivation qualifies too.
+          echo "deps=false" >> "$GITHUB_OUTPUT"
+          if grep -a -q "Could not resolve all artifacts for configuration" fail.log \
+            || grep -a -qE "Could not find [A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+" fail.log \
+            || grep -a -qE "hash mismatch in fixed-output derivation.*-deps" fail.log; then
+            echo "deps failure confirmed."
+            grep -a -oE "Could not find [A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+" fail.log \
+              | sed 's/\.$//' | sort -u | head -5 | tee coords.txt
+            {
+              echo "coords<<EOF"
+              cat coords.txt
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "deps=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "toplevel failed for a non-dependency reason, leaving it to humans."
+            exit 0
+          fi
+
+      - name: Checkout PR head
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        uses: actions/checkout@v7
+        with:
+          # PAT, not GITHUB_TOKEN: the fix commit must re-trigger CI, and
+          # GITHUB_TOKEN pushes do not trigger workflows.
+          token: ${{ secrets.UPDATE_FLAKE_PAT }}
+          fetch-depth: 0
+          ref: refs/pull/${{ steps.target.outputs.pr }}/merge
+
+      - name: Loop guard
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        id: guard
+        run: |
+          # At most two consecutive auto-fix commits: a third identical
+          # failure means the refresh is not converging, stop pushing.
+          COUNT=0
+          for i in 1 2 3; do
+            MSG=$(git log -$i --format=%B 2>/dev/null | head -1)
+            case "$MSG" in
+              "[gradle-deps-auto]"*) COUNT=$((COUNT + 1)) ;;
+              *) break ;;
+            esac
+          done
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -ge 2 ]; then
+            echo "stop=true" >> "$GITHUB_OUTPUT"
+            echo "two auto-fix commits already at head and CI still fails."
+          else
+            echo "stop=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment and stop when not converging
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
+        run: |
+          MARK="<!-- gradle-deps-autofix -->"
+          if ! gh pr view "${{ steps.target.outputs.pr }}" --json comments \
+            -q '.comments[].body' | grep -q "$MARK"; then
+            gh pr comment "${{ steps.target.outputs.pr }}" --body "$MARK
+            The Gradle lock auto-fix already pushed twice and CI still fails.
+            ${{ steps.failure.outputs.coords }}
+            A human needs to look at this one."
+          fi
+          exit 0
+
+      - name: Free disk space before build
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        run: |
+          sudo rm -rf /usr/local/.ghcup /opt/hostedtoolcache/CodeQL \
+            /usr/local/lib/android/sdk/ndk /usr/share/dotnet /opt/ghc \
+            /usr/local/share/boost
+          sudo apt-get clean
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+
+      - uses: cachix/cachix-action@v17
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        with:
+          name: 0x006e-nix
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          skipPush: true
+
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        with:
+          use-flakehub: disabled
+
+      - name: Refresh Gradle locks
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
+        run: |
+          HEAD_BRANCH=$(gh pr view '${{ steps.target.outputs.pr }}' --json headRefName -q .headRefName)
+          git fetch origin "$HEAD_BRANCH"
+          git checkout -B "pr-${{ steps.target.outputs.pr }}-head" "origin/$HEAD_BRANCH"
+          if [ -n "${{ inputs.packages }}" ]; then
+            PKGS="${{ inputs.packages }}"
+          else
+            # Every package dir carrying a mitm-cache lockfile.
+            PKGS=$(for d in pkgs/*/deps.json; do basename "$(dirname "$d")"; done)
+          fi
+          echo "refreshing: $PKGS"
+          for pkg in $PKGS; do
+            if ! nix eval ".#$pkg.mitmCache.updateScript" --apply 's: "ok"' 2>/dev/null; then
+              echo "$pkg has no updateScript, skipping."
+              continue
+            fi
+            SCRIPT=$(nix build ".#$pkg.mitmCache.updateScript" --print-out-paths --no-link)
+            # The script writes pkgs/<pkg>/deps.json in place; ~15 min.
+            "$SCRIPT" || echo "$pkg refresh failed, continuing with the rest."
+          done
+          git status --porcelain -- pkgs/
+
+      - name: Push fix or report
+        if: >
+          steps.target.outputs.proceed == 'true' &&
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.guard.outputs.stop != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
+        run: |
+          if [ -z "$(git status --porcelain -- pkgs/)" ]; then
+            echo "refresh produced no changes."
+            MARK="<!-- gradle-deps-autofix -->"
+            if [ "${{ steps.target.outputs.mode }}" = "auto" ] \
+              && ! gh pr view "${{ steps.target.outputs.pr }}" --json comments \
+                -q '.comments[].body' | grep -q "$MARK"; then
+              gh pr comment "${{ steps.target.outputs.pr }}" --body "$MARK
+              CI failed with a dependency error but refreshing the Gradle
+              locks produced no new entries:
+              ${{ steps.failure.outputs.coords }}
+              The missing artifact may be genuinely unreachable, or the
+              failure needs a human."
+            fi
+            exit 0
+          fi
+          git add pkgs/
+          git -c user.name="github-actions[bot]" \
+            -c user.email="github-actions[bot]@users.noreply.github.com" \
+            commit -m "[gradle-deps-auto] refresh Gradle offline locks" \
+            -m "Automatic refresh after a CI dependency failure." \
+            -m "Failing coordinates:" \
+            -m "${{ steps.failure.outputs.coords }}"
+          git push origin "HEAD:$(gh pr view '${{ steps.target.outputs.pr }}' --json headRefName -q .headRefName)"
