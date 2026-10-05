@@ -45,6 +45,13 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: true
       - uses: DeterminateSystems/magic-nix-cache-action@main
+        with:
+          # The free part is the GitHub Actions cache. FlakeHub Cache is
+          # a paid service, and "no-preference" (the default) tries it
+          # anyway because Determinate Nix is installed above -- which
+          # fails with no netrc and prints a red error annotation on
+          # every run. Off: the GHA cache alone is what we want.
+          use-flakehub: disabled
       # Full check (NOT --no-build): stylix's nixvim target realizes a
       # derivation at eval time (IFD), which --no-build forbids on cold
       # stores. The cachix pull above keeps this download-fast.
@@ -90,6 +97,9 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         installCommand: nix profile install --accept-flake-config nixpkgs#cachix
     - uses: DeterminateSystems/magic-nix-cache-action@main
+      with:
+        # Same as the check job: free GHA cache on, paid FlakeHub off.
+        use-flakehub: disabled
     - run: nix-fast-build --skip-cached --flake '.#nixosConfigurations.ntsv.config.system.build.toplevel' --no-nom --cachix-cache 0x006e-nix
     # Pin the merged-main closure (current + previous) so GC can never
     # evict the generations you actually run. PR runs skip this step.
