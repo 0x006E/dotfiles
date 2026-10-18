@@ -47,6 +47,7 @@ delib.host {
       fonts.enable = true;
       guest-desktop.enable = true;
       kanshi.enable = true;
+      look.enable = true;
       niri.enable = true;
       nixos-updates.enable = true;
       noctalia.enable = true;

@@ -1,6 +1,11 @@
 {
   description = "Nithin's NixOS Configuration with Denix";
 
+  nixConfig = {
+    extra-substituters = [ "https://look.cachix.org" ];
+    extra-trusted-public-keys = [ "look.cachix.org-1:8elPCeSVBzlDZXqIRKBK9GyLIK/Hoe1xiWZF0ir7uX4=" ];
+  };
+
   inputs = {
     # Core Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -76,6 +81,11 @@
     noctalia = {
       url = "github:noctalia-dev/noctalia/cachix";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    look = {
+      url = "github:kunkka19xx/look?dir=apps/linows";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust-overlay.follows = "rust-overlay";
     };
     antigravity = {
       url = "github:jacopone/antigravity-nix";

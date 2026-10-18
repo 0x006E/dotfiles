@@ -145,7 +145,7 @@ delib.module {
                     # Basic Application Controls
                     {
                       "Mod+T".action = sh "niri msg action focus-workspace terminal && ghostty";
-                      "Mod+D".action = sh "noctalia msg panel-toggle launcher";
+                      "Mod+D".action = spawn "lookapp" "--toggle";
                       "Mod+E".action = spawn "nautilus";
                       "Mod+L".action =
                         sh ''notify-send "Locking Screen" "Your screen is being locked." --icon=system-lock-screen && noctalia msg session lock '';
@@ -291,6 +291,7 @@ delib.module {
                   { command = [ "systemctl --user reset-failed niri-flake-polkit.service" ]; }
                   { command = [ "dex" ]; }
                   { command = [ "noctalia" ]; }
+                  { command = [ "lookapp" ]; }
                 ];
 
                 layer-rules = [
@@ -319,6 +320,10 @@ delib.module {
                         bottom-right = r;
                       };
                     clip-to-geometry = true;
+                  }
+                  {
+                    matches = [ { app-id = "^lookapp$"; } ];
+                    open-floating = true;
                   }
                   {
                     matches = [ { app-id = "ghostty"; } ];
