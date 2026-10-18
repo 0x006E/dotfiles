@@ -1972,6 +1972,27 @@
    "module": "sha256-sFP87u4yX0JtS0cfb/sGg39jElmdx8MXhz+iblH9OlY=",
    "pom": "sha256-GwKODWMPwaNEpiqMX2uvIjh1yJhtDg4GKJ5tOPle9Cw="
   },
+  "io/github/jan-tennert/supabase#realtime-kt-android/3.4.1": {
+   "module": "sha256-ocQRBS8mpTSbqnUgKLm9bPyr5QZ6NRA7KXZn1nYhgA0=",
+   "pom": "sha256-/gTCpXUFtHKmv124/qvzd2jge+vKdOUXgKxNqldve5A="
+  },
+  "io/github/jan-tennert/supabase#realtime-kt-iosarm64/3.4.1": {
+   "module": "sha256-QJxBvB6NRXr9nqYvMSPFfQp44UjC1q/OiEztUb3sWOo=",
+   "pom": "sha256-ZURWzzv/mRUv8sC0KQVGnMubhiuccIRhNYtNvDloaXY="
+  },
+  "io/github/jan-tennert/supabase#realtime-kt-iossimulatorarm64/3.4.1": {
+   "module": "sha256-Ch6f71awkbtyjAOM4HB7xtD99fQrw1JmTSA/WHfMf1s=",
+   "pom": "sha256-JTBvjXX3k3JVTEpJ43nUOhA9jbI61dlLkWB+oe4GVI4="
+  },
+  "io/github/jan-tennert/supabase#realtime-kt-jvm/3.4.1": {
+   "jar": "sha256-k8iebeR0hhjyTkciI0qpTnUykXwqnlzfy7cU9HhNZVg=",
+   "module": "sha256-0IMISPFvQetXT5xjw7BqhtNh2lsR2W6NCSE5iFBbHOY=",
+   "pom": "sha256-5uYkYYWYTHwYr0FiqtQ/Pe8xdf47I4oOIrLEJrQuloQ="
+  },
+  "io/github/jan-tennert/supabase#realtime-kt/3.4.1": {
+   "module": "sha256-O5kld3z2P7l1/WZe8NCKLDIJs1GgZ2hFX09Eou8jzOI=",
+   "pom": "sha256-Eu88/Ekmkn9JQTyqNyAKNjRZupL05Hp+EwoqhGYSTc0="
+  },
   "io/github/jan-tennert/supabase#storage-kt-android/3.4.1": {
    "module": "sha256-VTk1yOIJehzAM03SPTjPAJOd4HRcVfv5eKLeq6dAQQE=",
    "pom": "sha256-20wSyXPTj2ZsGyNq2s3ij5hAfAm7TCqNSH6X5L3yIic="
@@ -2093,6 +2114,23 @@
   "io/ktor#ktor-client-okhttp/3.4.1": {
    "module": "sha256-oFkf0YVyRiqM1KxuRSXObptKlEXwwfECSN858bPU1Z4=",
    "pom": "sha256-4oGmXQ/YhSLONPKTiQWzxUPnuJlA+tnt7TS6ESHbi/8="
+  },
+  "io/ktor#ktor-client-websockets-iosarm64/3.4.0": {
+   "module": "sha256-I4LJ24lnBJ76il64kRrkIrdbV+1n9QLCRMZRVAb6mkk=",
+   "pom": "sha256-msn74ZfoEuwWqm12IuQek2E8EdDGV2IKW3oBhDa59D8="
+  },
+  "io/ktor#ktor-client-websockets-iossimulatorarm64/3.4.0": {
+   "module": "sha256-F+tjS0WEvl2FExAhfAeqpBgrZ67UkIF0ody5S0UCbg0=",
+   "pom": "sha256-VC9jpJuaX9UtxWTIbcoJbcAvof3Y/jpyy+VnkjIEGbg="
+  },
+  "io/ktor#ktor-client-websockets-jvm/3.4.0": {
+   "jar": "sha256-hskejJOs7yeB3ZHZ3AwOKeN+6JVIJRtosWWxED3+rVk=",
+   "module": "sha256-/wVx+k6T8EFr4B9V3NUPxFzbbksIb5af5JmHTvccrcI=",
+   "pom": "sha256-8/Yd3qqgFXHcOpWNGkYk1iC2Xl6hX9dprvEYW36W3M8="
+  },
+  "io/ktor#ktor-client-websockets/3.4.0": {
+   "module": "sha256-pjyg+W6/7ccLG61jEMqUkKko11vp/swZr5wc4G08Z+M=",
+   "pom": "sha256-dlPzSmaDTz5mK3LX/QkyCQQIeKDA8cGshBma+9gE2iU="
   },
   "io/ktor#ktor-events-iosarm64/3.4.1": {
    "module": "sha256-/JNuLi9uD6ARZVlYU4bAu6yBeUtP5KFJcmId48IcwY0=",
