@@ -11,14 +11,6 @@
 
   # Targeted fixes and additions on top of nixpkgs.
   (final: prev: {
-    python3 = prev.python3.override {
-      packageOverrides = _pfinal: pprev: {
-        curl-cffi = pprev.curl-cffi.overridePythonAttrs (_: {
-          doCheck = false;
-        });
-      };
-    };
-    python3Packages = final.python3.pkgs;
     vimPlugins = prev.vimPlugins // import ../pkgs/vimPlugins { pkgs = final; };
     mpv = prev.mpv.override {
       scripts = [ final.mpvScripts.mpris ];
