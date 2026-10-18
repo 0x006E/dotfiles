@@ -54,8 +54,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -n "${{ inputs.pr-number }}" ]; then
+            HEAD_REF=$(gh pr view "${{ inputs.pr-number }}" --json headRefName -q .headRefName)
             echo "mode=manual" >> "$GITHUB_OUTPUT"
             echo "pr=${{ inputs.pr-number }}" >> "$GITHUB_OUTPUT"
+            echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
             echo "proceed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -69,6 +71,7 @@ jobs:
           # workflow_run on main sees PR metadata only for PR-triggered runs.
           PR=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
           HEAD_REPO=$(jq -r '.workflow_run.head_repository.full_name // empty' "$GITHUB_EVENT_PATH")
+          HEAD_REF=$(jq -r '.workflow_run.pull_requests[0].head.ref // empty' "$GITHUB_EVENT_PATH")
           if [ -z "$PR" ]; then
             echo "failed run is not attached to a PR, nothing to do."
             exit 0
@@ -77,7 +80,11 @@ jobs:
             echo "PR head is a fork ($HEAD_REPO), cannot push there."
             exit 0
           fi
+          if [ -z "$HEAD_REF" ]; then
+            HEAD_REF=$(gh pr view "$PR" --json headRefName -q .headRefName)
+          fi
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
+          echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
           echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
 
@@ -90,13 +97,17 @@ jobs:
           # Find the failed toplevel job of the triggering run and scan its
           # log. Only a Gradle resolution failure qualifies for an automatic
           # lock refresh; anything else exits quietly (a human owns it).
-          JOBS=$(gh api "repos/${{ github.repository }}/actions/runs/${{ steps.target.outputs.run_id }}/jobs?per_page=30")
+          JOBS=$(gh api "repos/${{ github.repository }}/actions/runs/${{ steps.target.outputs.run_id }}/jobs?per_page=100")
           JOB_ID=$(echo "$JOBS" | jq -r '.jobs[] | select(.name == "toplevel" and .conclusion == "failure") | .id' | head -1)
           if [ -z "$JOB_ID" ]; then
             echo "no failed toplevel job, nothing to do."
             exit 0
           fi
-          gh api "repos/${{ github.repository }}/actions/jobs/$JOB_ID/logs" > fail.log
+          EXTRA_FLAGS=()
+          if gh api --help | grep -q -- '--allow-escape-sequences'; then
+            EXTRA_FLAGS+=("--allow-escape-sequences")
+          fi
+          gh api "${EXTRA_FLAGS[@]}" "repos/${{ github.repository }}/actions/jobs/$JOB_ID/logs" > fail.log
           # Real signatures seen in the wild (PR #146): Gradle's
           # "Could not resolve all artifacts for configuration" +
           # "Could not find group:name:version". A bare hash-mismatch on a
@@ -107,7 +118,10 @@ jobs:
             || grep -a -qE "hash mismatch in fixed-output derivation.*-deps" fail.log; then
             echo "deps failure confirmed."
             grep -a -oE "Could not find [A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+" fail.log \
-              | sed 's/\.$//' | sort -u | head -5 | tee coords.txt
+              | sed 's/\.$//' | sort -u | head -5 | tee coords.txt || true
+            if [ ! -s coords.txt ]; then
+              grep -a -oE "hash mismatch in fixed-output derivation '[^']+'" fail.log | head -5 | tee coords.txt || true
+            fi
             {
               echo "coords<<EOF"
               cat coords.txt
@@ -122,33 +136,31 @@ jobs:
       - name: Checkout PR head
         if: >
           steps.target.outputs.proceed == 'true' &&
-          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
-          steps.guard.outputs.stop != 'true'
+          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true')
         uses: actions/checkout@v7
         with:
           # PAT, not GITHUB_TOKEN: the fix commit must re-trigger CI, and
           # GITHUB_TOKEN pushes do not trigger workflows.
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
           fetch-depth: 0
-          ref: refs/pull/${{ steps.target.outputs.pr }}/merge
+          ref: ${{ steps.target.outputs.head_ref }}
 
       - name: Loop guard
         if: >
           steps.target.outputs.proceed == 'true' &&
-          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
-          steps.guard.outputs.stop != 'true'
+          steps.target.outputs.mode == 'auto' &&
+          steps.failure.outputs.deps == 'true'
         id: guard
         run: |
           # At most two consecutive auto-fix commits: a third identical
           # failure means the refresh is not converging, stop pushing.
           COUNT=0
-          for i in 1 2 3; do
-            MSG=$(git log -$i --format=%B 2>/dev/null | head -1)
-            case "$MSG" in
+          while IFS= read -r msg; do
+            case "$msg" in
               "[gradle-deps-auto]"*) COUNT=$((COUNT + 1)) ;;
               *) break ;;
             esac
-          done
+          done < <(git log -3 --format=%s 2>/dev/null)
           echo "count=$COUNT" >> "$GITHUB_OUTPUT"
           if [ "$COUNT" -ge 2 ]; then
             echo "stop=true" >> "$GITHUB_OUTPUT"
@@ -160,7 +172,8 @@ jobs:
       - name: Comment and stop when not converging
         if: >
           steps.target.outputs.proceed == 'true' &&
-          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
+          steps.target.outputs.mode == 'auto' &&
+          steps.failure.outputs.deps == 'true' &&
           steps.guard.outputs.stop == 'true'
         env:
           GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
@@ -215,17 +228,12 @@ jobs:
           steps.target.outputs.proceed == 'true' &&
           (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
           steps.guard.outputs.stop != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
         run: |
-          HEAD_BRANCH=$(gh pr view '${{ steps.target.outputs.pr }}' --json headRefName -q .headRefName)
-          git fetch origin "$HEAD_BRANCH"
-          git checkout -B "pr-${{ steps.target.outputs.pr }}-head" "origin/$HEAD_BRANCH"
           if [ -n "${{ inputs.packages }}" ]; then
             PKGS="${{ inputs.packages }}"
           else
             # Every package dir carrying a mitm-cache lockfile.
-            PKGS=$(for d in pkgs/*/deps.json; do basename "$(dirname "$d")"; done)
+            PKGS=$(for d in pkgs/*/deps.json; do [ -e "$d" ] && basename "$(dirname "$d")"; done)
           fi
           echo "refreshing: $PKGS"
           for pkg in $PKGS; do
@@ -269,4 +277,4 @@ jobs:
             -m "Automatic refresh after a CI dependency failure." \
             -m "Failing coordinates:" \
             -m "${{ steps.failure.outputs.coords }}"
-          git push origin "HEAD:$(gh pr view '${{ steps.target.outputs.pr }}' --json headRefName -q .headRefName)"
+          git push origin "HEAD:${{ steps.target.outputs.head_ref }}"
