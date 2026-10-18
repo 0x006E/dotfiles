@@ -47,14 +47,6 @@ delib.module {
 
         direnv = {
           enable = true;
-          package = pkgs.direnv.overrideAttrs (oldAttrs: {
-            patches = oldAttrs.patches or [ ] ++ [
-              (pkgs.fetchpatch {
-                url = "https://github.com/direnv/direnv/pull/1048.patch";
-                hash = "sha256-BG+ekOPVBWsosMLxTCJPOQWX1eOrWiIfDswd1Xk/4GU=";
-              })
-            ];
-          });
           nix-direnv.enable = true;
           enableBashIntegration = true;
         };
