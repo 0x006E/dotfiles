@@ -633,6 +633,31 @@
         "type": "github"
       }
     },
+    "look": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ]
+      },
+      "locked": {
+        "dir": "apps/linows",
+        "lastModified": 1792219140,
+        "narHash": "sha256-f/B3LswiSmF3oKlY5s3pkNywnHzk4MC1G1Fs+FRdVfI=",
+        "owner": "kunkka19xx",
+        "repo": "look",
+        "rev": "010682cae0023c292ba6bee515baf910e0b3a3cc",
+        "type": "github"
+      },
+      "original": {
+        "dir": "apps/linows",
+        "owner": "kunkka19xx",
+        "repo": "look",
+        "type": "github"
+      }
+    },
     "mattpocock-skills": {
       "flake": false,
       "locked": {
@@ -1085,6 +1110,7 @@
         "impermanence": "impermanence",
         "lanzaboote": "lanzaboote",
         "llm-agents": "llm-agents",
+        "look": "look",
         "mattpocock-skills": "mattpocock-skills",
         "niri": "niri",
         "nix-index-database": "nix-index-database",
