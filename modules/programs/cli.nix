@@ -55,7 +55,6 @@ delib.module {
           enable = true;
           enableCompletion = true;
           bashrcExtra = ''
-            eval "$(direnv hook bash)"
             export DISPLAY=${myconfig.constants.xwaylandDisplay}
             export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
 
