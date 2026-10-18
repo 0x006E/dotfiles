@@ -32,7 +32,9 @@ jobs:
       # key misses on a new flake.lock.
       - uses: actions/cache@v4
         with:
-          path: ~/.cache/nix
+          path: |
+            ~/.cache/nix/tarballs
+            ~/.cache/nix/gitv3
           key: nix-eval-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
             nix-eval-${{ runner.os }}-
@@ -71,7 +73,9 @@ jobs:
     # up the nix-fast-build profile install below (fewer refetches).
     - uses: actions/cache@v4
       with:
-        path: ~/.cache/nix
+        path: |
+          ~/.cache/nix/tarballs
+          ~/.cache/nix/gitv3
         key: nix-eval-${{ runner.os }}-${{ hashFiles('flake.lock') }}
         restore-keys: |
           nix-eval-${{ runner.os }}-

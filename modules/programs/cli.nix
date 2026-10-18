@@ -47,14 +47,6 @@ delib.module {
 
         direnv = {
           enable = true;
-          package = pkgs.direnv.overrideAttrs (oldAttrs: {
-            patches = oldAttrs.patches or [ ] ++ [
-              (pkgs.fetchpatch {
-                url = "https://github.com/direnv/direnv/pull/1048.patch";
-                hash = "sha256-BG+ekOPVBWsosMLxTCJPOQWX1eOrWiIfDswd1Xk/4GU=";
-              })
-            ];
-          });
           nix-direnv.enable = true;
           enableBashIntegration = true;
         };
@@ -63,7 +55,6 @@ delib.module {
           enable = true;
           enableCompletion = true;
           bashrcExtra = ''
-            eval "$(direnv hook bash)"
             export DISPLAY=${myconfig.constants.xwaylandDisplay}
             export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
 
