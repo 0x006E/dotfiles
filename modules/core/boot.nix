@@ -14,10 +14,6 @@ delib.module {
       # (attempt at fixing the AX211 CNVi crashes; watch the nvidia
       # module build — stable lags behind brand-new kernels).
       boot.kernelPackages = pkgs.linuxPackages_latest;
-      # NOTE: the Acer ALC256 headset-mic quirk ships as an out-of-tree
-      # module (pkgs/alc269-kernel-module, wired up in hardware.audio)
-      # of boot.kernelPatches: same fix, but minutes/KBs per kernel bump
-      # instead of a full kernel rebuild (hour + ~1GB cache).
       boot = {
         loader = {
           # Secure Boot is handled by lanzaboote (core.secureboot), which
