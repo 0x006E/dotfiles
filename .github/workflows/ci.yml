@@ -94,7 +94,12 @@ jobs:
         df -h
     - uses: DeterminateSystems/nix-installer-action@main
     - name: Install nix-fast-build
-      run: nix --accept-flake-config profile install "github:Mic92/nix-fast-build"
+      # From nixpkgs, not the github: flake (it isn't on any cache and
+      # rebuilds every run). cache.nixos.org serves hydra's unstable evals
+      # for this pin; while a channel eval is stalled (e.g. the 2026-10
+      # python 3.14 wave, unfixed udiskie), it 404s and builds locally —
+      # same cost the github: flake had, correct derivation later.
+      run: nix --accept-flake-config profile install "nixpkgs#nix-fast-build"
     - uses: cachix/cachix-action@v17
       with:
         name: 0x006e-nix
