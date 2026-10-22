@@ -105,6 +105,32 @@ jobs:
         # Same as the check job: free GHA cache on, paid FlakeHub off.
         use-flakehub: disabled
     - run: nix-fast-build --skip-cached --flake '.#nixosConfigurations.ntsv.config.system.build.toplevel' --no-nom --cachix-cache 0x006e-nix
+    # nix-fast-build only keeps the last 10k lines of the toplevel build in
+    # its own output, so a failure deep in a long build scrolls out of the
+    # job log. Nix itself keeps the full per-derivation logs (failed ones
+    # included) under /nix/var/log/nix/drvs: on failure only, collect them,
+    # oldest first so the failure lands at the bottom, and upload as
+    # build.log. continue-on-error: a log hiccup must not mask the real result.
+    - name: Collect build logs
+      if: failure()
+      continue-on-error: true
+      run: |
+        sudo find /nix/var/log/nix/drvs -type f -printf '%T@ %p\0' 2>/dev/null \
+          | sort -z -n | cut -z -d' ' -f2- \
+          | while IFS= read -r -d '' f; do
+              printf '\n===== %s =====\n' "$f"
+              sudo bzcat -f "$f" 2>/dev/null || true
+            done > build.log
+        ls -lh build.log
+    - name: Upload build.log
+      if: failure()
+      continue-on-error: true
+      uses: actions/upload-artifact@v7
+      with:
+        name: build.log
+        path: build.log
+        if-no-files-found: warn
+        retention-days: 7
     # Pin the merged-main closure (current + previous) so GC can never
     # evict the generations you actually run. PR runs skip this step.
     - name: Pin main closure
