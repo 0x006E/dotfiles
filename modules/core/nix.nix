@@ -67,9 +67,5 @@ delib.module {
       nixpkgs = {
         config.allowUnfree = true;
       };
-
-      environment.etc."nix/nix.custom.conf".text = ''
-        eval-cores = 4
-      '';
     };
 }
