@@ -16,9 +16,16 @@ on:
       branches: [main]
       paths:
         - 'flake.nix'
+
+# Least privilege for the default token: checkout only needs read. Pushing
+# and PR creation use UPDATE_FLAKE_PAT explicitly (so CI fires on the PRs).
+permissions:
+  contents: read
+
 jobs:
   lockfile:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -28,7 +35,7 @@ jobs:
           # different Authorization headers and GitHub 400s the push.
           persist-credentials: false
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+        uses: DeterminateSystems/determinate-nix-action@v3
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@v29
         with:
@@ -40,6 +47,7 @@ jobs:
           pr-labels: automated
   updateFlakePackages:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -49,7 +57,7 @@ jobs:
           # different Authorization headers and GitHub 400s the push.
           persist-credentials: false
       - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
+        uses: DeterminateSystems/determinate-nix-action@v3
       - name: Update flake packages
         uses: 0x006e/nix-update-action@main
         with:

@@ -16,21 +16,33 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Supersede stale PR runs (every bot push / fix commit starts a new one and
+# the old toplevel build is wasted minutes). Never cancel main: those runs
+# pin the closure. A cancelled run concludes "cancelled", so gradle-deps
+# (which reacts to "failure" only) ignores it.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: read
-      id-token: write
+      # cache-nix-action purges superseded caches via the Actions cache API.
+      # (No id-token: FlakeHub is not used, and without an OIDC token
+      # Determinate Nix does not attempt a FlakeHub login at all.)
+      actions: write
     steps:
       - uses: actions/checkout@v7
       # Persist the flake evaluator (Git/fetcher) cache: without this,
       # every job re-downloads + re-unpacks all inputs ("unpacking ...
-      # into the Git cache"). /nix/store is already shared via
-      # magic-nix-cache + cachix; this covers ~/.cache/nix instead.
+      # into the Git cache"). /nix/store is shared via cache-nix-action
+      # + cachix; this covers ~/.cache/nix instead.
       # Safe across lock changes: nix verifies narHash on use, and the
       # key misses on a new flake.lock.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cache/nix/tarballs
@@ -38,7 +50,7 @@ jobs:
           key: nix-eval-${{ runner.os }}-${{ hashFiles('flake.lock') }}
           restore-keys: |
             nix-eval-${{ runner.os }}-
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/determinate-nix-action@v3
       # Pull-only: reuse paths previous runs pushed (e.g. the kernel)
       # instead of compiling them a second time on this runner.
       - uses: cachix/cachix-action@v17
@@ -46,14 +58,21 @@ jobs:
           name: 0x006e-nix
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: true
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      # Restore + save /nix as ONE GitHub Actions cache (no per-path
+      # uploads, so no Magic Nix Cache rate limiting). Separate keys per
+      # job: if check and toplevel shared one, whichever saved first would
+      # make the other see a hit and never save its own paths. Post-save
+      # only runs when the job succeeds, which is fine for the fast gate.
+      - uses: nix-community/cache-nix-action@v7
         with:
-          # The free part is the GitHub Actions cache. FlakeHub Cache is
-          # a paid service, and "no-preference" (the default) tries it
-          # anyway because Determinate Nix is installed above -- which
-          # fails with no netrc and prints a red error annotation on
-          # every run. Off: the GHA cache alone is what we want.
-          use-flakehub: disabled
+          primary-key: nix-check-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+          # No exact hit (new flake.lock): start from the latest older one.
+          restore-prefixes-first-match: nix-check-${{ runner.os }}-
+          # Keep only the newest cache of this kind.
+          purge: true
+          purge-prefixes: nix-check-${{ runner.os }}-
+          purge-created: 0
+          purge-primary-key: never
       # Full check (NOT --no-build): stylix's nixvim target realizes a
       # derivation at eval time (IFD), which --no-build forbids on cold
       # stores. The cachix pull above keeps this download-fast.
@@ -67,11 +86,18 @@ jobs:
     # the delta (out-of-tree modules, nvidia, initrd, toplevel refs).
     needs: [check]
     runs-on: ubuntu-latest
+    # The failing run took ~100 min; this is headroom, not a target. A hung
+    # build should not burn the 6 h default.
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      # cache-nix-action purges superseded caches via the Actions cache API.
+      actions: write
     steps:
     - uses: actions/checkout@v7
     # Same evaluator-cache rationale as the check job above; also speeds
     # up the nix-fast-build profile install below (fewer refetches).
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: |
           ~/.cache/nix/tarballs
@@ -92,7 +118,17 @@ jobs:
         sudo apt-get clean
         echo "Disk space after cleanup:"
         df -h
-    - uses: DeterminateSystems/nix-installer-action@main
+    - uses: DeterminateSystems/determinate-nix-action@v3
+    # Restore only here; the save step is at the very end with always().
+    # The combined action's post-save is success()-only, and this job is
+    # the one that fails after a long source build, so a failed run would
+    # otherwise throw away everything it compiled.
+    - name: Restore Nix store
+      id: nix-cache
+      uses: nix-community/cache-nix-action/restore@v7
+      with:
+        primary-key: nix-toplevel-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+        restore-prefixes-first-match: nix-toplevel-${{ runner.os }}-
     - name: Install nix-fast-build
       run: nix --accept-flake-config profile install "github:Mic92/nix-fast-build"
     - uses: cachix/cachix-action@v17
@@ -100,10 +136,6 @@ jobs:
         name: 0x006e-nix
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         installCommand: nix profile install --accept-flake-config nixpkgs#cachix
-    - uses: DeterminateSystems/magic-nix-cache-action@main
-      with:
-        # Same as the check job: free GHA cache on, paid FlakeHub off.
-        use-flakehub: disabled
     - run: nix-fast-build --skip-cached --flake '.#nixosConfigurations.ntsv.config.system.build.toplevel' --no-nom --cachix-cache 0x006e-nix
     # nix-fast-build only keeps the last 10k lines of the toplevel build in
     # its own output, so a failure deep in a long build scrolls out of the
@@ -140,3 +172,17 @@ jobs:
       run: |
         TOP=$(nix build '.#nixosConfigurations.ntsv.config.system.build.toplevel' --print-out-paths --no-link)
         cachix pin 0x006e-nix main "$TOP" --keep-revisions 2
+    # Save even when the build failed (see the restore step). No
+    # gc-max-store-size on purpose: GC would delete the freshly built,
+    # unrooted outputs this cache exists to keep. Skipped on an exact key
+    # hit, since a cache with the same key can't be overwritten.
+    - name: Save Nix store
+      if: always() && steps.nix-cache.outputs.hit-primary-key != 'true'
+      continue-on-error: true
+      uses: nix-community/cache-nix-action/save@v7
+      with:
+        primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+        purge: true
+        purge-prefixes: nix-toplevel-${{ runner.os }}-
+        purge-created: 0
+        purge-primary-key: never

@@ -9,9 +9,11 @@ name: gradle-deps
 # breaks `toplevel` with "Could not find <coord>", and nothing in the update
 # flow repairs it. This workflow closes that loop:
 #
-# - automatic: when a `ci` run fails on a same-repo PR, it downloads the
-#   failed toplevel log, checks the failure is a missing-dependency error,
-#   refreshes every Gradle lock on the PR head, and pushes the fix back.
+# - automatic: when a `ci` run fails on a same-repo PR, it reads the failed
+#   toplevel build log (the `build.log` artifact ci uploads on failure,
+#   falling back to the job log), checks the failure is a missing-dependency
+#   error, refreshes every Gradle lock on the PR head, and pushes the fix
+#   back.
 # - manual: workflow_dispatch on any PR number, skips the log check and
 #   refreshes unconditionally.
 #
@@ -52,18 +54,27 @@ jobs:
         id: target
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Untrusted-ish text (inputs, ref names) goes through env, never
+          # straight into the script body.
+          PR_INPUT: ${{ inputs.pr-number }}
+          CONCL: ${{ github.event.workflow_run.conclusion }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ -n "${{ inputs.pr-number }}" ]; then
-            HEAD_REF=$(gh pr view "${{ inputs.pr-number }}" --json headRefName -q .headRefName)
+          if [ -n "$PR_INPUT" ]; then
+            if ! [[ "$PR_INPUT" =~ ^[0-9]+$ ]]; then
+              echo "pr-number must be a number, got: $PR_INPUT" >&2
+              exit 1
+            fi
+            HEAD_REF=$(gh pr view "$PR_INPUT" --json headRefName -q .headRefName)
             echo "mode=manual" >> "$GITHUB_OUTPUT"
-            echo "pr=${{ inputs.pr-number }}" >> "$GITHUB_OUTPUT"
+            echo "pr=$PR_INPUT" >> "$GITHUB_OUTPUT"
             echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
             echo "proceed=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           echo "mode=auto" >> "$GITHUB_OUTPUT"
           echo "proceed=false" >> "$GITHUB_OUTPUT"
-          CONCL="${{ github.event.workflow_run.conclusion }}"
           if [ "$CONCL" != "failure" ]; then
             echo "ci concluded $CONCL, nothing to do."
             exit 0
@@ -76,7 +87,7 @@ jobs:
             echo "failed run is not attached to a PR, nothing to do."
             exit 0
           fi
-          if [ "$HEAD_REPO" != "${{ github.repository }}" ]; then
+          if [ "$HEAD_REPO" != "$REPO" ]; then
             echo "PR head is a fork ($HEAD_REPO), cannot push there."
             exit 0
           fi
@@ -85,7 +96,7 @@ jobs:
           fi
           echo "pr=$PR" >> "$GITHUB_OUTPUT"
           echo "head_ref=$HEAD_REF" >> "$GITHUB_OUTPUT"
-          echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
           echo "proceed=true" >> "$GITHUB_OUTPUT"
 
       - name: Failure is a missing-dependency error
@@ -93,21 +104,39 @@ jobs:
         if: steps.target.outputs.proceed == 'true' && steps.target.outputs.mode == 'auto'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ steps.target.outputs.run_id }}
         run: |
           # Find the failed toplevel job of the triggering run and scan its
           # log. Only a Gradle resolution failure qualifies for an automatic
           # lock refresh; anything else exits quietly (a human owns it).
-          JOBS=$(gh api "repos/${{ github.repository }}/actions/runs/${{ steps.target.outputs.run_id }}/jobs?per_page=100")
+          JOBS=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs?per_page=100")
           JOB_ID=$(echo "$JOBS" | jq -r '.jobs[] | select(.name == "toplevel" and .conclusion == "failure") | .id' | head -1)
           if [ -z "$JOB_ID" ]; then
             echo "no failed toplevel job, nothing to do."
             exit 0
           fi
-          EXTRA_FLAGS=()
-          if gh api --help | grep -q -- '--allow-escape-sequences'; then
-            EXTRA_FLAGS+=("--allow-escape-sequences")
+          # Preferred source: the build.log artifact ci uploads on failure.
+          # It holds the complete per-derivation Nix logs, whereas the job
+          # log only keeps the last 10k lines of the toplevel build, so the
+          # failing Gradle derivation can scroll out of it.
+          rm -f fail.log
+          mkdir -p artifact-logs
+          if gh run download "$RUN_ID" --repo "$REPO" --name build.log --dir artifact-logs 2>/dev/null; then
+            ART=$(find artifact-logs -type f -name build.log | head -1)
+            if [ -n "$ART" ] && [ -s "$ART" ]; then
+              echo "using build.log artifact."
+              mv "$ART" fail.log
+            fi
           fi
-          gh api "${EXTRA_FLAGS[@]}" "repos/${{ github.repository }}/actions/jobs/$JOB_ID/logs" > fail.log
+          if [ ! -s fail.log ]; then
+            echo "no build.log artifact, falling back to the job log."
+            EXTRA_FLAGS=()
+            if gh api --help | grep -q -- '--allow-escape-sequences'; then
+              EXTRA_FLAGS+=("--allow-escape-sequences")
+            fi
+            gh api "${EXTRA_FLAGS[@]}" "repos/$REPO/actions/jobs/$JOB_ID/logs" > fail.log
+          fi
           # Real signatures seen in the wild (PR #146): Gradle's
           # "Could not resolve all artifacts for configuration" +
           # "Could not find group:name:version". A bare hash-mismatch on a
@@ -177,14 +206,16 @@ jobs:
           steps.guard.outputs.stop == 'true'
         env:
           GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
+          PR: ${{ steps.target.outputs.pr }}
+          COORDS: ${{ steps.failure.outputs.coords }}
         run: |
           MARK="<!-- gradle-deps-autofix -->"
-          if ! gh pr view "${{ steps.target.outputs.pr }}" --json comments \
+          if ! gh pr view "$PR" --json comments \
             -q '.comments[].body' | grep -q "$MARK"; then
-            gh pr comment "${{ steps.target.outputs.pr }}" --body "$MARK
-            The Gradle lock auto-fix already pushed twice and CI still fails.
-            ${{ steps.failure.outputs.coords }}
-            A human needs to look at this one."
+            gh pr comment "$PR" --body "$MARK
+          The Gradle lock auto-fix already pushed twice and CI still fails.
+          $COORDS
+          A human needs to look at this one."
           fi
           exit 0
 
@@ -199,12 +230,16 @@ jobs:
             /usr/local/share/boost
           sudo apt-get clean
 
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/determinate-nix-action@v3
         if: >
           steps.target.outputs.proceed == 'true' &&
           (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
           steps.guard.outputs.stop != 'true'
 
+      # Pull-only Cachix is the whole cache story here. Magic Nix Cache is
+      # gone, and a cache-nix-action save is deliberately not used: this job
+      # runs rarely, and a multi-GB save would push ci's toplevel cache out
+      # of the repo's 10 GB Actions cache quota.
       - uses: cachix/cachix-action@v17
         if: >
           steps.target.outputs.proceed == 'true' &&
@@ -215,22 +250,20 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skipPush: true
 
-      - uses: DeterminateSystems/magic-nix-cache-action@main
-        if: >
-          steps.target.outputs.proceed == 'true' &&
-          (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
-          steps.guard.outputs.stop != 'true'
-        with:
-          use-flakehub: disabled
-
       - name: Refresh Gradle locks
         if: >
           steps.target.outputs.proceed == 'true' &&
           (steps.target.outputs.mode == 'manual' || steps.failure.outputs.deps == 'true') &&
           steps.guard.outputs.stop != 'true'
+        env:
+          PKGS_INPUT: ${{ inputs.packages }}
         run: |
-          if [ -n "${{ inputs.packages }}" ]; then
-            PKGS="${{ inputs.packages }}"
+          if [ -n "$PKGS_INPUT" ]; then
+            if ! [[ "$PKGS_INPUT" =~ ^[A-Za-z0-9_.\ -]+$ ]]; then
+              echo "packages must be space-separated package attr names" >&2
+              exit 1
+            fi
+            PKGS="$PKGS_INPUT"
           else
             # Every package dir carrying a mitm-cache lockfile.
             PKGS=$(for d in pkgs/*/deps.json; do [ -e "$d" ] && basename "$(dirname "$d")"; done)
@@ -254,19 +287,23 @@ jobs:
           steps.guard.outputs.stop != 'true'
         env:
           GH_TOKEN: ${{ secrets.UPDATE_FLAKE_PAT }}
+          MODE: ${{ steps.target.outputs.mode }}
+          PR: ${{ steps.target.outputs.pr }}
+          HEAD_REF: ${{ steps.target.outputs.head_ref }}
+          COORDS: ${{ steps.failure.outputs.coords }}
         run: |
           if [ -z "$(git status --porcelain -- pkgs/)" ]; then
             echo "refresh produced no changes."
             MARK="<!-- gradle-deps-autofix -->"
-            if [ "${{ steps.target.outputs.mode }}" = "auto" ] \
-              && ! gh pr view "${{ steps.target.outputs.pr }}" --json comments \
+            if [ "$MODE" = "auto" ] \
+              && ! gh pr view "$PR" --json comments \
                 -q '.comments[].body' | grep -q "$MARK"; then
-              gh pr comment "${{ steps.target.outputs.pr }}" --body "$MARK
-              CI failed with a dependency error but refreshing the Gradle
-              locks produced no new entries:
-              ${{ steps.failure.outputs.coords }}
-              The missing artifact may be genuinely unreachable, or the
-              failure needs a human."
+              gh pr comment "$PR" --body "$MARK
+          CI failed with a dependency error but refreshing the Gradle
+          locks produced no new entries:
+          $COORDS
+          The missing artifact may be genuinely unreachable, or the
+          failure needs a human."
             fi
             exit 0
           fi
@@ -276,5 +313,5 @@ jobs:
             commit -m "[gradle-deps-auto] refresh Gradle offline locks" \
             -m "Automatic refresh after a CI dependency failure." \
             -m "Failing coordinates:" \
-            -m "${{ steps.failure.outputs.coords }}"
-          git push origin "HEAD:${{ steps.target.outputs.head_ref }}"
+            -m "$COORDS"
+          git push origin "HEAD:refs/heads/$HEAD_REF"
