@@ -48,6 +48,7 @@ delib.module {
             "@wheel"
           ];
           substituters = [
+            "https://look.cachix.org"
             "https://install.determinate.systems"
             "https://lanzaboote.cachix.org"
             "https://0x006e-nix.cachix.org"
@@ -55,6 +56,7 @@ delib.module {
             "https://nix-community.cachix.org"
           ];
           trusted-public-keys = [
+            "look.cachix.org-1:8elPCeSVBzlDZXqIRKBK9GyLIK/Hoe1xiWZF0ir7uX4="
             "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
             "lanzaboote.cachix.org-1:Nt9//zGmqkg1k5iu+B3bkj3OmHKjSw9pvf3faffLLNk="
             "0x006e-nix.cachix.org-1:JV0ESHZ7I9+ihTkFJ81RtqsjzV/2845VPwpU8OD8JL8="
