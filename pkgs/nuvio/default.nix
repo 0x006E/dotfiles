@@ -54,7 +54,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "nuvio";
-  version = "0.1.31-alpha-unstable-2026-10-21";
+  version = "0.1.32-alpha-unstable-2026-10-21";
 
   src = fetchFromGitHub {
     owner = "NuvioMedia";
