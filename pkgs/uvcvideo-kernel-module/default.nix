@@ -17,6 +17,14 @@ pkgs.stdenv.mkDerivation {
 
   modulePath = "drivers/media/usb/uvc";
   patches = kernel.patches ++ [ ./patches/00uvc_version_fix.patch ];
+
+  # Carry the kernel's make flags, notably `cmd_sign`, so
+  # `modules_install` signs the module with kmodigest and emits the
+  # `<module>.ko.cer` that nixpkgs' modules aggregator concatenates into
+  # `modules.cer`. Without it the out-of-tree module is unsigned and has
+  # no certificate.
+  makeFlags = kernel.commonMakeFlags;
+
   buildPhase = ''
     BUILT_KERNEL=$kernel_dev/lib/modules/$kernelVersion/build
 
@@ -24,12 +32,12 @@ pkgs.stdenv.mkDerivation {
     cp $BUILT_KERNEL/.config        .
     cp $kernel_dev/vmlinux          .
 
-    make "-j$NIX_BUILD_CORES" modules_prepare
-    make "-j$NIX_BUILD_CORES" M=$modulePath modules
+    make "-j$NIX_BUILD_CORES" $makeFlags modules_prepare
+    make "-j$NIX_BUILD_CORES" $makeFlags M=$modulePath modules
   '';
 
   installPhase = ''
-    make \
+    make $makeFlags \
       INSTALL_MOD_PATH="$out" \
       XZ="xz -T$NIX_BUILD_CORES" \
       M="$modulePath" \
