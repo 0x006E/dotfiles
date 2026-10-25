@@ -3,6 +3,7 @@
   stdenv,
   lib,
   fetchFromGitHub,
+  kernelModuleMakeFlags,
   kernel ? pkgs.linuxPackages_cachyos.latest,
 }:
 stdenv.mkDerivation rec {
@@ -19,7 +20,7 @@ stdenv.mkDerivation rec {
   setSourceRoot = "export sourceRoot=$(pwd)/source";
   nativeBuildInputs = kernel.moduleBuildDependencies;
 
-  makeFlags = [
+  makeFlags = kernelModuleMakeFlags ++ [
     "-C"
     "${kernel.dev}/lib/modules/${kernel.modDirVersion}/build"
     "M=$(sourceRoot)"
