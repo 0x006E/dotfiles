@@ -64,6 +64,8 @@ jobs:
           # Re-exports carry no repo-owned version: their versions live in
           # nixpkgs and flow through lockfile PRs. Attempting nix-update on
           # them only produces eval errors, so skip them outright.
-          blacklist: "zoho-mail,windsurf,zen-browser-unwrapped,catppuccin-cursors-latteDark,catppuccin-cursors-mochaLight,inkscape,papers"
+          # wallfetch is a local script (`src = ./fetch.sh`), so there is no
+          # upstream URL to poll.
+          blacklist: "zoho-mail,windsurf,zen-browser-unwrapped,catppuccin-cursors-latteDark,catppuccin-cursors-mochaLight,inkscape,papers,wallfetch"
           token: ${{ secrets.UPDATE_FLAKE_PAT }}
           pr-labels: automated
