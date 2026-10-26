@@ -7,8 +7,8 @@ delib.module {
       # Disable systemd-boot as it's replaced by Lanzaboote
       loader.systemd-boot.enable = lib.mkForce false;
 
-      # Enable systemd in initrd
-      initrd.systemd.enable = true;
+      # systemd in initrd is the only initrd implementation since the
+      # scripted one was removed, and it is enabled by default.
 
       # Lanzaboote Configuration
       lanzaboote = {
