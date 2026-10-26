@@ -21,7 +21,6 @@ delib.module {
       ];
 
       # Additional Boot Settings
-      initrd.verbose = false; # Disable verbose initrd messages
       consoleLogLevel = 0; # Minimize console output
 
       # Plymouth Configuration
