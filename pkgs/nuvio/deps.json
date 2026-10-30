@@ -694,6 +694,10 @@
    "module": "sha256-WJtIEA2khdLP9CJx1ayzmzmuUOZwukvoXhnp8PFLet0=",
    "pom": "sha256-2/aj2Vlql79sTNiKA5Ymr5v8CfwX29ZI4xoLynKz4j8="
   },
+  "androidx/media3#media3-effect/1.8.0": {
+   "module": "sha256-6XdWqGkFEzZ73DKHaxcUrnFzI7TwOvMIojJn0kn9baY=",
+   "pom": "sha256-hLrjBPfBq7iWZFIyTdnW22kNDv2NA/O8jSIxr/AqOs4="
+  },
   "androidx/media3#media3-exoplayer-dash/1.8.0": {
    "module": "sha256-R7iegErG6japfnVJD1wCoAMfPTDaogv2txaoNIdDTnk=",
    "pom": "sha256-brlDHAIWyXHZ6PlHfY38IJTLhDB3f63w6dAwo2zdjjA="
