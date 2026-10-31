@@ -41,6 +41,10 @@ delib.module {
           # Default 300s: any stall threw the whole nar away and restarted
           # from zero, so a large source could never finish. 0 disables it.
           stalled-download-timeout = 0;
+          # Default 3600s: a lookup that misses while CI is still building a
+          # fresh merge sticks as "not substitutable" for an hour, so the next
+          # switch rebuilds from source. 300s still caches genuine misses.
+          narinfo-cache-negative-ttl = 300;
           max-jobs = 4;
           cores = 4;
           trusted-users = [
