@@ -29,7 +29,12 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      # PAT, not GITHUB_TOKEN: auto-merge performed with the default token
+      # suppresses the push event on main, so ci.yml's pin step (which only
+      # runs on push to main) would never execute. The PAT makes the merge
+      # trigger the post-merge ci run, exactly once per merged PR.
       - uses: peter-evans/enable-pull-request-automerge@v3
         with:
+          token: ${{ secrets.UPDATE_FLAKE_PAT }}
           pull-request-number: ${{ github.event.pull_request.number }}
           merge-method: merge

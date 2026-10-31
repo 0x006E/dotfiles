@@ -164,9 +164,14 @@ jobs:
         if-no-files-found: warn
         retention-days: 7
     # Pin the merged-main closure (current + previous) so GC can never
-    # evict the generations you actually run. PR runs skip this step.
+    # evict the generations you actually run. PR runs skip this step; it
+    # must run on push to main. auto-merge-updates.yml therefore enables
+    # auto-merge with the PAT: a GITHUB_TOKEN merge suppresses this push
+    # run and the pin would never happen.
     # The Cachix plan caps pin storage; a full quota is a warning, not a
-    # build failure (the store push above already succeeded).
+    # build failure (the store push above already succeeded). If two
+    # revisions no longer fit, retry with one so the newest closure is
+    # still protected.
     - name: Pin main closure
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       env:
@@ -176,6 +181,11 @@ jobs:
         set +e
         cachix pin 0x006e-nix main "$TOP" --keep-revisions 2 2>&1 | tee /tmp/cachix-pin.log
         rc=${PIPESTATUS[0]}
+        if [ "$rc" -ne 0 ] && grep -q 'Pin storage limit exceeded' /tmp/cachix-pin.log; then
+          echo "::warning::pin quota exceeded for 2 revisions; keeping only the latest"
+          cachix pin 0x006e-nix main "$TOP" --keep-revisions 1 2>&1 | tee /tmp/cachix-pin.log
+          rc=${PIPESTATUS[0]}
+        fi
         set -e
         if [ "$rc" -ne 0 ]; then
           if grep -q 'Pin storage limit exceeded' /tmp/cachix-pin.log; then
