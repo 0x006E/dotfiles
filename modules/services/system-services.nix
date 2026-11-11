@@ -1,4 +1,4 @@
-{ delib, pkgs, ... }:
+{ delib, ... }:
 delib.module {
   name = "services.system-services";
   options = delib.singleEnableOption true;
@@ -8,11 +8,12 @@ delib.module {
       fwupd.enable = true;
       bpftune.enable = true;
 
-      scx = {
+      scx-loader = {
         enable = true;
-        package = pkgs.scx.full;
-        scheduler = "scx_lavd";
-        extraArgs = [ "--autopower" ];
+        config = {
+          default_sched = "scx_lavd";
+          scheds.scx_lavd.auto_mode = [ "--autopower" ];
+        };
       };
 
       beesd.filesystems = {
