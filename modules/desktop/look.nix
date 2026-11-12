@@ -1,6 +1,7 @@
 {
   delib,
   inputs,
+  pkgs,
   ...
 }:
 delib.module {
@@ -15,8 +16,16 @@ delib.module {
     imports = [ inputs.look.homeModules.default ];
   };
 
-  nixos.ifEnabled = { ... }: {
-    programs.lookapp.enable = true;
+  nixos.ifEnabled = {
+    programs.lookapp = {
+      enable = true;
+      # Upstream links rusqlite but forgets sqlite in the package's
+      # buildInputs, so the link step fails on `-lsqlite3`
+      # (kunkka19xx/look#703). Drop this once the fix is merged upstream.
+      package = inputs.look.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+        buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.sqlite ];
+      });
+    };
   };
 
   home.ifEnabled =
