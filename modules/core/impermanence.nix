@@ -24,6 +24,9 @@ let
     ".java/.userPrefs"
     "nix"
     ".local/state"
+    # Secret Service (gnome-keyring): Antigravity stores its OAuth tokens here;
+    # its scope marker lives in .config/antigravity below.
+    ".local/share/keyrings"
     ".local/share/atuin"
     ".local/share/opencode"
     ".local/share/direnv"
@@ -39,6 +42,13 @@ let
     ".config/nuvio"
     ".config/opencode"
     ".config/zen"
+    # Antigravity: CLI credential scope (keyring entry names) and the VS Code
+    # extension's global state (state.vscdb + metrics).
+    ".config/antigravity"
+    ".config/Code/User/globalStorage"
+    # Antigravity CLI (agy): binary once installed+patched by the VS Code
+    # extension, MCP/project config, conversations, brain and state files.
+    ".gemini"
   ];
 in
 delib.module {
