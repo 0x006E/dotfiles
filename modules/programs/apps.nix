@@ -22,6 +22,8 @@ delib.module {
       overskride
       mpv
       nuvio
+      # Tauri YouTube Music client; identifier com.limusic.desktop
+      limusic
       bottles
       winetricks
     ];

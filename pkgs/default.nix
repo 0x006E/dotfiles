@@ -7,6 +7,7 @@ let
 in
 {
   boomaga = pkgs.qt6.callPackage ./boomaga.nix { };
+  limusic = pkgs.callPackage ./limusic.nix { };
   wallfetch = pkgs.callPackage ./wallfetch { };
   nuvio = pkgs.callPackage ./nuvio {
     jdk21 = pkgs.jetbrains.jdk-21;

@@ -40,6 +40,9 @@ let
     ".var"
     ".config/dconf"
     ".config/nuvio"
+    # LiMusic (Tauri): app config + webview/app data live under its identifier
+    ".config/com.limusic.desktop"
+    ".local/share/com.limusic.desktop"
     ".config/opencode"
     ".config/zen"
     # Antigravity: CLI credential scope (keyring entry names) and the VS Code
