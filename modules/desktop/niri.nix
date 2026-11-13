@@ -303,6 +303,29 @@ delib.module {
                     matches = [ { namespace = "^noctalia-wallpaper$"; } ];
                     place-within-backdrop = true;
                   }
+                  {
+                    # wayprompt is a layer-shell client, so niri only
+                    # shadows it when a layer rule explicitly asks for
+                    # it. Radius matches the dialog's corner-radius=0
+                    # in modules/programs/wayprompt/config.ini.mustache.
+                    matches = [ { namespace = "^wayprompt$"; } ];
+                    shadow = {
+                      enable = true;
+                      softness = 24;
+                      spread = 4;
+                      offset = {
+                        x = 0;
+                        y = 6;
+                      };
+                      color = "#00000080";
+                    };
+                    geometry-corner-radius = {
+                      top-left = 0.0;
+                      top-right = 0.0;
+                      bottom-right = 0.0;
+                      bottom-left = 0.0;
+                    };
+                  }
                 ];
 
                 # Window Rules
