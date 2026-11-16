@@ -77,6 +77,14 @@
    "module": "sha256-qLF1E5SeXbbJYBwwvhnflTdi3Yd1EvHiz8+ugdJECUQ=",
    "pom": "sha256-D5U3BlmBQNnYc1zdWusfo1kz9OLzHAvz64GgU6TIwaU="
   },
+  "androidx/baselineprofile#androidx.baselineprofile.gradle.plugin/1.5.0": {
+   "pom": "sha256-4Huo2gnjr/AgaA9rcHANuK1DOQQI9asK6V8ilXp+OyY="
+  },
+  "androidx/benchmark#benchmark-baseline-profile-gradle-plugin/1.5.0": {
+   "jar": "sha256-6QRN9zwkwWTZYMSAknSBQCdGxktnltjCnPoPkzDK1pk=",
+   "module": "sha256-TG6sChDvPFZqrDEBaCNgpnGysiSdORgjh38n6f4Rkt8=",
+   "pom": "sha256-7t8DjJUwBAK9LOctTbGpIt6GnnfVsNN00FQZ0c7zsIY="
+  },
   "androidx/browser#browser/1.9.0": {
    "module": "sha256-v/9LDjPLqtkw2ftaMObNNcPSrb24Rt8uuceKADhBB4c=",
    "pom": "sha256-SaDxmRPra1qLygAXrWN5qth88KA9qJcjPf5jgOSEhdc="
@@ -948,6 +956,9 @@
   "com/android/library#com.android.library.gradle.plugin/9.2.0": {
    "pom": "sha256-wo5a0Nbl597SWl2JFtwJ8ewYxma4B/fw1IVkjGTs0F4="
   },
+  "com/android/test#com.android.test.gradle.plugin/9.2.0": {
+   "pom": "sha256-zOhNoSJrBAHloEQ/S53o7LU3qlcoz/hx2nU457QyDuo="
+  },
   "com/android/tools#annotations/32.2.0": {
    "jar": "sha256-VJcXk0yJlF+f5zT4gNc0c+95M2qzUXrPDk0oUdl8Xc4=",
    "pom": "sha256-YRi7bZNKGGbGEPP6k0p8hszk16aMexO+SkAEiNqdeu0="
@@ -1080,6 +1091,10 @@
    "jar": "sha256-Mmj9pb6ey/TWIa2+23GpcuBm/Vb65JqTWb2d9/IKXZs=",
    "module": "sha256-Mh6yZWz0/v5kc4fsbEpdlrC5YdgfhrlCJXChDTK7f70=",
    "pom": "sha256-FBAnjOfYdlrBLOsIj3ArN3W48+KkOo4E+Ie7ws3Vxp4="
+  },
+  "com/google/testing/platform#core-proto/0.0.8-alpha08": {
+   "jar": "sha256-OSBXWnTxQ3l1zfRSdvm3XnrkG6+43rHWDn1jnyHRsGw=",
+   "pom": "sha256-ku8nGFWHHB1GMpE4yl4rxpJvHZvgYH0v/Ayl/vJcegs="
   }
  },
  "https://plugins.gradle.org/m2/org/gradle": {
