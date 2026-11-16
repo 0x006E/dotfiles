@@ -15,6 +15,8 @@ delib.module {
   home.ifEnabled =
     { myconfig, ... }:
     {
+      xdg.mimeApps.enable = true;
+
       programs.zen-browser = {
         enable = true;
         # OS-level default handler (xdg-mime) + BROWSER=zen-beta in the
