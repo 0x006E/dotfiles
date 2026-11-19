@@ -1967,9 +1967,13 @@
    "module": "sha256-WMzbbfdnY/6bHxjIcnbqZNoyycw52emP92C+QjwTqHs=",
    "pom": "sha256-mU3Vkeru6DkkqSGQQUbYwuSyr8RsMquLyLKERHn8O+o="
   },
-  "io/github/abdallahmehiz#mpv-android-lib/0.1.12": {
-   "module": "sha256-6zgB4EFxJ6xNkqkygzpPdc/Wezt5xEjLl0BewQ9cIHo=",
-   "pom": "sha256-XSNvSTcylUZdWexz+DgmRXbeVkI34BitJ2B6vm9A9fI="
+  "io/github/abdallahmehiz#mpv-android-lib-android/0.2.1": {
+   "module": "sha256-T3O0fnKdK9q0N5b2INlZdwfWUYa/ZKgXFdEcUg7xiSU=",
+   "pom": "sha256-kvSbB6Z0eB6BNzs86NwKkR5lXxhY6lTwafZU324MMmI="
+  },
+  "io/github/abdallahmehiz#mpv-android-lib/0.2.1": {
+   "module": "sha256-4uv8ueRCslhob0MNJC0sGLepjZ+u7YrrB4o8y4WEUOY=",
+   "pom": "sha256-Fakz41YrVIEy2CXytZXQyIWm6MPWclbgoE9nCN3oDB4="
   },
   "io/github/dokar3#quickjs-kt-jvm/1.0.15": {
    "jar": "sha256-yKjQtH4sPNb7IephggS6CgQCfgnkHcA2wPYFGII/PW0=",
